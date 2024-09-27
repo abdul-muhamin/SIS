@@ -1,3 +1,4 @@
+// UserPage.tsx
 import { useState } from 'react';
 
 import Card from '@mui/material/Card';
@@ -18,24 +19,34 @@ import Scrollbar from 'src/components/scrollbar';
 import TableNoData from '../table-no-data';
 import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
+// import AddStudentModal from './addStudentModel';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
+import UpdateStudentModal from './updateStudentModel';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
 // ----------------------------------------------------------------------
 
 export default function UserPage() {
   const [page, setPage] = useState(0);
-
   const [order, setOrder] = useState('asc');
-
   const [selected, setSelected] = useState([]);
-
   const [orderBy, setOrderBy] = useState('name');
-
   const [filterName, setFilterName] = useState('');
-
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [openModal, setOpenModal] = useState(false); // State to manage modal visibility
+  const [currentUser, setCurrentUser] = useState(null); // State to manage the current user being edited
+
+  // Modal Handlers
+  const handleOpenModal = (user) => {
+    setCurrentUser(user); // Set the current user for editing
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setCurrentUser(null); // Reset current user when closing modal
+  };
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -98,12 +109,17 @@ export default function UserPage() {
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Users</Typography>
-
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
+        <Button
+          variant="contained"
+          color="inherit"
+          startIcon={<Iconify icon="eva:plus-fill" />}
+          onClick={() => handleOpenModal(null)} // Open modal for new user
+        >
           New User
         </Button>
       </Stack>
 
+      {/* Table Section */}
       <Card>
         <UserTableToolbar
           numSelected={selected.length}
@@ -144,6 +160,7 @@ export default function UserPage() {
                       isVerified={row.isVerified}
                       selected={selected.indexOf(row.name) !== -1}
                       handleClick={(event) => handleClick(event, row.name)}
+                      onEdit={() => handleOpenModal(row)} // Pass the row data to open the modal for editing
                     />
                   ))}
 
@@ -168,6 +185,9 @@ export default function UserPage() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Card>
+
+      {/* AddStudentModal Popup */}
+      <UpdateStudentModal open={openModal} onClose={handleCloseModal} user={currentUser} />
     </Container>
   );
 }

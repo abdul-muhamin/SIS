@@ -9,34 +9,59 @@ const icon = (name) => (
 const navConfig = [
   {
     title: 'dashboard',
-    path: '/',
+    path: '/dashboard',
     icon: icon('ic_analytics'),
   },
   {
-    title: 'user',
+    title: 'student',
     path: '/user',
     icon: icon('ic_user'),
   },
   {
-    title: 'product',
-    path: '/products',
-    icon: icon('ic_cart'),
+    title: 'teacher',
+    path: '/student',
+    icon: icon('ic_user'),
   },
   {
-    title: 'blog',
-    path: '/blog',
-    icon: icon('ic_blog'),
+    title: 'Grade',
+    path: '/update-student',
+    icon: icon('ic_user'),
   },
+  {
+    title: 'Assignment',
+    path: '/add-assignment',
+    icon: icon('ic_user'),
+  },
+  {
+    title: 'Admin',
+    path: '/assignment-user',
+    icon: icon('ic_user'),
+  },
+  // {
+  //   title: 'admin panel',
+  //   path: '/admin-panel',
+  //   icon: icon('ic_user'),
+  // },
+  // {
+  //   title: 'product',
+  //   path: '/products',
+  //   icon: icon('ic_cart'),
+  // },
+  // {
+  //   title: 'blog',
+  //   path: '/blog',
+  //   icon: icon('ic_blog'),
+  // },
   {
     title: 'login',
-    path: '/login',
+    path: '/',
     icon: icon('ic_lock'),
   },
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: icon('ic_disabled'),
-  },
+  // {
+  //   title: 'Not found',
+  //   path: '/404',
+  //   icon: icon('ic_disabled'),
+  // },
 ];
 
 export default navConfig;

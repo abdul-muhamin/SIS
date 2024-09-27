@@ -1,3 +1,4 @@
+// UserTableRow.jsx
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -25,6 +26,7 @@ export default function UserTableRow({
   isVerified,
   status,
   handleClick,
+  onEdit, // Add onEdit prop
 }) {
   const [open, setOpen] = useState(null);
 
@@ -73,33 +75,30 @@ export default function UserTableRow({
         open={!!open}
         anchorEl={open}
         onClose={handleCloseMenu}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        PaperProps={{
-          sx: { width: 140 },
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
         }}
       >
-        <MenuItem onClick={handleCloseMenu}>
-          <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
-          Edit
-        </MenuItem>
-
-        <MenuItem onClick={handleCloseMenu} sx={{ color: 'error.main' }}>
-          <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
-          Delete
-        </MenuItem>
+        <MenuItem onClick={() => { onEdit(); handleCloseMenu(); }}>Edit</MenuItem>
+        <MenuItem onClick={handleCloseMenu}>Delete</MenuItem>
       </Popover>
     </>
   );
 }
 
 UserTableRow.propTypes = {
-  avatarUrl: PropTypes.any,
-  company: PropTypes.any,
-  handleClick: PropTypes.func,
-  isVerified: PropTypes.any,
-  name: PropTypes.any,
-  role: PropTypes.any,
-  selected: PropTypes.any,
+  selected: PropTypes.bool,
+  name: PropTypes.string,
+  avatarUrl: PropTypes.string,
+  company: PropTypes.string,
+  role: PropTypes.string,
+  isVerified: PropTypes.bool,
   status: PropTypes.string,
+  handleClick: PropTypes.func,
+  onEdit: PropTypes.func, // Add prop types for onEdit
 };

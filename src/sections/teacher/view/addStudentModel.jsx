@@ -14,7 +14,7 @@ import {
   DialogActions,
 } from '@mui/material';
 
-const UpdateStudentModal = ({ open, onClose }) => {
+const AddStudentModal = ({ open, onClose }) => {
   const [formValues, setFormValues] = useState({
     fullName: '',
     email: '',
@@ -41,12 +41,8 @@ const UpdateStudentModal = ({ open, onClose }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>Add Student</DialogTitle>
-      <DialogContent sx={{
-          padding: 2,
-          overflow: 'hidden', // Prevent scrolling
-          maxHeight: '500px', // Set a fixed height for the dialog content
-        }}  >
-        <Box sx={{ padding: 2 }}>
+      <DialogContent>
+        <Box sx={{ padding: 4 }}>
           <Grid container spacing={2}>
             {/* Left Column */}
             <Grid item xs={12} md={6}>
@@ -151,10 +147,10 @@ const UpdateStudentModal = ({ open, onClose }) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="secondary">
-          Update
+          Cancel
         </Button>
         <Button onClick={handleSubmit} color="primary">
-          Cancel
+          Add Student
         </Button>
       </DialogActions>
     </Dialog>
@@ -162,9 +158,9 @@ const UpdateStudentModal = ({ open, onClose }) => {
 };
 
 // Define prop types for validation
-UpdateStudentModal.propTypes = {
+AddStudentModal.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };
 
-export default UpdateStudentModal;
+export default AddStudentModal;

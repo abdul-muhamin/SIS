@@ -6,7 +6,7 @@ import {
 
 import AddAssignmentTopBar from '../assignment/addAssignmentTopBar';
 
-const GradeTable = () => {
+const AddGrade = () => {
   const grades = [
     { course: 'Math', mid: 100, final: 100 },
     { course: 'Turkish Language', mid: 100, final: 100 },
@@ -63,4 +63,4 @@ const GradeTable = () => {
   );
 };
 
-export default GradeTable;
+export default AddGrade;

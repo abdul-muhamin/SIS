@@ -39,11 +39,15 @@ const AddStudentModal = ({ open, onClose }) => {
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth >
       <DialogTitle>Add Student</DialogTitle>
-      <DialogContent>
-        <Box sx={{ padding: 4 }}>
-          <Grid container spacing={2}>
+      <DialogContent  sx={{
+          padding: 2,
+          overflow: 'hidden', // Prevent scrolling
+          maxHeight: '500px', // Set a fixed height for the dialog content
+        }} >
+        <Box sx={{ padding: 2 }}>
+          <Grid container spacing={1}>
             {/* Left Column */}
             <Grid item xs={12} md={6}>
               <TextField

@@ -19,17 +19,17 @@ const navConfig = [
   },
   {
     title: 'teacher',
-    path: '/student',
+    path: '/teacher',
     icon: icon('ic_user'),
   },
   {
     title: 'Grade',
-    path: '/update-student',
+    path: '/grade',
     icon: icon('ic_user'),
   },
   {
     title: 'Assignment',
-    path: '/add-assignment',
+    path: '/Assignment-user',
     icon: icon('ic_user'),
   },
   {
@@ -37,11 +37,11 @@ const navConfig = [
     path: '/assignment-user',
     icon: icon('ic_user'),
   },
-  // {
-  //   title: 'admin panel',
-  //   path: '/admin-panel',
-  //   icon: icon('ic_user'),
-  // },
+  {
+    title: 'admin panel',
+    path: '/admin-panel',
+    icon: icon('ic_user'),
+  },
   // {
   //   title: 'product',
   //   path: '/products',

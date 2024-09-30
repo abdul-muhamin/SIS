@@ -123,14 +123,14 @@ export default function UserPage() {
       }
     }} >
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
-        <Typography variant="h4">Students</Typography>
+        <Typography variant="h4">Teacher</Typography>
         <Button
           variant="contained"
           color="inherit"
           startIcon={<Iconify icon="eva:plus-fill" />}
           onClick={handleOpenAddModal} // Open modal for adding a new student
         >
-          New Student
+          New Teacher
         </Button>
       </Stack>
 

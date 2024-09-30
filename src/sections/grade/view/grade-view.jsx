@@ -21,7 +21,7 @@ import UserTableHead from '../user-table-head';
 import AddStudentModal from './addStudentModel'; // Import the AddStudentModal
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
-import UpdateStudentModal from './updateStudentModel'; // Import the UpdateStudentModal
+// import UpdateStudentModal from './updateGrade'; 
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
 // ----------------------------------------------------------------------
@@ -36,9 +36,8 @@ export default function UserPage() {
 
   // Modals state
   const [openAddModal, setOpenAddModal] = useState(false); // State for Add modal
-  const [openUpdateModal, setOpenUpdateModal] = useState(false); // State for Update modal
-  const [currentUser, setCurrentUser] = useState(null); // State for current user being edited
-
+  // const [openUpdateModal, setOpenUpdateModal] = useState(false);
+  // const [currentUser, setCurrentUser] = useState(null); 
   // Add Modal Handlers
   const handleOpenAddModal = () => {
     setOpenAddModal(true); // Open AddStudentModal
@@ -49,15 +48,14 @@ export default function UserPage() {
   };
 
   // Update Modal Handlers
-  const handleOpenUpdateModal = (user) => {
-    setCurrentUser(user); // Set the current user for editing
-    setOpenUpdateModal(true); // Open UpdateStudentModal
-  };
+  // const handleOpenUpdateModal = (user) => {
+  //   setCurrentUser(user); 
+  //   setOpenUpdateModal(true); 
 
-  const handleCloseUpdateModal = () => {
-    setOpenUpdateModal(false);
-    setCurrentUser(null); // Reset current user when closing modal
-  };
+  // const handleCloseUpdateModal = () => {
+  //   setOpenUpdateModal(false);
+  //   setCurrentUser(null); 
+  // };
 
   // Sorting and Filtering Logic
   const handleSort = (event, id) => {
@@ -123,14 +121,14 @@ export default function UserPage() {
       }
     }} >
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
-        <Typography variant="h4">Students</Typography>
+        <Typography variant="h4">Grade</Typography>
         <Button
           variant="contained"
           color="inherit"
           startIcon={<Iconify icon="eva:plus-fill" />}
           onClick={handleOpenAddModal} // Open modal for adding a new student
         >
-          New Student
+          Add Grade
         </Button>
       </Stack>
 
@@ -155,10 +153,11 @@ export default function UserPage() {
                 headLabel={[
                   { id: 'name', label: 'Name' },
                   { id: 'idNumber', label: 'Id Number' },
-                  { id: 'Class', label: 'Class' },
-                  { id: 'fatherName', label: 'Father Name' },
-                  { id: 'motherName', label: 'Mother Name' },
-                  { id: 'Address', label: 'Address' },
+                  { id: 'course', label: 'Course' },
+                  { id: 'mids', label: 'Mids' },
+                  { id: 'final', label: 'Final' },
+                  { id: 'grade', label: 'Grade' },
+                  // { id: 'grade', label: 'grade' },
                   { id: '' },
                 ]}
               />
@@ -176,7 +175,7 @@ export default function UserPage() {
                       isVerified={row.isVerified}
                       selected={selected.indexOf(row.name) !== -1}
                       handleClick={(event) => handleClick(event, row.name)}
-                      onEdit={() => handleOpenUpdateModal(row)} // Pass the row data to open the modal for editing
+                      // onEdit={() => handleOpenUpdateModal(row)} // Pass the row data to open the modal for editing
                     />
                   ))}
 
@@ -206,7 +205,7 @@ export default function UserPage() {
       <AddStudentModal open={openAddModal} onClose={handleCloseAddModal} /> 
 
       {/* UpdateStudentModal Popup */}
-      <UpdateStudentModal open={openUpdateModal} onClose={handleCloseUpdateModal} user={currentUser} />
+      {/* <UpdateStudentModal open={openUpdateModal} onClose={handleCloseUpdateModal} user={currentUser} /> */}
     </Container>
   );
 }

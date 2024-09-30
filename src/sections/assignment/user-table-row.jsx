@@ -24,9 +24,9 @@ export default function UserTableRow({
   avatarUrl,
   idNumber,
   Class,
-  fatherName,
-  motherName,
-  Address,
+  assignment,
+  // motherName,
+  // Address,
   handleClick,
   onEdit, // Add onEdit prop
   onDelete, // Add onDelete prop for handling delete
@@ -74,9 +74,9 @@ export default function UserTableRow({
         <TableCell>{idNumber}</TableCell>
 
         <TableCell>{Class}</TableCell>
-        <TableCell>{fatherName}</TableCell>
-        <TableCell>{motherName}</TableCell>
-        <TableCell>{Address}</TableCell>
+        <TableCell>{assignment}</TableCell>
+        {/* <TableCell>{motherName}</TableCell> */}
+        {/* <TableCell>{Address}</TableCell> */}
 
         {/* <TableCell>
           <Label color={(status === 'banned' && 'error') || 'success'}>{status}</Label>
@@ -122,9 +122,9 @@ UserTableRow.propTypes = {
   avatarUrl: PropTypes.string,
   idNumber: PropTypes.string,
   Class: PropTypes.string,
-  fatherName: PropTypes.string,
-  motherName: PropTypes.string,
-  Address: PropTypes.string,
+  assignment: PropTypes.string,
+  // motherName: PropTypes.string,
+  // Address: PropTypes.string,
   handleClick: PropTypes.func,
   onEdit: PropTypes.func, // Add prop types for onEdit
   onDelete: PropTypes.func, // Add prop types for onDelete

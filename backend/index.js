@@ -19,7 +19,7 @@ mongoose.connect("mongodb+srv://rehany7xa:y7xapjwpq@cluster0.5epjo.mongodb.net/?
 .catch((err)=>console.log(err))
 
 // Item API routes
-app.use('/api/items', router);
+app.use('/api/students', router);
 
 // Basic route
 app.get('/', (req, res) => {

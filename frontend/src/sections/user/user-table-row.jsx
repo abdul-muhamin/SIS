@@ -19,6 +19,7 @@ import DeleteConfirmationModal from './view/deleteModel'; // Import the delete m
 // ----------------------------------------------------------------------
 
 export default function UserTableRow({
+  id, // Add id prop here
   selected,
   name,
   avatarUrl,
@@ -42,6 +43,19 @@ export default function UserTableRow({
     setOpen(null);
   };
 
+  const handleOpenEditModal = () => {
+    onEdit({ 
+      id, // Pass the id when editing
+      idNumber, 
+      fullName: name, 
+      class: Class, 
+      fatherName, 
+      motherName, 
+      address: Address 
+    }); // Pass the required student data
+    setOpen(true);
+  };
+
   const handleOpenDeleteModal = () => {
     setDeleteModalOpen(true);
     handleCloseMenu(); // Close the menu when delete is clicked
@@ -52,7 +66,7 @@ export default function UserTableRow({
   };
 
   const handleProceedDelete = () => {
-    onDelete(); // Call the delete handler passed from props
+    onDelete(id); // Pass the id when deleting
     setDeleteModalOpen(false); // Close the modal after confirming delete
   };
 
@@ -78,10 +92,6 @@ export default function UserTableRow({
         <TableCell>{motherName}</TableCell>
         <TableCell>{Address}</TableCell>
 
-        {/* <TableCell>
-          <Label color={(status === 'banned' && 'error') || 'success'}>{status}</Label>
-        </TableCell> */}
-
         <TableCell align="right">
           <IconButton onClick={handleOpenMenu}>
             <Iconify icon="eva:more-vertical-fill" />
@@ -89,20 +99,8 @@ export default function UserTableRow({
         </TableCell>
       </TableRow>
 
-      <Popover
-        open={!!open}
-        anchorEl={open}
-        onClose={handleCloseMenu}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-      >
-        <MenuItem onClick={() => { onEdit(); handleCloseMenu(); }}>Edit</MenuItem>
+      <Popover open={!!open} anchorEl={open} onClose={handleCloseMenu}>
+        <MenuItem onClick={handleOpenEditModal}>Edit</MenuItem>
         <MenuItem onClick={handleOpenDeleteModal}>Delete</MenuItem>
       </Popover>
 
@@ -117,6 +115,7 @@ export default function UserTableRow({
 }
 
 UserTableRow.propTypes = {
+  id: PropTypes.string, // Add prop type for id
   selected: PropTypes.bool,
   name: PropTypes.string,
   avatarUrl: PropTypes.string,

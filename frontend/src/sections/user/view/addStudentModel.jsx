@@ -28,24 +28,50 @@ const AddStudentModal = ({ open, onClose }) => {
     studentId: '',
   });
 
+  const [error, setError] = useState(null); // To handle errors
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
   };
 
-  const handleSubmit = () => {
-    console.log('Form submitted:', formValues);
-    onClose(); // Close the dialog after submission
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      // Sending a POST request to your backend API to save student data
+      const response = await fetch('http://localhost:3001/api/students', { 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formValues), // Send the form values as JSON
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to add student');
+      }
+  
+      const result = await response.json();
+      console.log('Student added successfully:', result);
+  
+      // Close the modal after successful submission
+      onClose();
+    } catch (err) {
+      console.error('Error adding student:', err.message);
+      setError(err.message); // Set error message if something goes wrong
+    }
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth >
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>Add Student</DialogTitle>
-      <DialogContent  sx={{
+      <DialogContent
+        sx={{
           padding: 2,
           overflow: 'hidden', // Prevent scrolling
           maxHeight: '500px', // Set a fixed height for the dialog content
-        }} >
+        }}
+      >
         <Box sx={{ padding: 2 }}>
           <Grid container spacing={1}>
             {/* Left Column */}
@@ -148,6 +174,12 @@ const AddStudentModal = ({ open, onClose }) => {
             </Grid>
           </Grid>
         </Box>
+
+        {error && (
+          <Typography color="error" sx={{ mt: 2 }}>
+            {error}
+          </Typography>
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="secondary">

@@ -23,7 +23,7 @@ export default function DeleteConfirmationModal({ open, onClose, onProceed }) {
       </DialogTitle>
       <DialogContent>
         <DialogContentText id="delete-dialog-description">
-          Are you sure you want to delete this item? This action cannot be undone.
+          Are you sure you want to delete this item?
         </DialogContentText>
       </DialogContent>
       <DialogActions>

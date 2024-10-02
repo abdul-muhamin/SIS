@@ -22,13 +22,14 @@ export default function UserTableRow({
   id, // Add id prop here
   selected,
   name,
-  avatarUrl,
+  photoUrl,
   idNumber,
   Class,
   fatherName,
   motherName,
   Address,
   handleClick,
+  status,
   onEdit, // Add onEdit prop
   onDelete, // Add onDelete prop for handling delete
 }) {
@@ -79,7 +80,7 @@ export default function UserTableRow({
 
         <TableCell component="th" scope="row" padding="none">
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt={name} src={avatarUrl} />
+          <Avatar src="http://localhost:3001/assests/images/profiles" />
             <Typography variant="subtitle2" noWrap>
               {name}
             </Typography>
@@ -91,6 +92,7 @@ export default function UserTableRow({
         <TableCell>{fatherName}</TableCell>
         <TableCell>{motherName}</TableCell>
         <TableCell>{Address}</TableCell>
+        <TableCell>{status}</TableCell>
 
         <TableCell align="right">
           <IconButton onClick={handleOpenMenu}>
@@ -118,8 +120,9 @@ UserTableRow.propTypes = {
   id: PropTypes.string, // Add prop type for id
   selected: PropTypes.bool,
   name: PropTypes.string,
-  avatarUrl: PropTypes.string,
+  photoUrl: PropTypes.string,
   idNumber: PropTypes.string,
+  status: PropTypes.string,
   Class: PropTypes.string,
   fatherName: PropTypes.string,
   motherName: PropTypes.string,

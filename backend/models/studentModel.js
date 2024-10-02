@@ -11,7 +11,8 @@ const StudentSchema = new mongoose.Schema({
     motherPhoneNumber:String,
     address:String,
     stundentId:String,
-    photoUrl: String
+    photoUrl: String,
+    status:String
 })
 
 const StudentModel = mongoose.model("student" , StudentSchema)

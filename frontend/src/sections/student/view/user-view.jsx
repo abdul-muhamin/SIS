@@ -211,6 +211,9 @@ export default function UserPage() {
                   { id: 'fatherName', label: 'Father Name' },
                   { id: 'motherName', label: 'Mother Name' },
                   { id: 'Address', label: 'Address' },
+                  { id: 'status', label: 'Status' },
+                  { id: 'status', label: 'Status' },
+                  
                   { id: '' },
                 ]}
               />
@@ -222,7 +225,9 @@ export default function UserPage() {
                     <UserTableRow
                       key={row._id} // Use studentId as key for unique identification
                       name={row.fullName}
-                      avatarUrl={row.photo ? `/uploads/${row.photo}` : "/default-avatar.jpg"}
+                      // avatarUrl={row.photoUrl ? `/uploads/${row.photoUrl}` : "/default-avatar.jpg"}
+                      avatarUrl="/avatar_1.jpg"
+                    
                       idNumber={row.idNumber}
                       Class={row.class}
                       fatherName={row.fatherName}
@@ -230,6 +235,7 @@ export default function UserPage() {
                       motherPhoneName={row.motherPhoneName}
                       motherName={row.motherName}
                       Address={row.address}
+                      status={row.status}
                       selected={selected.indexOf(row.fullName) !== -1}
                       handleClick={(event) => handleClick(event, row.fullName)}
                       onEdit={() => handleOpenUpdateModal(row)} // Pass the row data to open the modal for editing

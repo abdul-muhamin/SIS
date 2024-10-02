@@ -10,7 +10,8 @@ const StudentSchema = new mongoose.Schema({
     fatherPhoneNumber:String,
     motherPhoneNumber:String,
     address:String,
-    stundentId:String
+    stundentId:String,
+    photoUrl: String
 })
 
 const StudentModel = mongoose.model("student" , StudentSchema)

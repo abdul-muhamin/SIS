@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   Box,
@@ -14,7 +14,7 @@ import {
   DialogActions,
 } from '@mui/material';
 
-const AddStudentModal = ({ open, onClose }) => {
+const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
   const [formValues, setFormValues] = useState({
     fullName: '',
     email: '',
@@ -22,58 +22,71 @@ const AddStudentModal = ({ open, onClose }) => {
     idNumber: '',
     fatherName: '',
     motherName: '',
-    fatherPhone: '',
-    motherPhone: '',
+    fatherPhoneNumber: '',
+    motherPhoneNumber: '',
     address: '',
-    studentId: '',
+    // Ensure _id is part of the initial state if you are using it for updates
+    _id: '',
   });
 
-  const [error, setError] = useState(null); // To handle errors
+  useEffect(() => {
+    if (user) {
+      console.log('User object:', user); // Log user prop
+      setFormValues({
+        fullName: user.fullName || '',
+        email: user.email || '',
+        class: user.class || '',
+        idNumber: user.idNumber || '',
+        fatherName: user.fatherName || '',
+        motherName: user.motherName || '',
+        fatherPhoneNumber: user.fatherPhoneNumber || '',
+        motherPhoneNumber: user.motherPhoneNumber || '',
+        address: user.address || '',
+        // Use _id from the user object
+        _id: user._id || '',
+      });
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async () => {
+    console.log('Form values before submit:', formValues); // Debug log
+    if (!formValues._id) {
+      console.error('Student ID (_id) is missing'); // Log if _id is missing
+      return; // Prevent submission if _id is not set
+    }
+
     try {
-      e.preventDefault();
-      // Sending a POST request to your backend API to save student data
-      const response = await fetch('http://localhost:3001/api/students', { 
-        method: 'POST',
+      const response = await fetch(`http://localhost:3001/api/students/${formValues._id}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formValues), // Send the form values as JSON
+        body: JSON.stringify(formValues),
       });
-  
+
       if (!response.ok) {
-        throw new Error('Failed to add student');
+        throw new Error('Failed to update student');
       }
-  
-      const result = await response.json();
-      console.log('Student added successfully:', result);
-  
-      // Close the modal after successful submission
-      onClose();
-    } catch (err) {
-      console.error('Error adding student:', err.message);
-      setError(err.message); // Set error message if something goes wrong
+
+      const data = await response.json();
+      onUpdateUser(data); // Call the parent function to update the user in the list
+      onClose(); // Close the dialog after successful submission
+    } catch (error) {
+      console.error('Error updating student:', error);
     }
   };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>Add Student</DialogTitle>
-      <DialogContent
-        sx={{
-          padding: 2,
-          overflow: 'hidden', // Prevent scrolling
-          maxHeight: '500px', // Set a fixed height for the dialog content
-        }}
-      >
+      <DialogTitle>Update Student</DialogTitle>
+      <DialogContent sx={{ padding: 2, overflow: 'hidden', maxHeight: '500px' }}>
         <Box sx={{ padding: 2 }}>
-          <Grid container spacing={1}>
+          <Grid container spacing={2}>
             {/* Left Column */}
             <Grid item xs={12} md={6}>
               <TextField
@@ -142,16 +155,16 @@ const AddStudentModal = ({ open, onClose }) => {
               <TextField
                 fullWidth
                 label="Father Phone Number"
-                name="fatherPhone"
-                value={formValues.fatherPhone}
+                name="fatherPhoneNumber"
+                value={formValues.fatherPhoneNumber}
                 onChange={handleChange}
                 margin="normal"
               />
               <TextField
                 fullWidth
                 label="Mother Phone Number"
-                name="motherPhone"
-                value={formValues.motherPhone}
+                name="motherPhoneNumber"
+                value={formValues.motherPhoneNumber}
                 onChange={handleChange}
                 margin="normal"
               />
@@ -164,29 +177,25 @@ const AddStudentModal = ({ open, onClose }) => {
                 margin="normal"
               />
               <TextField
+              sx={{display:"none"}}
                 fullWidth
                 label="Student ID"
-                name="studentId"
-                value={formValues.studentId}
+                name="_id"
+                value={formValues._id}
                 onChange={handleChange}
                 margin="normal"
+                disabled // Disable this field as it should not be changed by the user
               />
             </Grid>
           </Grid>
         </Box>
-
-        {error && (
-          <Typography color="error" sx={{ mt: 2 }}>
-            {error}
-          </Typography>
-        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="secondary">
           Cancel
         </Button>
         <Button onClick={handleSubmit} color="primary">
-          Add Student
+          Update
         </Button>
       </DialogActions>
     </Dialog>
@@ -194,9 +203,11 @@ const AddStudentModal = ({ open, onClose }) => {
 };
 
 // Define prop types for validation
-AddStudentModal.propTypes = {
+UpdateStudentModal.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+  user: PropTypes.object, // Expect user object for initial form values
+  onUpdateUser: PropTypes.func.isRequired, // Function to update user in the list
 };
 
-export default AddStudentModal;
+export default UpdateStudentModal;

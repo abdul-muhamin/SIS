@@ -3,6 +3,7 @@ const Student = require('../models/studentModel'); // Assuming you have a Mongoo
 exports.create = async (req, res) => {
   try {
     const student = new Student(req.body); // Create a new student with the data sent in the request
+    console.log(student)
     await student.save(); // Save the student in the database
     res.status(201).json({ message: 'Student created successfully', student });
   } catch (error) {

@@ -218,13 +218,16 @@ export default function UserPage() {
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
+                    
                     <UserTableRow
                       key={row._id} // Use studentId as key for unique identification
                       name={row.fullName}
-                      avatarUrl={row.avatarUrl}
+                      avatarUrl={row.photo ? `/uploads/${row.photo}` : "/default-avatar.jpg"}
                       idNumber={row.idNumber}
                       Class={row.class}
                       fatherName={row.fatherName}
+                      fatherPhoneName={row.fatherPhoneName}
+                      motherPhoneName={row.motherPhoneName}
                       motherName={row.motherName}
                       Address={row.address}
                       selected={selected.indexOf(row.fullName) !== -1}

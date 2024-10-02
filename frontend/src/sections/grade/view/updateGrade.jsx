@@ -15,7 +15,7 @@ import { users } from 'src/_mock/user';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
-import { emptyRows, applyFilter, getComparator } from 'src/sections/user/utils';
+import { emptyRows, applyFilter, getComparator } from 'src/sections/student/utils';
 
 import TableNoData from '../table-no-data';
 import UserTableRow from '../user-table-row';

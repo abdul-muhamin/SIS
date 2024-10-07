@@ -212,7 +212,7 @@ export default function UserPage() {
                   { id: 'motherName', label: 'Mother Name' },
                   { id: 'Address', label: 'Address' },
                   { id: 'status', label: 'Status' },
-                  { id: 'status', label: 'Status' },
+                  // { id: 'status', label: 'Status' },
                   
                   { id: '' },
                 ]}

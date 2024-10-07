@@ -1,7 +1,7 @@
-const StudentModel = require('../models/studentModel');
+const TeacherModel = require('../models/teacherModel');
 
 // Controller for handling CRUD operations
-const studentController = {
+const teacherController = {
 
   // Create a new student with file upload
   createStudent: async (req, res) => {
@@ -23,7 +23,7 @@ const studentController = {
       // Check if file was uploaded and get the file name
       const photo = req.file ? req.file.filename : null;
 
-      const newStudent = new StudentModel({
+      const newStudent = new TeacherModel({
         fullName,
         email,
         class: studentClass,
@@ -55,7 +55,7 @@ const studentController = {
   // Get all students
   getAllStudents: async (req, res) => {
     try {
-      const students = await StudentModel.find();
+      const students = await TeacherModel.find();
 
       // Modify the photo field to include the full URL
       const studentsWithPhotoUrl = students.map(student => ({
@@ -73,7 +73,7 @@ const studentController = {
   getStudentById: async (req, res) => {
     try {
       const studentId = req.params.id;
-      const student = await StudentModel.findById(studentId);
+      const student = await TeacherModel.findById(studentId);
 
       if (!student) {
         return res.status(404).json({ error: "Student not found" });
@@ -102,7 +102,7 @@ const studentController = {
         updatedData.photo = req.file.filename;
       }
 
-      const updatedStudent = await StudentModel.findByIdAndUpdate(studentId, updatedData, { new: true });
+      const updatedStudent = await TeacherModel.findByIdAndUpdate(studentId, updatedData, { new: true });
 
       if (!updatedStudent) {
         return res.status(404).json({ error: "Student not found" });
@@ -125,7 +125,7 @@ const studentController = {
     try {
       const studentId = req.params.id;
 
-      const deletedStudent = await StudentModel.findByIdAndDelete(studentId);
+      const deletedStudent = await TeacherModel.findByIdAndDelete(studentId);
 
       if (!deletedStudent) {
         return res.status(404).json({ error: "Student not found" });
@@ -138,4 +138,4 @@ const studentController = {
   }
 };
 
-module.exports = studentController;
+module.exports = teacherController;

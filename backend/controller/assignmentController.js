@@ -1,4 +1,4 @@
-const StudentModel = require('../models/studentModel');
+const AssignmentModel = require('../models/assignmentModel');
 
 // Controller for handling CRUD operations
 const studentController = {
@@ -23,7 +23,7 @@ const studentController = {
       // Check if file was uploaded and get the file name
       const photo = req.file ? req.file.filename : null;
 
-      const newStudent = new StudentModel({
+      const newStudent = new AssignmentModel({
         fullName,
         email,
         class: studentClass,
@@ -55,7 +55,8 @@ const studentController = {
   // Get all students
   getAllStudents: async (req, res) => {
     try {
-      const students = await StudentModel.find();
+      const students = await AssignmentModel
+      .find();
 
       // Modify the photo field to include the full URL
       const studentsWithPhotoUrl = students.map(student => ({
@@ -73,7 +74,7 @@ const studentController = {
   getStudentById: async (req, res) => {
     try {
       const studentId = req.params.id;
-      const student = await StudentModel.findById(studentId);
+      const student = await AssignmentModel.findById(studentId);
 
       if (!student) {
         return res.status(404).json({ error: "Student not found" });
@@ -102,7 +103,7 @@ const studentController = {
         updatedData.photo = req.file.filename;
       }
 
-      const updatedStudent = await StudentModel.findByIdAndUpdate(studentId, updatedData, { new: true });
+      const updatedStudent = await AssignmentModel.findByIdAndUpdate(studentId, updatedData, { new: true });
 
       if (!updatedStudent) {
         return res.status(404).json({ error: "Student not found" });
@@ -125,13 +126,13 @@ const studentController = {
     try {
       const studentId = req.params.id;
 
-      const deletedStudent = await StudentModel.findByIdAndDelete(studentId);
+      const deletedStudent = await AssignmentModel.findByIdAndDelete(studentId);
 
       if (!deletedStudent) {
-        return res.status(404).json({ error: "Student not found" });
+        return res.status(404).json({ error: "Assignment not found" });
       }
 
-      res.status(200).json({ message: "Student deleted successfully" });
+      res.status(200).json({ message: "Assignment deleted successfully" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

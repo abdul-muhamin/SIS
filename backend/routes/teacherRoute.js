@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const studentController = require('../controller/studentController');
+const teacherController = require('../controller/teacherController');
 const multer = require('multer');
 const path = require('path');
 
@@ -17,18 +17,18 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Create a new student (with photo upload)
-router.post('/', upload.single('photo'), studentController.createStudent);
+router.post('/', upload.single('photo'), teacherController.createStudent);
 
 // Get all students
-router.get('/', studentController.getAllStudents);
+router.get('/', teacherController.getAllStudents);
 
 // Get a student by ID
-router.get('/:id', studentController.getStudentById);
+router.get('/:id', teacherController.getStudentById);
 
 // Update a student by ID (with photo upload)
-router.put('/:id', upload.single('photo'), studentController.updateStudentById);
+router.put('/:id', upload.single('photo'), teacherController.updateStudentById);
 
 // Delete a student by ID
-router.delete('/:id', studentController.deleteStudentById);
+router.delete('/:id', teacherController.deleteStudentById);
 
 module.exports = router;

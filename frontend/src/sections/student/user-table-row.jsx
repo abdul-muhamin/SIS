@@ -12,15 +12,17 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
 import Iconify from 'src/components/iconify';
+
 import DeleteConfirmationModal from './view/deleteModel'; // Import the delete modal
 
 // ----------------------------------------------------------------------
 
 export default function UserTableRow({
   id,
+  row,
   selected,
   name,
-  photoUrl,
+  // photoUrl,
   idNumber,
   Class,
   fatherName,
@@ -52,7 +54,8 @@ export default function UserTableRow({
       class: Class, 
       fatherName, 
       motherName, 
-      address: Address 
+      address: Address ,
+      status
     });
     setOpen(null); // Close the menu after opening the edit modal
   };
@@ -70,6 +73,8 @@ export default function UserTableRow({
     onDelete(id); // Pass the id when deleting
     setDeleteModalOpen(false); // Close the modal after confirming delete
   };
+  const photoUrl = row.photoUrl || '/default-avatar.jpg';
+  console.log('Photo URL:', photoUrl);
 
   return (
     <>
@@ -80,7 +85,7 @@ export default function UserTableRow({
 
         <TableCell component="th" scope="row" padding="none">
           <Stack direction="row" alignItems="center" spacing={2}>
-            <img src={photoUrl} alt='abc' /> 
+            <Avatar src={photoUrl} /> 
             <Typography variant="subtitle2" noWrap>
               {name}
             </Typography>
@@ -120,6 +125,7 @@ UserTableRow.propTypes = {
   selected: PropTypes.bool,
   name: PropTypes.string.isRequired,
   photoUrl: PropTypes.string, // Ensure photoUrl is received as a prop
+  row: PropTypes.string, // Ensure photoUrl is received as a prop
   idNumber: PropTypes.string.isRequired,
   Class: PropTypes.string.isRequired,
   fatherName: PropTypes.string.isRequired,

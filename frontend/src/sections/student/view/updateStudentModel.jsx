@@ -5,7 +5,6 @@ import {
   Box,
   Grid,
   Button,
-  Avatar,
   Dialog,
   TextField,
   Typography,
@@ -25,13 +24,15 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
     fatherPhoneNumber: '',
     motherPhoneNumber: '',
     address: '',
-    // Ensure _id is part of the initial state if you are using it for updates
     _id: '',
+    photo: '', // Added photo property
   });
 
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  // Load user data when the modal opens
   useEffect(() => {
     if (user) {
-      console.log('User object:', user); // Log user prop
       setFormValues({
         fullName: user.fullName || '',
         email: user.email || '',
@@ -42,31 +43,45 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
         fatherPhoneNumber: user.fatherPhoneNumber || '',
         motherPhoneNumber: user.motherPhoneNumber || '',
         address: user.address || '',
-        // Use _id from the user object
+        status: user.status || '',
         _id: user._id || '',
+        photo: user.photo ? `http://localhost:3001/uploads/${user.photo}` : '', // Set existing photo URL
       });
+      setSelectedFile(null); // Reset selected file when user changes
     }
-  }, [user]);
+  }, [user, open]); // Depend on both user and open to reset when modal opens
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
   };
 
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
   const handleSubmit = async () => {
-    console.log('Form values before submit:', formValues); // Debug log
-    if (!formValues._id) {
-      console.error('Student ID (_id) is missing'); // Log if _id is missing
-      return; // Prevent submission if _id is not set
+    const formData = new FormData();
+    formData.append('fullName', formValues.fullName);
+    formData.append('email', formValues.email);
+    formData.append('class', formValues.class);
+    formData.append('idNumber', formValues.idNumber);
+    formData.append('fatherName', formValues.fatherName);
+    formData.append('motherName', formValues.motherName);
+    formData.append('fatherPhoneNumber', formValues.fatherPhoneNumber);
+    formData.append('motherPhoneNumber', formValues.motherPhoneNumber);
+    formData.append('address', formValues.address);
+    formData.append('status', formValues.status);
+    formData.append('_id', formValues._id);
+
+    if (selectedFile) {
+      formData.append('photo', selectedFile); // Add the selected file
     }
 
     try {
       const response = await fetch(`http://localhost:3001/api/students/${formValues._id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formValues),
+        body: formData, // Use FormData for the update request
       });
 
       if (!response.ok) {
@@ -142,15 +157,27 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
 
             {/* Right Column */}
             <Grid item xs={12} md={6}>
-              {/* Profile Photo */}
-              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Avatar
-                  sx={{ width: 120, height: 120 }}
-                  src="/broken-image.jpg"
-                  alt="Student Photo"
-                />
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                {/* Display existing photo if available */}
+                {formValues.photo && !selectedFile && (
+                  <img
+                    src={formValues.photo} // Display the existing photo
+                    alt="Existing"
+                    style={{ marginTop: '10px', width: '100px', height: '100px', objectFit: 'cover' }}
+                  />
+                )}
+                {/* Input for file upload */}
+                <TextField name="photo" type="file" onChange={handleFileChange} />
+                {/* Display selected photo if a new file has been chosen */}
+                {selectedFile && (
+                  <img
+                    src={URL.createObjectURL(selectedFile)}
+                    alt="Selected Preview"
+                    style={{ marginTop: '10px', width: '100px', height: '100px', objectFit: 'cover' }}
+                  />
+                )}
+                <Typography align="center">Photo</Typography>
               </Box>
-              <Typography align="center">Photo</Typography>
 
               <TextField
                 fullWidth
@@ -177,7 +204,15 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
                 margin="normal"
               />
               <TextField
-              sx={{display:"none"}}
+                fullWidth
+                label="Status"
+                name="status"
+                value={formValues.status}
+                onChange={handleChange}
+                margin="normal"
+              />
+              <TextField
+                sx={{ display: "none" }}
                 fullWidth
                 label="Student ID"
                 name="_id"

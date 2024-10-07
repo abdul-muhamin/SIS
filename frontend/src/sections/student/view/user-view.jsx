@@ -226,7 +226,7 @@ export default function UserPage() {
                     <UserTableRow
                       key={row._id} // Use studentId as key for unique identification
                       name={row.fullName}
-                      // row={row}
+                      row={row}
                       avatarUrl={row?.photoUrl ??  "/default-avatar.jpg"}
                     
                       idNumber={row.idNumber}

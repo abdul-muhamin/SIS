@@ -2,7 +2,6 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Stack from '@mui/material/Stack';
-import Avatar from '@mui/material/Avatar';
 import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
@@ -20,10 +19,11 @@ import DeleteConfirmationModal from './view/deleteModel'; // Import the delete m
 
 export default function UserTableRow({
   selected,
-  name,
-  avatarUrl,
-  idNumber,
-  Class,
+  // name,
+  // avatarUrl,
+  // idNumber,
+  // Class,
+  title,
   assignment,
   // motherName,
   // Address,
@@ -65,15 +65,15 @@ export default function UserTableRow({
 
         <TableCell component="th" scope="row" padding="none">
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt={name} src={avatarUrl} />
+            {/* <Avatar alt={name} src={avatarUrl} /> */}
             <Typography variant="subtitle2" noWrap>
-              {name}
+              {title}
             </Typography>
           </Stack>
         </TableCell>
-        <TableCell>{idNumber}</TableCell>
+        {/* <TableCell>{idNumber}</TableCell> */}
 
-        <TableCell>{Class}</TableCell>
+        {/* <TableCell>{Class}</TableCell> */}
         <TableCell>{assignment}</TableCell>
         {/* <TableCell>{motherName}</TableCell> */}
         {/* <TableCell>{Address}</TableCell> */}
@@ -118,10 +118,10 @@ export default function UserTableRow({
 
 UserTableRow.propTypes = {
   selected: PropTypes.bool,
-  name: PropTypes.string,
-  avatarUrl: PropTypes.string,
-  idNumber: PropTypes.string,
-  Class: PropTypes.string,
+  title: PropTypes.string,
+  // avatarUrl: PropTypes.string,
+  // idNumber: PropTypes.string,
+  // Class: PropTypes.string,
   assignment: PropTypes.string,
   // motherName: PropTypes.string,
   // Address: PropTypes.string,

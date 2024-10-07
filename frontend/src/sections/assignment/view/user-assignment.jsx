@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -9,8 +9,6 @@ import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
-
-import { users } from 'src/_mock/user';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
@@ -23,11 +21,11 @@ import UserTableHead from '../user-table-head';
 import AddStudentModal from './addStudentModel'; // Import the AddStudentModal
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
-// import UpdateStudentModal from './updateGrade'; 
+import UpdateStudentModal from './updateStudentModel'; // Import the UpdateStudentModal
 
 // ----------------------------------------------------------------------
 
-export default function AssignmentPage() {
+export default function UserPage() {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -35,28 +33,89 @@ export default function AssignmentPage() {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  // Modals state
-  const [openAddModal, setOpenAddModal] = useState(false); // State for Add modal
-  // const [openUpdateModal, setOpenUpdateModal] = useState(false);
-  // const [currentUser, setCurrentUser] = useState(null); 
+  // State for users and modals
+  const [users, setUsers] = useState([]); // State for storing users
+  const [openAddModal, setOpenAddModal] = useState(false);
+  const [openUpdateModal, setOpenUpdateModal] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  // Fetch users from the API
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/assignments'); // Adjust the URL as necessary
+      if (!response.ok) {
+        throw new Error('Failed to fetch users');
+      }
+      const data = await response.json();
+      setUsers(data); // Assuming your API returns an array of users
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers(); // Fetch users when the component mounts
+  }, []);
+
+  // Delete a user
+  const deleteUser = async (id) => {
+    if (!id) {
+      console.error('Error: user id is undefined');
+      return;
+    }
+    try {
+      const response = await fetch(`http://localhost:3001/api/assignments/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete user');
+      }
+      fetchUsers(); // Refresh users after deletion
+    } catch (err) {
+      console.error('Error deleting user:', err);
+    }
+  };
+
   // Add Modal Handlers
   const handleOpenAddModal = () => {
-    setOpenAddModal(true); // Open AddStudentModal
+    setOpenAddModal(true);
   };
 
   const handleCloseAddModal = () => {
-    setOpenAddModal(false); // Close AddStudentModal
+    setOpenAddModal(false);
+    fetchUsers(); // Refresh the users after adding a new student
   };
 
   // Update Modal Handlers
-  // const handleOpenUpdateModal = (user) => {
-  //   setCurrentUser(user); 
-  //   setOpenUpdateModal(true); 
+  const handleOpenUpdateModal = (user) => {
+    setCurrentUser(user);
+    setOpenUpdateModal(true);
+  };
 
-  // const handleCloseUpdateModal = () => {
-  //   setOpenUpdateModal(false);
-  //   setCurrentUser(null); 
-  // };
+  const handleCloseUpdateModal = () => {
+    setOpenUpdateModal(false);
+    setCurrentUser(null);
+  };
+
+  // Handle updated user data
+  const handleUpdateUser = async (updatedUser) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/assignments/${updatedUser._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedUser),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to update user');
+      }
+      await fetchUsers(); // Refresh the user list after updating
+      handleCloseUpdateModal(); // Close the modal after updating
+    } catch (error) {
+      console.error('Error updating user:', error);
+    }
+  };
 
   // Sorting and Filtering Logic
   const handleSort = (event, id) => {
@@ -67,7 +126,7 @@ export default function AssignmentPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = users.map((n) => n.name);
+      const newSelecteds = users.map((n) => n.fullName);
       setSelected(newSelecteds);
       return;
     }
@@ -115,21 +174,16 @@ export default function AssignmentPage() {
   const notFound = !dataFiltered.length && !!filterName;
 
   return (
-    <Container sx={{
-      height :{
-        lg: '60vh',
-        // sm:'full'
-      }
-    }} >
+    <Container sx={{ height: { lg: '60vh' } }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
         <Typography variant="h4">Assignments</Typography>
         <Button
           variant="contained"
           color="inherit"
           startIcon={<Iconify icon="eva:plus-fill" />}
-          onClick={handleOpenAddModal} // Open modal for adding a new student
+          onClick={handleOpenAddModal}
         >
-          Add Assignment
+          New Assignment
         </Button>
       </Stack>
 
@@ -152,13 +206,15 @@ export default function AssignmentPage() {
                 onRequestSort={handleSort}
                 onSelectAllClick={handleSelectAllClick}
                 headLabel={[
-                  { id: 'name', label: 'Name' },
-                  { id: 'idNumber', label: 'Id Number' },
-                  { id: 'course', label: 'Course' },
-                  // { id: 'mids', label: 'Mids' },
-                  // { id: 'final', label: 'Final' },
+                  { id: 'title', label: 'Title' },
+                  // { id: 'idNumber', label: 'Id Number' },
+                  // { id: 'Class', label: 'Class' },
+                  // { id: 'fatherName', label: 'Father Name' },
+                  // { id: 'motherName', label: 'Mother Name' },
+                  // { id: 'Address', label: 'Address' },
                   { id: 'assignment', label: 'Assignment' },
-                  // { id: 'grade', label: 'grade' },
+                  // { id: 'status', label: 'Status' },
+                  
                   { id: '' },
                 ]}
               />
@@ -166,17 +222,18 @@ export default function AssignmentPage() {
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
+                    
+                    
                     <UserTableRow
-                      key={row.id}
-                      name={row.name}
-                      role={row.role}
-                      status={row.status}
-                      company={row.company}
-                      avatarUrl={row.avatarUrl}
-                      isVerified={row.isVerified}
-                      selected={selected.indexOf(row.name) !== -1}
-                      handleClick={(event) => handleClick(event, row.name)}
-                      // onEdit={() => handleOpenUpdateModal(row)} // Pass the row data to open the modal for editing
+                      key={row._id} // Use studentId as key for unique identification
+                      title={row.title}
+                      row={row}
+                      assignment={row.assignment}
+                      
+                      selected={selected.indexOf(row.fullName) !== -1}
+                      handleClick={(event) => handleClick(event, row.fullName)}
+                      onEdit={() => handleOpenUpdateModal(row)} // Pass the row data to open the modal for editing
+                      onDelete={() => deleteUser(row._id)} // Call deleteUser with studentId
                     />
                   ))}
 
@@ -203,10 +260,16 @@ export default function AssignmentPage() {
       </Card>
 
       {/* AddStudentModal Popup */}
-      <AddStudentModal open={openAddModal} onClose={handleCloseAddModal} /> 
+      <AddStudentModal open={openAddModal} onClose={handleCloseAddModal} />
 
       {/* UpdateStudentModal Popup */}
-      {/* <UpdateStudentModal open={openUpdateModal} onClose={handleCloseUpdateModal} user={currentUser} /> */}
+      <UpdateStudentModal
+        open={openUpdateModal}
+        onClose={handleCloseUpdateModal}
+        assignmentId={currentUser ? currentUser._id : null} // Pass the current user's ID to the modal
+        user={currentUser} // Pass the current user to the modal
+        onUpdateUser={handleUpdateUser}
+      />
     </Container>
   );
 }

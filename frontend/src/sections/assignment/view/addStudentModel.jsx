@@ -1,53 +1,103 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
 
 import {
   Box,
-  Dialog,
+  Grid,
   Button,
+  Dialog,
   TextField,
+  Typography,
   DialogTitle,
-  DialogContent,
   DialogActions,
+  DialogContent,
 } from '@mui/material';
 
-const AddAssignmentModal = ({ open, onClose }) => {
-  const [message, setMessage] = useState('');
+const AddStudentModal = ({ open, onClose }) => {
+  const [formValues, setFormValues] = useState({
+    title: '',
+    assignment: '',
+  });
+
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
-    setMessage(e.target.value);
+    const { name, value } = e.target;
+    setFormValues({ ...formValues, [name]: value });
   };
 
-  const handleAddAssignment = () => {
-    console.log('Assignment message:', message);
-    // Add assignment logic here
-    onClose(); // Close the modal after submission
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+
+      const response = await fetch('http://localhost:3001/api/assignments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formValues),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add assignments');
+      }
+
+      const result = await response.json();
+      console.log('assignments added successfully:', result);
+
+      setFormValues({
+        title: '',
+        assignment: '',
+      });
+
+      // Close the modal after successful submission
+      onClose();
+    } catch (err) {
+      console.error('Error adding student:', err.message);
+      setError(err.message);
+    }
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle sx={{ fontWeight: 'bold', fontSize: '1.5rem', textAlign: 'center' }}>
-        Add Assignment
-      </DialogTitle>
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogTitle>Add Assignments</DialogTitle>
       <DialogContent>
-        <Box sx={{ mt: 2, mb: 3 }}>
-          <TextField
-            label="Message"
-            placeholder="Enter the assignment details"
-            fullWidth
-            multiline
-            rows={5}
-            value={message}
-            onChange={handleChange}
-            variant="outlined"
-          />
+        <Box>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Title"
+                name="title"
+                value={formValues.title}
+                onChange={handleChange}
+                margin="normal"
+              />
+              <TextField
+                fullWidth
+                label="Assignment"
+                name="assignment"
+                multiline
+                rows={5}
+                value={formValues.assignment}
+                onChange={handleChange}
+                margin="normal"
+              />
+            </Grid>
+          </Grid>
         </Box>
+
+        {error && (
+          <Typography color="error" sx={{ mt: 2 }}>
+            {error}
+          </Typography>
+        )}
       </DialogContent>
-      <DialogActions sx={{ justifyContent: 'flex-end', p: 2 }}>
-        <Button onClick={onClose} variant="contained" color="error" sx={{ mr: 1 }}>
+      <DialogActions>
+        <Button onClick={onClose} color="secondary">
           Cancel
         </Button>
-        <Button onClick={handleAddAssignment} variant="contained" color="primary">
+        <Button onClick={handleSubmit} color="primary">
           Add Assignment
         </Button>
       </DialogActions>
@@ -56,9 +106,9 @@ const AddAssignmentModal = ({ open, onClose }) => {
 };
 
 // Define prop types for validation
-AddAssignmentModal.propTypes = {
+AddStudentModal.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };
 
-export default AddAssignmentModal;
+export default AddStudentModal;

@@ -11,15 +11,13 @@ import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-// import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
-
 import DeleteConfirmationModal from './view/deleteModel'; // Import the delete modal
 
 // ----------------------------------------------------------------------
 
 export default function UserTableRow({
-  id, // Add id prop here
+  id,
   selected,
   name,
   photoUrl,
@@ -27,11 +25,13 @@ export default function UserTableRow({
   Class,
   fatherName,
   motherName,
+  fatherPhoneNumber,
+  motherPhoneNumber,
   Address,
   handleClick,
   status,
-  onEdit, // Add onEdit prop
-  onDelete, // Add onDelete prop for handling delete
+  onEdit,
+  onDelete,
 }) {
   const [open, setOpen] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false); // State to manage delete modal visibility
@@ -46,15 +46,15 @@ export default function UserTableRow({
 
   const handleOpenEditModal = () => {
     onEdit({ 
-      id, // Pass the id when editing
+      id, 
       idNumber, 
       fullName: name, 
       class: Class, 
       fatherName, 
       motherName, 
       address: Address 
-    }); // Pass the required student data
-    setOpen(true);
+    });
+    setOpen(null); // Close the menu after opening the edit modal
   };
 
   const handleOpenDeleteModal = () => {
@@ -80,14 +80,13 @@ export default function UserTableRow({
 
         <TableCell component="th" scope="row" padding="none">
           <Stack direction="row" alignItems="center" spacing={2}>
-          <Avatar src="http://localhost:3001/assests/images/profiles" />
+            <img src={photoUrl} alt='abc' /> 
             <Typography variant="subtitle2" noWrap>
               {name}
             </Typography>
           </Stack>
         </TableCell>
         <TableCell>{idNumber}</TableCell>
-
         <TableCell>{Class}</TableCell>
         <TableCell>{fatherName}</TableCell>
         <TableCell>{motherName}</TableCell>
@@ -117,17 +116,19 @@ export default function UserTableRow({
 }
 
 UserTableRow.propTypes = {
-  id: PropTypes.string, // Add prop type for id
+  id: PropTypes.string.isRequired,
   selected: PropTypes.bool,
-  name: PropTypes.string,
-  photoUrl: PropTypes.string,
-  idNumber: PropTypes.string,
-  status: PropTypes.string,
-  Class: PropTypes.string,
-  fatherName: PropTypes.string,
-  motherName: PropTypes.string,
-  Address: PropTypes.string,
-  handleClick: PropTypes.func,
-  onEdit: PropTypes.func, // Add prop types for onEdit
-  onDelete: PropTypes.func, // Add prop types for onDelete
+  name: PropTypes.string.isRequired,
+  photoUrl: PropTypes.string, // Ensure photoUrl is received as a prop
+  idNumber: PropTypes.string.isRequired,
+  Class: PropTypes.string.isRequired,
+  fatherName: PropTypes.string.isRequired,
+  motherName: PropTypes.string.isRequired,
+  fatherPhoneNumber: PropTypes.string.isRequired,
+  motherPhoneNumber: PropTypes.string.isRequired,
+  Address: PropTypes.string.isRequired,
+  handleClick: PropTypes.func.isRequired,
+  status: PropTypes.string.isRequired,
+  onEdit: PropTypes.func.isRequired, // Add prop types for onEdit
+  onDelete: PropTypes.func.isRequired, // Add prop types for onDelete
 };

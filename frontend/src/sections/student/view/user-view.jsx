@@ -222,11 +222,12 @@ export default function UserPage() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
                     
+                    
                     <UserTableRow
                       key={row._id} // Use studentId as key for unique identification
                       name={row.fullName}
-                      // avatarUrl={row.photoUrl ? `/uploads/${row.photoUrl}` : "/default-avatar.jpg"}
-                      avatarUrl="/avatar_1.jpg"
+                      // row={row}
+                      avatarUrl={row?.photoUrl ??  "/default-avatar.jpg"}
                     
                       idNumber={row.idNumber}
                       Class={row.class}

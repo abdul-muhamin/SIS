@@ -1,6 +1,5 @@
-import axios from 'axios';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
 
 import {
   Box,
@@ -10,8 +9,8 @@ import {
   TextField,
   Typography,
   DialogTitle,
-  DialogContent,
   DialogActions,
+  DialogContent,
 } from '@mui/material';
 
 const AddStudentModal = ({ open, onClose }) => {
@@ -28,55 +27,41 @@ const AddStudentModal = ({ open, onClose }) => {
     studentId: '',
     status: '',
   });
-  const [error, setError] = useState(null); // To handle errors
-  // const [selectedImage, setSelectedImage] = useState(null); // State for storing the selected image
+
+  const [error, setError] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
   };
-  // useEffect(() => {
-  //   getImage();
-  // },[]);
-  // const handleImageChange = (e) => {
-  //   const file = e.target.files[0];
-  //   if (file) {
-  //     setSelectedImage(URL.createObjectURL(file)); 
-  //   }
-  // };
-
-  const [selectedFile, setSelectedFile] = useState(null);
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
-    console.log(selectedFile)
   };
 
-  const handleUpload = async () => {
-    const formData = new FormData();
-    formData.append('image', selectedFile);
-  }
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
+
+      const formData = new FormData();
+      formData.append('fullName', formValues.fullName);
+      formData.append('email', formValues.email);
+      formData.append('class', formValues.class);
+      formData.append('idNumber', formValues.idNumber);
+      formData.append('fatherName', formValues.fatherName);
+      formData.append('motherName', formValues.motherName);
+      formData.append('fatherPhoneNumber', formValues.fatherPhoneNumber);
+      formData.append('motherPhoneNumber', formValues.motherPhoneNumber);
+      formData.append('address', formValues.address);
+      formData.append('studentId', formValues.studentId);
+      formData.append('status', formValues.status);
+      formData.append('photo', selectedFile); // Add the selected file
+
       const response = await fetch('http://localhost:3001/api/students', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ...formValues, photo: selectedFile }), // Include the selected image in the request
+        body: formData, // No need for Content-Type here, FormData will set it automatically
       });
-      const formData = new FormData();
-    formData.append("image", selectedFile);
-
-    const imageResutlt = await axios.post(
-      "http://localhost:3001/api/students",
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    );
-    console.log(imageResutlt)
 
       if (!response.ok) {
         throw new Error('Failed to add student');
@@ -104,24 +89,14 @@ const AddStudentModal = ({ open, onClose }) => {
       onClose();
     } catch (err) {
       console.error('Error adding student:', err.message);
-      setError(err.message); // Set error message if something goes wrong
+      setError(err.message);
     }
   };
-  // const getImage = async () => {
-  //   const result = await axios.get("http://localhost:3001/api/students");
-  //   console.log(result);
-  //   selectedFile(result?.data?.data);
-  // };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>Add Student</DialogTitle>
-      <DialogContent
-        sx={{
-          overflow: 'hidden', // Prevent scrolling
-          maxHeight: '1000px', // Set a fixed height for the dialog content
-        }}
-      >
+      <DialogContent>
         <Box>
           <Grid container spacing={2}>
             {/* Left Column */}
@@ -180,11 +155,10 @@ const AddStudentModal = ({ open, onClose }) => {
             {/* Right Column */}
             <Grid item xs={12} md={6}>
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <TextField type="file" onChange={handleFileChange} />
-              <Button onClick={handleUpload} disabled={!selectedFile}>Upload</Button>
+                <TextField name="photo" type="file" onChange={handleFileChange} />
                 {selectedFile && (
                   <img
-                    src={selectedFile}
+                    src={URL.createObjectURL(selectedFile)}
                     alt="Selected Preview"
                     style={{ marginTop: '10px', width: '100px', height: '100px', objectFit: 'cover' }}
                   />

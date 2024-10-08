@@ -167,10 +167,20 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
-  const handleDeleteAll = (event) => {
-    //map
-    //delete
-    //selected;
+  const handleDeleteAll = async () => {
+    try {
+      const deleteRequests = selected.map((id) =>
+        fetch(`http://localhost:3001/api/students/${id}`, {
+          method: 'DELETE',
+        })
+      );
+      
+      await Promise.all(deleteRequests); // Wait for all delete requests to complete
+      setSelected([]); // Clear the selection
+      fetchUsers(); // Refresh the user list after deletion
+    } catch (error) {
+      console.error('Error deleting users:', error);
+    }
   };
 
   const dataFiltered = applyFilter({

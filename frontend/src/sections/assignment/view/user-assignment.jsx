@@ -126,14 +126,16 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = users.map((n) => n.fullName);
+      const newSelecteds = users.map((n) => n._id);
       setSelected(newSelecteds);
+      console.log('event', event.target.checked, newSelecteds);
       return;
     }
     setSelected([]);
   };
 
   const handleClick = (event, name) => {
+    console.log('newSelected', event, name);
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
     if (selectedIndex === -1) {
@@ -149,6 +151,7 @@ export default function UserPage() {
       );
     }
     setSelected(newSelected);
+    console.log(newSelected);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -163,6 +166,21 @@ export default function UserPage() {
   const handleFilterByName = (event) => {
     setPage(0);
     setFilterName(event.target.value);
+  };
+  const handleDeleteAll = async () => {
+    try {
+      const deleteRequests = selected.map((id) =>
+        fetch(`http://localhost:3001/api/assignments/${id}`, {
+          method: 'DELETE',
+        })
+      );
+      
+      await Promise.all(deleteRequests); // Wait for all delete requests to complete
+      setSelected([]); // Clear the selection
+      fetchUsers(); // Refresh the user list after deletion
+    } catch (error) {
+      console.error('Error deleting users:', error);
+    }
   };
 
   const dataFiltered = applyFilter({
@@ -193,6 +211,7 @@ export default function UserPage() {
           numSelected={selected.length}
           filterName={filterName}
           onFilterName={handleFilterByName}
+          onDeleteAll={handleDeleteAll}
         />
 
         <Scrollbar>
@@ -226,7 +245,7 @@ export default function UserPage() {
                       assignment={row.assignment}
                       
                       selected={selected.indexOf(row.fullName) !== -1}
-                      handleClick={(event) => handleClick(event, row.fullName)}
+                      handleClick={(event) => handleClick(event, row._id)}
                       onEdit={() => handleOpenUpdateModal(row)} // Pass the row data to open the modal for editing
                       onDelete={() => deleteUser(row._id)} // Call deleteUser with studentId
                     />

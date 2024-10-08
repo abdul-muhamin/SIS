@@ -1,7 +1,4 @@
-
-// new 
 import { useState, useEffect } from 'react';
-
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
@@ -11,17 +8,15 @@ import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
-
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
-
 import TableNoData from '../table-no-data';
 import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
-import AddStudentModal from './addStudentModel'; // Import the AddStudentModal
+import AddStudentModal from './addStudentModel';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
-import UpdateStudentModal from './updateStudentModel'; // Import the UpdateStudentModal
+import UpdateStudentModal from './updateStudentModel';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
 // ----------------------------------------------------------------------
@@ -33,9 +28,7 @@ export default function UserPage() {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  // State for users and modals
-  const [users, setUsers] = useState([]); // State for storing users
+  const [users, setUsers] = useState([]);
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
@@ -43,22 +36,20 @@ export default function UserPage() {
   // Fetch users from the API
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/teachers'); // Adjust the URL as necessary
-      if (!response.ok) {
-        throw new Error('Failed to fetch users');
-      }
+      const response = await fetch('http://localhost:3001/api/teachers');
+      if (!response.ok) throw new Error('Failed to fetch users');
       const data = await response.json();
-      setUsers(data); // Assuming your API returns an array of users
+      setUsers(data);
     } catch (error) {
       console.error('Error fetching users:', error);
     }
   };
 
   useEffect(() => {
-    fetchUsers(); // Fetch users when the component mounts
+    fetchUsers();
   }, []);
 
-  // Delete a user
+  // Delete user
   const deleteUser = async (id) => {
     if (!id) {
       console.error('Error: user id is undefined');
@@ -68,23 +59,18 @@ export default function UserPage() {
       const response = await fetch(`http://localhost:3001/api/teachers/${id}`, {
         method: 'DELETE',
       });
-      if (!response.ok) {
-        throw new Error('Failed to delete user');
-      }
-      fetchUsers(); // Refresh users after deletion
+      if (!response.ok) throw new Error('Failed to delete user');
+      fetchUsers();
     } catch (err) {
       console.error('Error deleting user:', err);
     }
   };
 
   // Add Modal Handlers
-  const handleOpenAddModal = () => {
-    setOpenAddModal(true);
-  };
-
+  const handleOpenAddModal = () => setOpenAddModal(true);
   const handleCloseAddModal = () => {
     setOpenAddModal(false);
-    fetchUsers(); // Refresh the users after adding a new student
+    fetchUsers();
   };
 
   // Update Modal Handlers
@@ -92,7 +78,6 @@ export default function UserPage() {
     setCurrentUser(user);
     setOpenUpdateModal(true);
   };
-
   const handleCloseUpdateModal = () => {
     setOpenUpdateModal(false);
     setCurrentUser(null);
@@ -103,16 +88,12 @@ export default function UserPage() {
     try {
       const response = await fetch(`http://localhost:3001/api/teachers/${updatedUser._id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedUser),
       });
-      if (!response.ok) {
-        throw new Error('Failed to update user');
-      }
-      await fetchUsers(); // Refresh the user list after updating
-      handleCloseUpdateModal(); // Close the modal after updating
+      if (!response.ok) throw new Error('Failed to update user');
+      await fetchUsers();
+      handleCloseUpdateModal();
     } catch (error) {
       console.error('Error updating user:', error);
     }
@@ -127,7 +108,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = users.map((n) => n.fullName);
+      const newSelecteds = users.map((n) => n._id);
       setSelected(newSelecteds);
       return;
     }
@@ -137,6 +118,7 @@ export default function UserPage() {
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
+
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, name);
     } else if (selectedIndex === 0) {
@@ -144,26 +126,33 @@ export default function UserPage() {
     } else if (selectedIndex === selected.length - 1) {
       newSelected = newSelected.concat(selected.slice(0, -1));
     } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
+      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
     }
+
     setSelected(newSelected);
   };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
+  const handleChangePage = (event, newPage) => setPage(newPage);
   const handleChangeRowsPerPage = (event) => {
     setPage(0);
     setRowsPerPage(parseInt(event.target.value, 10));
   };
-
   const handleFilterByName = (event) => {
     setPage(0);
     setFilterName(event.target.value);
+  };
+
+  const handleDeleteAll = async () => {
+    try {
+      const deleteRequests = selected.map((id) =>
+        fetch(`http://localhost:3001/api/teachers/${id}`, { method: 'DELETE' })
+      );
+      await Promise.all(deleteRequests);
+      setSelected([]);
+      fetchUsers();
+    } catch (error) {
+      console.error('Error deleting users:', error);
+    }
   };
 
   const dataFiltered = applyFilter({
@@ -194,6 +183,7 @@ export default function UserPage() {
           numSelected={selected.length}
           filterName={filterName}
           onFilterName={handleFilterByName}
+          onDeleteAll={handleDeleteAll}
         />
 
         <Scrollbar>
@@ -214,8 +204,6 @@ export default function UserPage() {
                   { id: 'motherName', label: 'Mother Name' },
                   { id: 'Address', label: 'Address' },
                   { id: 'status', label: 'Status' },
-                  // { id: 'status', label: 'Status' },
-                  
                   { id: '' },
                 ]}
               />
@@ -223,14 +211,11 @@ export default function UserPage() {
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
-                    
-                    
                     <UserTableRow
-                      key={row._id} // Use studentId as key for unique identification
+                      key={row._id}
                       name={row.fullName}
                       row={row}
-                      avatarUrl={row?.photoUrl ??  "/default-avatar.jpg"}
-                    
+                      avatarUrl={row?.photoUrl ?? '/default-avatar.jpg'}
                       idNumber={row.idNumber}
                       Class={row.class}
                       fatherName={row.fatherName}
@@ -239,18 +224,13 @@ export default function UserPage() {
                       motherName={row.motherName}
                       Address={row.address}
                       status={row.status}
-                      selected={selected.indexOf(row.fullName) !== -1}
-                      handleClick={(event) => handleClick(event, row.fullName)}
-                      onEdit={() => handleOpenUpdateModal(row)} // Pass the row data to open the modal for editing
-                      onDelete={() => deleteUser(row._id)} // Call deleteUser with studentId
+                      selected={selected.indexOf(row._id) !== -1} // Check if this row is selected
+                      handleClick={(event) => handleClick(event, row._id)} // Toggle selection on checkbox click
+                      onEdit={() => handleOpenUpdateModal(row)}
+                      onDelete={() => deleteUser(row._id)}
                     />
                   ))}
-
-                <TableEmptyRows
-                  height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, users.length)}
-                />
-
+                <TableEmptyRows height={77} emptyRows={emptyRows(page, rowsPerPage, users.length)} />
                 {notFound && <TableNoData query={filterName} />}
               </TableBody>
             </Table>
@@ -258,27 +238,24 @@ export default function UserPage() {
         </Scrollbar>
 
         <TablePagination
-          page={page}
+          rowsPerPageOptions={[5, 10, 25]}
           component="div"
           count={users.length}
           rowsPerPage={rowsPerPage}
+          page={page}
           onPageChange={handleChangePage}
-          rowsPerPageOptions={[5, 10, 25]}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Card>
 
-      {/* AddStudentModal Popup */}
+      {/* Modals */}
       <AddStudentModal open={openAddModal} onClose={handleCloseAddModal} />
-
-      {/* UpdateStudentModal Popup */}
       <UpdateStudentModal
         open={openUpdateModal}
         onClose={handleCloseUpdateModal}
-        user={currentUser} // Pass the current user to the modal
-        onUpdateUser={handleUpdateUser} // Pass the update handler
+        user={currentUser}
+        onUpdate={handleUpdateUser}
       />
     </Container>
   );
 }
-

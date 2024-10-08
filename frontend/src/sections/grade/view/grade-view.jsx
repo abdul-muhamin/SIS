@@ -127,14 +127,16 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = users.map((n) => n.courseName);
+      const newSelecteds = users.map((n) => n._id);
       setSelected(newSelecteds);
+      console.log('event', event.target.checked, newSelecteds);
       return;
     }
     setSelected([]);
   };
 
   const handleClick = (event, name) => {
+    console.log('newSelected', event, name);
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
     if (selectedIndex === -1) {
@@ -150,6 +152,22 @@ export default function UserPage() {
       );
     }
     setSelected(newSelected);
+    console.log(newSelected);
+  };
+  const handleDeleteAll = async () => {
+    try {
+      const deleteRequests = selected.map((id) =>
+        fetch(`http://localhost:3001/api/grades/${id}`, {
+          method: 'DELETE',
+        })
+      );
+      
+      await Promise.all(deleteRequests); // Wait for all delete requests to complete
+      setSelected([]); // Clear the selection
+      fetchUsers(); // Refresh the user list after deletion
+    } catch (error) {
+      console.error('Error deleting users:', error);
+    }
   };
 
   const handleChangePage = (event, newPage) => {
@@ -199,6 +217,7 @@ export default function UserPage() {
           numSelected={selected.length}
           filterName={filterName}
           onFilterName={handleFilterByName}
+          onDeleteAll={handleDeleteAll}
         />
 
         <Scrollbar>
@@ -216,7 +235,7 @@ export default function UserPage() {
                   { id: 'mid', label: 'Mid' },
                   { id: 'final', label: 'Final' },
                   
-                  // { id: 'status', label: 'Status' },
+                  
                   
                   { id: '' },
                 ]}
@@ -235,14 +254,9 @@ export default function UserPage() {
                     
                       mid={row.mid}
                       final={row.final}
-                      // fatherName={row.fatherName}
-                      // fatherPhoneName={row.fatherPhoneName}
-                      // motherPhoneName={row.motherPhoneName}
-                      // motherName={row.motherName}
-                      // Address={row.address}
-                      // status={row.status}
+                      
                       selected={selected.indexOf(row.courseName) !== -1}
-                      handleClick={(event) => handleClick(event, row.courseName)}
+                      handleClick={(event) => handleClick(event, row._id)}
                       onEdit={() => handleOpenUpdateModal(row)} // Pass the row data to open the modal for editing
                       onDelete={() => deleteUser(row._id)} // Call deleteUser with studentId
                     />

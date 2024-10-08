@@ -1,14 +1,11 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import Stack from '@mui/material/Stack';
-import Avatar from '@mui/material/Avatar';
 import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import MenuItem from '@mui/material/MenuItem';
 import TableCell from '@mui/material/TableCell';
-import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
 // import Label from 'src/components/label';
@@ -20,13 +17,10 @@ import DeleteConfirmationModal from './view/deleteModel'; // Import the delete m
 
 export default function UserTableRow({
   selected,
-  name,
-  avatarUrl,
-  idNumber,
-  Class,
-  fatherName,
-  motherName,
-  Address,
+  courseName,
+  mid,
+  final,
+  // grade,
   handleClick,
   onEdit, // Add onEdit prop
   onDelete, // Add onDelete prop for handling delete
@@ -63,20 +57,13 @@ export default function UserTableRow({
           <Checkbox disableRipple checked={selected} onChange={handleClick} />
         </TableCell>
 
-        <TableCell component="th" scope="row" padding="none">
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt={name} src={avatarUrl} />
-            <Typography variant="subtitle2" noWrap>
-              {name}
-            </Typography>
-          </Stack>
-        </TableCell>
-        <TableCell>{idNumber}</TableCell>
+        
+        <TableCell>{courseName}</TableCell>
 
-        <TableCell>{Class}</TableCell>
-        <TableCell>{fatherName}</TableCell>
-        <TableCell>{motherName}</TableCell>
-        <TableCell>{Address}</TableCell>
+        <TableCell>{mid}</TableCell>
+        <TableCell>{final}</TableCell>
+        {/* <TableCell>{grade}</TableCell> */}
+        
 
         {/* <TableCell>
           <Label color={(status === 'banned' && 'error') || 'success'}>{status}</Label>
@@ -118,13 +105,10 @@ export default function UserTableRow({
 
 UserTableRow.propTypes = {
   selected: PropTypes.bool,
-  name: PropTypes.string,
-  avatarUrl: PropTypes.string,
-  idNumber: PropTypes.string,
-  Class: PropTypes.string,
-  fatherName: PropTypes.string,
-  motherName: PropTypes.string,
-  Address: PropTypes.string,
+  courseName: PropTypes.string,
+  mid: PropTypes.string,
+  // grade: PropTypes.string,
+  final: PropTypes.string,
   handleClick: PropTypes.func,
   onEdit: PropTypes.func, // Add prop types for onEdit
   onDelete: PropTypes.func, // Add prop types for onDelete

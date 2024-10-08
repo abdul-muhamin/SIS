@@ -7,6 +7,7 @@ const studentRoutes = require("./routes/stundentRoute");
 const path = require("path");
 const teacherRoutes = require("./routes/teacherRoute")
 const assignmentRoutes = require("./routes/assignmentRoute")
+const gradeRoutes = require("./routes/gradeRoute")
 
 const app = express();
 app.use(cors());
@@ -29,6 +30,7 @@ mongoose
 app.use('/api/students', studentRoutes);
 app.use('/api/teachers', teacherRoutes);
 app.use('/api/assignments', assignmentRoutes);
+app.use('/api/grades', gradeRoutes);
 
 // Serve uploaded files statically
 app.use('/uploads', express.static('uploads'));

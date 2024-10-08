@@ -1,212 +1,101 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+} from '@mui/material';
 
-import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
-import Table from '@mui/material/Table';
-import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import TableBody from '@mui/material/TableBody';
-import Typography from '@mui/material/Typography';
-import TableContainer from '@mui/material/TableContainer';
-import TablePagination from '@mui/material/TablePagination';
+const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
+  const [courseName, setCourseName] = useState('');
+  const [midGrade, setMidGrade] = useState('');
+  const [finalGrade, setFinalGrade] = useState('');
 
-import { users } from 'src/_mock/user';
-
-import Iconify from 'src/components/iconify';
-import Scrollbar from 'src/components/scrollbar';
-
-import { emptyRows, applyFilter, getComparator } from 'src/sections/student/utils';
-
-import TableNoData from '../table-no-data';
-import UserTableRow from '../user-table-row';
-import UserTableHead from '../user-table-head';
-import AddStudentModal from './addStudentModel'; // Import the AddStudentModal
-import TableEmptyRows from '../table-empty-rows';
-import UserTableToolbar from '../user-table-toolbar';
-// import UpdateStudentModal from './updateGrade'; 
-
-// ----------------------------------------------------------------------
-
-export default function AssignmentPage() {
-  const [page, setPage] = useState(0);
-  const [order, setOrder] = useState('asc');
-  const [selected, setSelected] = useState([]);
-  const [orderBy, setOrderBy] = useState('name');
-  const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  // Modals state
-  const [openAddModal, setOpenAddModal] = useState(false); // State for Add modal
-  // const [openUpdateModal, setOpenUpdateModal] = useState(false);
-  // const [currentUser, setCurrentUser] = useState(null); 
-  // Add Modal Handlers
-  const handleOpenAddModal = () => {
-    setOpenAddModal(true); // Open AddStudentModal
-  };
-
-  const handleCloseAddModal = () => {
-    setOpenAddModal(false); // Close AddStudentModal
-  };
-
-  // Update Modal Handlers
-  // const handleOpenUpdateModal = (user) => {
-  //   setCurrentUser(user); 
-  //   setOpenUpdateModal(true); 
-
-  // const handleCloseUpdateModal = () => {
-  //   setOpenUpdateModal(false);
-  //   setCurrentUser(null); 
-  // };
-
-  // Sorting and Filtering Logic
-  const handleSort = (event, id) => {
-    const isAsc = orderBy === id && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(id);
-  };
-
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = users.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
+  // Set state when the modal opens
+  useEffect(() => {
+    if (user) {
+      setCourseName(user.courseName); // Assuming the user object has a 'course' property
+      setMidGrade(user.mid); // Assuming the user object has a 'mids' property
+      setFinalGrade(user.final); // Assuming the user object has a 'final' property
     }
-    setSelected([]);
-  };
+  }, [user]);
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
+  const handleUpdate = async () => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/grades/${user._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          courseName,
+          mid: midGrade,
+          final: finalGrade,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update grades');
+      }
+
+      const result = await response.json();
+      console.log('Grades updated successfully:', result);
+      onUpdateUser(result); // Call the parent update function
+      onClose(); // Close the modal after updating
+    } catch (error) {
+      console.error('Error updating grades:', error.message);
     }
-    setSelected(newSelected);
   };
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setPage(0);
-    setRowsPerPage(parseInt(event.target.value, 10));
-  };
-
-  const handleFilterByName = (event) => {
-    setPage(0);
-    setFilterName(event.target.value);
-  };
-
-  const dataFiltered = applyFilter({
-    inputData: users,
-    comparator: getComparator(order, orderBy),
-    filterName,
-  });
-
-  const notFound = !dataFiltered.length && !!filterName;
 
   return (
-    <Container sx={{
-      height :{
-        lg: '60vh',
-        // sm:'full'
-      }
-    }} >
-      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
-        <Typography variant="h4">Grade</Typography>
-        <Button
-          variant="contained"
-          color="inherit"
-          startIcon={<Iconify icon="eva:plus-fill" />}
-          onClick={handleOpenAddModal} // Open modal for adding a new student
-        >
-          Add Grade
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogTitle>Update Grade</DialogTitle>
+      <DialogContent>
+        <TextField
+          label="Course Name"
+          value={courseName}
+          onChange={(e) => setCourseName(e.target.value)}
+          fullWidth
+          margin="normal" // Add margin to separate fields
+        />
+        <TextField
+          label="Mid"
+          type="number"
+          value={midGrade}
+          onChange={(e) => setMidGrade(e.target.value)}
+          fullWidth
+          margin="normal" // Add margin to separate fields
+        />
+        <TextField
+          label="Final"
+          type="number"
+          value={finalGrade}
+          onChange={(e) => setFinalGrade(e.target.value)}
+          fullWidth
+          margin="normal" // Add margin to separate fields
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} variant="contained" color="error">
+          Cancel
         </Button>
-      </Stack>
-
-      {/* Table Section */}
-      <Card>
-        <UserTableToolbar
-          numSelected={selected.length}
-          filterName={filterName}
-          onFilterName={handleFilterByName}
-        />
-
-        <Scrollbar>
-          <TableContainer sx={{ overflow: 'unset' }}>
-            <Table sx={{ minWidth: 800 }}>
-              <UserTableHead
-                order={order}
-                orderBy={orderBy}
-                rowCount={users.length}
-                numSelected={selected.length}
-                onRequestSort={handleSort}
-                onSelectAllClick={handleSelectAllClick}
-                headLabel={[
-                  { id: 'name', label: 'Name' },
-                  { id: 'idNumber', label: 'Id Number' },
-                  { id: 'course', label: 'Course' },
-                  { id: 'mids', label: 'Mids' },
-                  { id: 'final', label: 'Final' },
-                  { id: 'grade', label: 'Grade' },
-                  // { id: 'grade', label: 'grade' },
-                  { id: '' },
-                ]}
-              />
-              <TableBody>
-                {dataFiltered
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <UserTableRow
-                      key={row.id}
-                      name={row.name}
-                      role={row.role}
-                      status={row.status}
-                      company={row.company}
-                      avatarUrl={row.avatarUrl}
-                      isVerified={row.isVerified}
-                      selected={selected.indexOf(row.name) !== -1}
-                      handleClick={(event) => handleClick(event, row.name)}
-                      // onEdit={() => handleOpenUpdateModal(row)} // Pass the row data to open the modal for editing
-                    />
-                  ))}
-
-                <TableEmptyRows
-                  height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, users.length)}
-                />
-
-                {notFound && <TableNoData query={filterName} />}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Scrollbar>
-
-        <TablePagination
-          page={page}
-          component="div"
-          count={users.length}
-          rowsPerPage={rowsPerPage}
-          onPageChange={handleChangePage}
-          rowsPerPageOptions={[5, 10, 25]}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Card>
-
-      {/* AddStudentModal Popup */}
-      <AddStudentModal open={openAddModal} onClose={handleCloseAddModal} /> 
-
-      {/* UpdateStudentModal Popup */}
-      {/* <UpdateStudentModal open={openUpdateModal} onClose={handleCloseUpdateModal} user={currentUser} /> */}
-    </Container>
+        <Button onClick={handleUpdate} variant="contained" color="primary">
+          Update
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
-}
+};
+
+// Define prop types for validation
+UpdateStudentModal.propTypes = {
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  user: PropTypes.object,
+  onUpdateUser: PropTypes.func.isRequired, // Ensure this prop is required
+};
+
+export default UpdateStudentModal;

@@ -19,14 +19,8 @@ import DeleteConfirmationModal from './view/deleteModel'; // Import the delete m
 
 export default function UserTableRow({
   selected,
-  // name,
-  // avatarUrl,
-  // idNumber,
-  // Class,
   title,
   assignment,
-  // motherName,
-  // Address,
   handleClick,
   onEdit, // Add onEdit prop
   onDelete, // Add onDelete prop for handling delete
@@ -56,6 +50,12 @@ export default function UserTableRow({
     setDeleteModalOpen(false); // Close the modal after confirming delete
   };
 
+  // Function to truncate the assignment to 5 words
+  const truncateAssignment = (text) => {
+    const words = text.split(' ');
+    return words.length > 5 ? `${words.slice(0, 5).join(' ')}...` : text;
+  };
+
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
@@ -65,22 +65,18 @@ export default function UserTableRow({
 
         <TableCell component="th" scope="row" padding="none">
           <Stack direction="row" alignItems="center" spacing={2}>
-            {/* <Avatar alt={name} src={avatarUrl} /> */}
             <Typography variant="subtitle2" noWrap>
               {title}
             </Typography>
           </Stack>
         </TableCell>
-        {/* <TableCell>{idNumber}</TableCell> */}
 
-        {/* <TableCell>{Class}</TableCell> */}
-        <TableCell>{assignment}</TableCell>
-        {/* <TableCell>{motherName}</TableCell> */}
-        {/* <TableCell>{Address}</TableCell> */}
-
-        {/* <TableCell>
-          <Label color={(status === 'banned' && 'error') || 'success'}>{status}</Label>
-        </TableCell> */}
+        {/* Use the truncate function for the assignment */}
+        <TableCell>
+          <Typography variant="body2" noWrap>
+            {truncateAssignment(assignment)}
+          </Typography>
+        </TableCell>
 
         <TableCell align="right">
           <IconButton onClick={handleOpenMenu}>
@@ -119,12 +115,7 @@ export default function UserTableRow({
 UserTableRow.propTypes = {
   selected: PropTypes.bool,
   title: PropTypes.string,
-  // avatarUrl: PropTypes.string,
-  // idNumber: PropTypes.string,
-  // Class: PropTypes.string,
   assignment: PropTypes.string,
-  // motherName: PropTypes.string,
-  // Address: PropTypes.string,
   handleClick: PropTypes.func,
   onEdit: PropTypes.func, // Add prop types for onEdit
   onDelete: PropTypes.func, // Add prop types for onDelete

@@ -125,14 +125,16 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = users.map((n) => n.fullName);
+      const newSelecteds = users.map((n) => n._id);
       setSelected(newSelecteds);
+      console.log('event', event.target.checked, newSelecteds);
       return;
     }
     setSelected([]);
   };
 
   const handleClick = (event, name) => {
+    console.log('newSelected', event, name);
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
     if (selectedIndex === -1) {
@@ -148,7 +150,7 @@ export default function UserPage() {
       );
     }
     setSelected(newSelected);
-    console.log(newSelected)
+    console.log(newSelected);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -163,6 +165,12 @@ export default function UserPage() {
   const handleFilterByName = (event) => {
     setPage(0);
     setFilterName(event.target.value);
+  };
+
+  const handleDeleteAll = (event) => {
+    //map
+    //delete
+    //selected;
   };
 
   const dataFiltered = applyFilter({
@@ -193,6 +201,7 @@ export default function UserPage() {
           numSelected={selected.length}
           filterName={filterName}
           onFilterName={handleFilterByName}
+          onDeleteAll={handleDeleteAll}
         />
 
         <Scrollbar>
@@ -214,7 +223,7 @@ export default function UserPage() {
                   { id: 'Address', label: 'Address' },
                   { id: 'status', label: 'Status' },
                   // { id: 'status', label: 'Status' },
-                  
+
                   { id: '' },
                 ]}
               />
@@ -222,14 +231,11 @@ export default function UserPage() {
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
-                    
-                    
                     <UserTableRow
                       key={row._id} // Use studentId as key for unique identification
                       name={row.fullName}
                       row={row}
-                      avatarUrl={row?.photoUrl ??  "/default-avatar.jpg"}
-                    
+                      avatarUrl={row?.photoUrl ?? '/default-avatar.jpg'}
                       idNumber={row.idNumber}
                       Class={row.class}
                       fatherName={row.fatherName}
@@ -238,8 +244,8 @@ export default function UserPage() {
                       motherName={row.motherName}
                       Address={row.address}
                       status={row.status}
-                      selected={selected.indexOf(row.fullName) !== -1}
-                      handleClick={(event) => handleClick(event, row.fullName)}
+                      selected={selected.indexOf(row._id) !== -1}
+                      handleClick={(event) => handleClick(event, row._id)}
                       onEdit={() => handleOpenUpdateModal(row)} // Pass the row data to open the modal for editing
                       onDelete={() => deleteUser(row._id)} // Call deleteUser with studentId
                     />

@@ -208,7 +208,7 @@ export default function UserPage() {
                 headLabel={[
                   { id: 'title', label: 'Title' },
                   
-                  { id: 'assignment', label: 'Assignment' },
+                  { id: 'assignment', label: 'Discription' },
                   
                   { id: '' },
                 ]}

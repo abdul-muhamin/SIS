@@ -29,7 +29,7 @@ const navConfig = [
   },
   {
     title: 'Assignment',
-    path: '/Assignment-user',
+    path: '/assignment',
     icon: icon('ic_user'),
   },
   {

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+
 import {
   Table,
   Dialog,
@@ -8,10 +9,10 @@ import {
   TableBody,
   TableCell,
   TableHead,
+  TextField,
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField,
 } from '@mui/material';
 
 const AddStudentModal = ({ open, onClose }) => {

@@ -63,7 +63,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser, assignmentId })
           <TextField
             margin="dense"
             name="assignment"
-            label="Assignment"
+            label="Discription"
             type="text"
             fullWidth
             multiline

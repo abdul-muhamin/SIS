@@ -19,9 +19,9 @@ import TableNoData from '../table-no-data';
 import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
 import AddStudentModal from './addStudentModel'; // Import the AddStudentModal
+import UpdateStudentModal from './updateGrade';
 import TableEmptyRows from '../table-empty-rows';
-import UserTableToolbar from '../user-table-toolbar';
-import UpdateStudentModal from './updateGrade'; // Import the UpdateStudentModal
+import UserTableToolbar from '../user-table-toolbar'; // Import the UpdateStudentModal
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
 // ----------------------------------------------------------------------

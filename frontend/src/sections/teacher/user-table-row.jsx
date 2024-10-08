@@ -241,8 +241,9 @@ export default function UserTableRow({
       </TableRow>
 
       <Popover open={!!open} anchorEl={open} onClose={handleCloseMenu}>
-        <MenuItem onClick={handleOpenEditModal}>Edit</MenuItem>
-        <MenuItem onClick={handleOpenDeleteModal}>Delete</MenuItem>
+        <MenuItem onClick={handleOpenEditModal}><Iconify icon="solar:pen-bold" sx={{ mr: 1 }} />Edit</MenuItem>
+        <MenuItem onClick={handleOpenDeleteModal}>
+        <Iconify icon="solar:trash-bin-trash-bold" sx={{ mr: 1  }}/>Delete</MenuItem>
       </Popover>
 
       {/* Delete Confirmation Modal */}

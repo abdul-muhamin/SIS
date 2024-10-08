@@ -6,6 +6,8 @@ import {
   Grid,
   Button,
   Dialog,
+  Select,
+  MenuItem,
   TextField,
   Typography,
   DialogTitle,
@@ -26,6 +28,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
     address: '',
     _id: '',
     photo: '', // Added photo property
+    status: 'Active', // Set default status to Active
   });
 
   const [selectedFile, setSelectedFile] = useState(null);
@@ -43,7 +46,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
         fatherPhoneNumber: user.fatherPhoneNumber || '',
         motherPhoneNumber: user.motherPhoneNumber || '',
         address: user.address || '',
-        status: user.status || '',
+        status: user.status || 'Active', // Set default status to Active
         _id: user._id || '',
         photo: user.photo ? `http://localhost:3001/uploads/${user.photo}` : '', // Set existing photo URL
       });
@@ -203,14 +206,20 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
                 onChange={handleChange}
                 margin="normal"
               />
-              <TextField
+
+              {/* Status Select Field */}
+              <Select
                 fullWidth
                 label="Status"
                 name="status"
                 value={formValues.status}
                 onChange={handleChange}
                 margin="normal"
-              />
+              >
+                <MenuItem value="Active">Active</MenuItem>
+                <MenuItem value="Banned">Banned</MenuItem>
+              </Select>
+
               <TextField
                 sx={{ display: "none" }}
                 fullWidth

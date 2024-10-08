@@ -75,7 +75,7 @@ const AddStudentModal = ({ open, onClose }) => {
               />
               <TextField
                 fullWidth
-                label="Assignment"
+                label="Discription"
                 name="assignment"
                 multiline
                 rows={5}

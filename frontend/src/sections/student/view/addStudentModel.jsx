@@ -6,6 +6,8 @@ import {
   Grid,
   Button,
   Dialog,
+  Select,
+  MenuItem,
   TextField,
   Typography,
   DialogTitle,
@@ -25,7 +27,7 @@ const AddStudentModal = ({ open, onClose }) => {
     motherPhoneNumber: '',
     address: '',
     studentId: '',
-    status: '',
+    status: 'Active', // Status field
   });
 
   const [error, setError] = useState(null);
@@ -56,11 +58,11 @@ const AddStudentModal = ({ open, onClose }) => {
       formData.append('address', formValues.address);
       formData.append('studentId', formValues.studentId);
       formData.append('status', formValues.status);
-      formData.append('photo', selectedFile); // Add the selected file
+      formData.append('photo', selectedFile);
 
       const response = await fetch('http://localhost:3001/api/students', {
         method: 'POST',
-        body: formData, // No need for Content-Type here, FormData will set it automatically
+        body: formData,
       });
 
       if (!response.ok) {
@@ -70,6 +72,7 @@ const AddStudentModal = ({ open, onClose }) => {
       const result = await response.json();
       console.log('Student added successfully:', result);
 
+      // Reset form values
       setFormValues({
         fullName: '',
         email: '',
@@ -83,7 +86,7 @@ const AddStudentModal = ({ open, onClose }) => {
         studentId: '',
         status: '',
       });
-      setSelectedFile(null); // Reset selected image
+      setSelectedFile(null);
 
       // Close the modal after successful submission
       onClose();
@@ -198,14 +201,19 @@ const AddStudentModal = ({ open, onClose }) => {
                 onChange={handleChange}
                 margin="normal"
               />
-              <TextField
+              
+              {/* Status Select Field */}
+              <Select
                 fullWidth
                 label="Status"
                 name="status"
                 value={formValues.status}
                 onChange={handleChange}
                 margin="normal"
-              />
+              >
+                <MenuItem value="Active">Active</MenuItem>
+                <MenuItem value="Banned">Banned</MenuItem>
+              </Select>
             </Grid>
           </Grid>
         </Box>

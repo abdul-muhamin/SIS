@@ -39,7 +39,7 @@ export default function Router() {
         { path: 'update-student', element: <UpdateStudentPage /> },
         { path: 'add-assignment', element: <AddAssignment /> },
         { path: 'admin-panel', element: <AdminPanel /> },
-        { path: 'Assignment-user', element: <AddAssignmentUserPage /> },
+        { path: 'assignment', element: <AddAssignmentUserPage /> },
         { path: 'grade', element: <GradePage /> },
       ],
     },

@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
+
 import {
   Dialog,
+  Button,
+  TextField,
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button,
-  TextField,
 } from '@mui/material';
 
 const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {

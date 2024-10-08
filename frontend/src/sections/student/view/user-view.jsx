@@ -148,6 +148,7 @@ export default function UserPage() {
       );
     }
     setSelected(newSelected);
+    console.log(newSelected)
   };
 
   const handleChangePage = (event, newPage) => {

@@ -1,172 +1,3 @@
-// import PropTypes from 'prop-types';
-// import React, { useState } from 'react';
-
-// import {
-//   Box,
-//   Grid,
-//   Button,
-//   Avatar,
-//   Dialog,
-//   TextField,
-//   Typography,
-//   DialogTitle,
-//   DialogContent,
-//   DialogActions,
-// } from '@mui/material';
-
-// const UpdateStudentModal = ({ open, onClose }) => {
-//   const [formValues, setFormValues] = useState({
-//     fullName: '',
-//     email: '',
-//     class: '',
-//     idNumber: '',
-//     fatherName: '',
-//     motherName: '',
-//     fatherPhone: '',
-//     motherPhone: '',
-//     address: '',
-//     studentId: '',
-//   });
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormValues({ ...formValues, [name]: value });
-//   };
-
-//   const handleSubmit = () => {
-//     console.log('Form submitted:', formValues);
-//     onClose(); // Close the dialog after submission
-//   };
-
-//   return (
-//     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-//       <DialogTitle>Add Student</DialogTitle>
-//       <DialogContent>
-//         <Box sx={{ padding: 4 }}>
-//           <Grid container spacing={2}>
-//             {/* Left Column */}
-//             <Grid item xs={12} md={6}>
-//               <TextField
-//                 fullWidth
-//                 label="Full Name"
-//                 name="fullName"
-//                 value={formValues.fullName}
-//                 onChange={handleChange}
-//                 margin="normal"
-//               />
-//               <TextField
-//                 fullWidth
-//                 label="Email"
-//                 name="email"
-//                 type="email"
-//                 value={formValues.email}
-//                 onChange={handleChange}
-//                 margin="normal"
-//               />
-//               <TextField
-//                 fullWidth
-//                 label="Class"
-//                 name="class"
-//                 value={formValues.class}
-//                 onChange={handleChange}
-//                 margin="normal"
-//               />
-//               <TextField
-//                 fullWidth
-//                 label="ID Number"
-//                 name="idNumber"
-//                 value={formValues.idNumber}
-//                 onChange={handleChange}
-//                 margin="normal"
-//               />
-//               <TextField
-//                 fullWidth
-//                 label="Father Name"
-//                 name="fatherName"
-//                 value={formValues.fatherName}
-//                 onChange={handleChange}
-//                 margin="normal"
-//               />
-//               <TextField
-//                 fullWidth
-//                 label="Mother Name"
-//                 name="motherName"
-//                 value={formValues.motherName}
-//                 onChange={handleChange}
-//                 margin="normal"
-//               />
-//             </Grid>
-
-//             {/* Right Column */}
-//             <Grid item xs={12} md={6}>
-//               {/* Profile Photo */}
-//               <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-//                 <Avatar
-//                   sx={{ width: 120, height: 120 }}
-//                   src="/broken-image.jpg"
-//                   alt="Student Photo"
-//                 />
-//               </Box>
-//               <Typography align="center">Photo</Typography>
-
-//               <TextField
-//                 fullWidth
-//                 label="Father Phone Number"
-//                 name="fatherPhone"
-//                 value={formValues.fatherPhone}
-//                 onChange={handleChange}
-//                 margin="normal"
-//               />
-//               <TextField
-//                 fullWidth
-//                 label="Mother Phone Number"
-//                 name="motherPhone"
-//                 value={formValues.motherPhone}
-//                 onChange={handleChange}
-//                 margin="normal"
-//               />
-//               <TextField
-//                 fullWidth
-//                 label="Address"
-//                 name="address"
-//                 value={formValues.address}
-//                 onChange={handleChange}
-//                 margin="normal"
-//               />
-//               <TextField
-//                 fullWidth
-//                 label="Student ID"
-//                 name="studentId"
-//                 value={formValues.studentId}
-//                 onChange={handleChange}
-//                 margin="normal"
-//               />
-//             </Grid>
-//           </Grid>
-//         </Box>
-//       </DialogContent>
-//       <DialogActions>
-//         <Button onClick={onClose} color="secondary">
-//           Update
-//         </Button>
-//         <Button onClick={handleSubmit} color="primary">
-//           Cancel
-//         </Button>
-//       </DialogActions>
-//     </Dialog>
-//   );
-// };
-
-// // Define prop types for validation
-// UpdateStudentModal.propTypes = {
-//   open: PropTypes.bool.isRequired,
-//   onClose: PropTypes.func.isRequired,
-// };
-
-// export default UpdateStudentModal;
-
-// new
-
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
 
@@ -175,6 +6,8 @@ import {
   Grid,
   Button,
   Dialog,
+  Select,
+  MenuItem,
   TextField,
   Typography,
   DialogTitle,
@@ -194,7 +27,8 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
     motherPhoneNumber: '',
     address: '',
     _id: '',
-    photo: '', // Added photo property
+    photo: '',
+    status: '', // Default status set to Active
   });
 
   const [selectedFile, setSelectedFile] = useState(null);
@@ -212,13 +46,13 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
         fatherPhoneNumber: user.fatherPhoneNumber || '',
         motherPhoneNumber: user.motherPhoneNumber || '',
         address: user.address || '',
-        status: user.status || '',
+        status: user.status || 'Active', // Set to Active if user status is undefined
         _id: user._id || '',
-        photo: user.photo ? `http://localhost:3001/uploads/${user.photo}` : '', // Set existing photo URL
+        photo: user.photo ? `http://localhost:3001/uploads/${user.photo}` : '',
       });
       setSelectedFile(null); // Reset selected file when user changes
     }
-  }, [user, open]); // Depend on both user and open to reset when modal opens
+  }, [user, open]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -250,7 +84,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
     try {
       const response = await fetch(`http://localhost:3001/api/teachers/${formValues._id}`, {
         method: 'PUT',
-        body: formData, // Use FormData for the update request
+        body: formData,
       });
 
       if (!response.ok) {
@@ -258,8 +92,8 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
       }
 
       const data = await response.json();
-      onUpdateUser(data); // Call the parent function to update the user in the list
-      onClose(); // Close the dialog after successful submission
+      onUpdateUser(data);
+      onClose();
     } catch (error) {
       console.error('Error updating student:', error);
     }
@@ -268,7 +102,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>Update Student</DialogTitle>
-      <DialogContent sx={{ padding: 2, overflow: 'hidden', maxHeight: '500px' }}>
+      <DialogContent sx={{ padding: 2, maxHeight: '600px', overflow: 'hidden' }}> {/* Adjusted max height */}
         <Box sx={{ padding: 2 }}>
           <Grid container spacing={2}>
             {/* Left Column */}
@@ -330,7 +164,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
                 {/* Display existing photo if available */}
                 {formValues.photo && !selectedFile && (
                   <img
-                    src={formValues.photo} // Display the existing photo
+                    src={formValues.photo}
                     alt="Existing"
                     style={{ marginTop: '10px', width: '100px', height: '100px', objectFit: 'cover' }}
                   />
@@ -372,23 +206,26 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
                 onChange={handleChange}
                 margin="normal"
               />
-              <TextField
+              <Select
                 fullWidth
                 label="Status"
                 name="status"
                 value={formValues.status}
                 onChange={handleChange}
                 margin="normal"
-              />
+              >
+                <MenuItem value="Active">Active</MenuItem>
+                <MenuItem value="Banned">Banned</MenuItem>
+              </Select>
               <TextField
                 sx={{ display: "none" }}
                 fullWidth
-                label="Student ID"
+                label="Teacher ID"
                 name="_id"
                 value={formValues._id}
                 onChange={handleChange}
                 margin="normal"
-                disabled // Disable this field as it should not be changed by the user
+                disabled
               />
             </Grid>
           </Grid>
@@ -410,8 +247,8 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
 UpdateStudentModal.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  user: PropTypes.object, // Expect user object for initial form values
-  onUpdateUser: PropTypes.func.isRequired, // Function to update user in the list
+  user: PropTypes.object,
+  onUpdateUser: PropTypes.func.isRequired,
 };
 
 export default UpdateStudentModal;

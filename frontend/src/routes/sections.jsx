@@ -16,6 +16,7 @@ export const AddAssignment = lazy(() => import('src/pages/add-assignment'));
 export const AddAssignmentUserPage = lazy(() => import('src/pages/assignment-user'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
+export const Attendence = lazy(()=> import ('src/pages/attendence'))
 
 // ----------------------------------------------------------------------
 
@@ -41,6 +42,7 @@ export default function Router() {
         { path: 'admin-panel', element: <AdminPanel /> },
         { path: 'assignment', element: <AddAssignmentUserPage /> },
         { path: 'grade', element: <GradePage /> },
+        { path: 'attendence', element: <Attendence /> },
       ],
     },
     {

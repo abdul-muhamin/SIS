@@ -12,7 +12,8 @@ const StudentSchema = new mongoose.Schema({
     address: String,
     studentId: String,
     photo: String, // Photo file name
-    status: String
+    status: String,
+    
 });
 
 const StudentModel = mongoose.model("student" , StudentSchema)

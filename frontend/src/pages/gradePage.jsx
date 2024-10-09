@@ -1,6 +1,6 @@
 // import GradeTable from "src/sections/grade/gradeView";
 import { GradeView } from 'src/sections/grade/view/index';
-
+import { Helmet } from 'react-helmet-async';
 
 // import AddAssignmentView from 'src/sections/assignment/addAssignmentView';
 
@@ -15,9 +15,9 @@ import { GradeView } from 'src/sections/grade/view/index';
 export default function gradePage() {
   return (
     <>
-      {/* <Helmet>
-        <title> Update and View </title>
-      </Helmet> */}
+      <Helmet>
+        <title>Grade | Minimal UI </title>
+      </Helmet>
 
       <GradeView />
     </>

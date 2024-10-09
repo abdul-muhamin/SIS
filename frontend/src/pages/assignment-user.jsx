@@ -4,7 +4,7 @@
 
 import { AssignmentPage } from 'src/sections/assignment/view/index';
 
-
+import { Helmet } from 'react-helmet-async';
 
 
 
@@ -14,9 +14,9 @@ import { AssignmentPage } from 'src/sections/assignment/view/index';
 export default function AddAssignmentUserPage() {
   return (
     <>
-      {/* <Helmet>
-        <title> Update and View </title>
-      </Helmet> */}
+      <Helmet>
+        <title>Assignment | Minimal UI</title>
+      </Helmet>
 
       <AssignmentPage />
     </>

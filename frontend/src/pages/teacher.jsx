@@ -10,7 +10,7 @@ export default function ProductsPage() {
   return (
     <>
       <Helmet>
-        <title> Teacher </title>
+        <title> Staff | Minimal UI</title>
       </Helmet>
 
       <Teacher />

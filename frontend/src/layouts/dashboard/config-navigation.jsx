@@ -18,7 +18,7 @@ const navConfig = [
     icon: icon('ic_user'),
   },
   {
-    title: 'teacher',
+    title: 'Staff',
     path: '/teacher',
     icon: icon('ic_user'),
   },
@@ -30,6 +30,11 @@ const navConfig = [
   {
     title: 'Assignment',
     path: '/assignment',
+    icon: icon('ic_user'),
+  },
+  {
+    title: 'Attendence',
+    path: '/attendence',
     icon: icon('ic_user'),
   },
   {

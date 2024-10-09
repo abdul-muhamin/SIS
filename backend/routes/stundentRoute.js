@@ -31,4 +31,4 @@ router.put('/:id', upload.single('photo'), studentController.updateStudentById);
 // Delete a student by ID
 router.delete('/:id', studentController.deleteStudentById);
 
-module.exports = router;
+module.exports = router; 

@@ -98,8 +98,19 @@ export default function UserTableRow({
           horizontal: 'right',
         }}
       >
-        <MenuItem onClick={() => { onEdit(); handleCloseMenu(); }}><Iconify icon="solar:pen-bold" sx={{ mr: 1 }} />Edit</MenuItem>
-        <MenuItem onClick={handleOpenDeleteModal}><Iconify icon="solar:trash-bin-trash-bold" sx={{ mr: 1  }}/>Delete</MenuItem>
+        <MenuItem
+          onClick={() => {
+            onEdit();
+            handleCloseMenu();
+          }}
+        >
+          <Iconify icon="solar:pen-bold" sx={{ mr: 1 }} />
+          Edit
+        </MenuItem>
+        <MenuItem onClick={handleOpenDeleteModal} sx={{ color: 'error.main' }}>
+          <Iconify icon="solar:trash-bin-trash-bold" sx={{ mr: 1 }} />
+          Delete
+        </MenuItem>
       </Popover>
 
       {/* Delete Confirmation Modal */}

@@ -102,7 +102,9 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>Update Student</DialogTitle>
-      <DialogContent sx={{ padding: 2, maxHeight: '600px', overflow: 'hidden' }}> {/* Adjusted max height */}
+      <DialogContent sx={{ padding: 2, maxHeight: '600px', overflow: 'hidden' }}>
+        {' '}
+        {/* Adjusted max height */}
         <Box sx={{ padding: 2 }}>
           <Grid container spacing={2}>
             {/* Left Column */}
@@ -166,7 +168,13 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
                   <img
                     src={formValues.photo}
                     alt="Existing"
-                    style={{ marginTop: '10px', width: '100px', height: '100px', objectFit: 'cover' }}
+                    style={{
+                      marginTop: '10px',
+                      width: '100px',
+                      borderRadius: 50,
+                      height: '100px',
+                      objectFit: 'cover',
+                    }}
                   />
                 )}
                 {/* Input for file upload */}
@@ -176,7 +184,12 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
                   <img
                     src={URL.createObjectURL(selectedFile)}
                     alt="Selected Preview"
-                    style={{ marginTop: '10px', width: '100px', height: '100px', objectFit: 'cover' }}
+                    style={{
+                      marginTop: '10px',
+                      width: '100px',
+                      height: '100px',
+                      objectFit: 'cover',
+                    }}
                   />
                 )}
                 <Typography align="center">Photo</Typography>
@@ -218,7 +231,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
                 <MenuItem value="Banned">Banned</MenuItem>
               </Select>
               <TextField
-                sx={{ display: "none" }}
+                sx={{ display: 'none' }}
                 fullWidth
                 label="Teacher ID"
                 name="_id"

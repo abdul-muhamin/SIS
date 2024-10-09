@@ -15,7 +15,6 @@ import Iconify from 'src/components/iconify';
 
 import DeleteConfirmationModal from './view/deleteModel'; // Import the delete modal
 
-
 // ----------------------------------------------------------------------
 
 export default function UserTableRow({
@@ -48,15 +47,15 @@ export default function UserTableRow({
   };
 
   const handleOpenEditModal = () => {
-    onEdit({ 
-      id, 
-      idNumber, 
-      fullName: name, 
-      class: Class, 
-      fatherName, 
-      motherName, 
-      address: Address ,
-      status
+    onEdit({
+      id,
+      idNumber,
+      fullName: name,
+      class: Class,
+      fatherName,
+      motherName,
+      address: Address,
+      status,
     });
     setOpen(null); // Close the menu after opening the edit modal
   };
@@ -86,7 +85,7 @@ export default function UserTableRow({
 
         <TableCell component="th" scope="row" padding="none">
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar src={photoUrl} /> 
+            <Avatar src={photoUrl} />
             <Typography variant="subtitle2" noWrap>
               {name}
             </Typography>
@@ -108,11 +107,13 @@ export default function UserTableRow({
 
       <Popover open={!!open} anchorEl={open} onClose={handleCloseMenu}>
         <MenuItem onClick={handleOpenEditModal}>
-        <Iconify icon="solar:pen-bold" sx={{ mr: 1 }} />
-        Edit</MenuItem>
-        <MenuItem onClick={handleOpenDeleteModal}>
-        <Iconify icon="solar:trash-bin-trash-bold" sx={{ mr: 1  }}/>
-        Delete</MenuItem>
+          <Iconify icon="solar:pen-bold" sx={{ mr: 1 }} />
+          Edit
+        </MenuItem>
+        <MenuItem onClick={handleOpenDeleteModal} sx={{ color: 'error.main' }}>
+          <Iconify icon="solar:trash-bin-trash-bold" sx={{ mr: 1 }} />
+          Delete
+        </MenuItem>
       </Popover>
 
       {/* Delete Confirmation Modal */}

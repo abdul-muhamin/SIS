@@ -166,7 +166,12 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
                   <img
                     src={formValues.photo} // Display the existing photo
                     alt="Existing"
-                    style={{ marginTop: '10px', width: '100px', height: '100px', objectFit: 'cover' }}
+                    style={{
+                      marginTop: '10px',
+                      width: '100px',
+                      height: '100px',
+                      objectFit: 'cover',
+                    }}
                   />
                 )}
                 {/* Input for file upload */}
@@ -176,7 +181,13 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
                   <img
                     src={URL.createObjectURL(selectedFile)}
                     alt="Selected Preview"
-                    style={{ marginTop: '10px', width: '100px', height: '100px', objectFit: 'cover' }}
+                    style={{
+                      marginTop: '10px',
+                      width: '100px',
+                      borderRadius: 50,
+                      height: '100px',
+                      objectFit: 'cover',
+                    }}
                   />
                 )}
                 <Typography align="center">Photo</Typography>
@@ -221,7 +232,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
               </Select>
 
               <TextField
-                sx={{ display: "none" }}
+                sx={{ display: 'none' }}
                 fullWidth
                 label="Student ID"
                 name="_id"

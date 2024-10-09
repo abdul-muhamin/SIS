@@ -163,7 +163,13 @@ const AddStudentModal = ({ open, onClose }) => {
                   <img
                     src={URL.createObjectURL(selectedFile)}
                     alt="Selected Preview"
-                    style={{ marginTop: '10px', width: '100px', height: '100px', objectFit: 'cover' }}
+                    style={{
+                      marginTop: '10px',
+                      width: '100px',
+                      borderRadius: 50,
+                      height: '100px',
+                      objectFit: 'cover',
+                    }}
                   />
                 )}
                 <Typography align="center">Photo</Typography>
@@ -201,7 +207,7 @@ const AddStudentModal = ({ open, onClose }) => {
                 onChange={handleChange}
                 margin="normal"
               />
-              
+
               {/* Status Select Field */}
               <Select
                 fullWidth

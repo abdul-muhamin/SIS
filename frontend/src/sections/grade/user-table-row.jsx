@@ -57,13 +57,11 @@ export default function UserTableRow({
           <Checkbox disableRipple checked={selected} onChange={handleClick} />
         </TableCell>
 
-        
         <TableCell>{courseName}</TableCell>
 
         <TableCell>{mid}</TableCell>
         <TableCell>{final}</TableCell>
         {/* <TableCell>{grade}</TableCell> */}
-        
 
         {/* <TableCell>
           <Label color={(status === 'banned' && 'error') || 'success'}>{status}</Label>
@@ -89,8 +87,19 @@ export default function UserTableRow({
           horizontal: 'right',
         }}
       >
-        <MenuItem onClick={() => { onEdit(); handleCloseMenu(); }}><Iconify icon="solar:pen-bold" sx={{ mr: 1 }} />Edit</MenuItem>
-        <MenuItem onClick={handleOpenDeleteModal}><Iconify icon="solar:trash-bin-trash-bold" sx={{ mr: 1  }}/>Delete</MenuItem>
+        <MenuItem
+          onClick={() => {
+            onEdit();
+            handleCloseMenu();
+          }}
+        >
+          <Iconify icon="solar:pen-bold" sx={{ mr: 1 }} />
+          Edit
+        </MenuItem>
+        <MenuItem onClick={handleOpenDeleteModal} sx={{ color: 'error.main' }}>
+          <Iconify icon="solar:trash-bin-trash-bold" sx={{ mr: 1 }} />
+          Delete
+        </MenuItem>
       </Popover>
 
       {/* Delete Confirmation Modal */}

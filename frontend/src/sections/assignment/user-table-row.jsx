@@ -53,7 +53,7 @@ export default function UserTableRow({
   // Function to truncate the assignment to 5 words
   const truncateAssignment = (text) => {
     const words = text.split(' ');
-    return words.length > 5 ? `${words.slice(0, 5).join(' ')}...` : text;
+    return words.length > 7 ? `${words.slice(0, 7).join(' ')}...` : text;
   };
 
   return (
@@ -66,7 +66,7 @@ export default function UserTableRow({
         <TableCell component="th" scope="row" padding="none">
           <Stack direction="row" alignItems="center" spacing={2}>
             <Typography variant="subtitle2" noWrap>
-              {title}
+              {truncateAssignment(title)}
             </Typography>
           </Stack>
         </TableCell>

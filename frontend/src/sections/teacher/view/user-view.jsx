@@ -142,8 +142,8 @@ export default function UserPage() {
   };
   const handleFilterByName = (event) => {
     setPage(0);
-    setFilterName(event.target.value);
-  };
+    setFilterName(event.target.value); 
+};
 
   const handleDeleteAll = async () => {
     try {

@@ -31,4 +31,12 @@ router.put('/:id', upload.single('photo'), studentController.updateStudentById);
 // Delete a student by ID
 router.delete('/:id', studentController.deleteStudentById);
 
-module.exports = router; 
+// Attendance functionality routes
+router.post('/:id/attendance', studentController.addAttendance); // Add attendance
+router.get('/:id/attendance', studentController.getAttendance); // Get attendance
+router.post('/:id/leave', studentController.applyLeave);
+
+// Get leave records for a student
+router.get('/:id/leave', studentController.getLeaves);
+
+module.exports = router;

@@ -35,7 +35,8 @@ const studentController = {
         address,
         studentId,
         photo,
-        status
+        status,
+        attendance: [] // Initialize attendance as an empty array
       });
 
       const savedStudent = await newStudent.save();
@@ -57,10 +58,11 @@ const studentController = {
     try {
       const students = await StudentModel.find();
 
-      // Modify the photo field to include the full URL
+      // Modify the photo field to include the full URL and include attendance data
       const studentsWithPhotoUrl = students.map(student => ({
         ...student._doc,  // Spread the existing student data
-        photoUrl: student.photo ? `${req.protocol}://${req.get('host')}/uploads/${student.photo}` : null
+        photoUrl: student.photo ? `${req.protocol}://${req.get('host')}/uploads/${student.photo}` : null,
+        attendance: student.attendance // Include attendance data in response
       }));
 
       res.status(200).json(studentsWithPhotoUrl);
@@ -79,10 +81,11 @@ const studentController = {
         return res.status(404).json({ error: "Student not found" });
       }
 
-      // Add the full URL for the photo
+      // Add the full URL for the photo and include attendance data
       const studentWithPhotoUrl = {
         ...student._doc,
-        photoUrl: student.photo ? `${req.protocol}://${req.get('host')}/uploads/${student.photo}` : null
+        photoUrl: student.photo ? `${req.protocol}://${req.get('host')}/uploads/${student.photo}` : null,
+        attendance: student.attendance // Include attendance data in response
       };
 
       res.status(200).json(studentWithPhotoUrl);
@@ -108,10 +111,11 @@ const studentController = {
         return res.status(404).json({ error: "Student not found" });
       }
 
-      // Include the updated photo URL in the response
+      // Include the updated photo URL and attendance data in the response
       const updatedStudentWithPhotoUrl = {
         ...updatedStudent._doc,
-        photoUrl: updatedStudent.photo ? `${req.protocol}://${req.get('host')}/uploads/${updatedStudent.photo}` : null
+        photoUrl: updatedStudent.photo ? `${req.protocol}://${req.get('host')}/uploads/${updatedStudent.photo}` : null,
+        attendance: updatedStudent.attendance // Include updated attendance data in response
       };
 
       res.status(200).json(updatedStudentWithPhotoUrl);
@@ -132,6 +136,94 @@ const studentController = {
       }
 
       res.status(200).json({ message: "Student deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  // Add attendance record for a student
+  addAttendance: async (req, res) => {
+    try {
+      const studentId = req.params.id;
+      const { date, clockIn, clockOut } = req.body;
+
+      // Find the student and update attendance
+      const student = await StudentModel.findById(studentId);
+      if (!student) {
+        return res.status(404).json({ error: 'Student not found' });
+      }
+
+      // Push new attendance data into student object
+      student.attendance = student.attendance || [];
+      student.attendance.push({ date, clockIn, clockOut });
+
+      await student.save();
+
+      // Return updated student data including attendance
+      res.status(200).json({
+        ...student._doc,
+        attendance: student.attendance
+      });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  // Get attendance for a student
+  getAttendance: async (req, res) => {
+    try {
+      const studentId = req.params.id;
+      const student = await StudentModel.findById(studentId);
+
+      if (!student) {
+        return res.status(404).json({ error: 'Student not found' });
+      }
+
+      // Return attendance records
+      res.status(200).json(student.attendance || []);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+  applyLeave: async (req, res) => {
+    try {
+      const studentId = req.params.id;
+      const { date, type } = req.body; // Type will be either 'full' or 'half'
+
+      // Find the student and update leave records
+      const student = await StudentModel.findById(studentId);
+      if (!student) {
+        return res.status(404).json({ error: 'Student not found' });
+      }
+
+      // Add the leave to the student's leave array
+      student.leaves = student.leaves || [];
+      student.leaves.push({ date, type });
+
+      await student.save();
+
+      // Return updated student data with leaves
+      res.status(200).json({
+        ...student._doc,
+        leaves: student.leaves
+      });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  // Get all leaves for a student
+  getLeaves: async (req, res) => {
+    try {
+      const studentId = req.params.id;
+      const student = await StudentModel.findById(studentId);
+
+      if (!student) {
+        return res.status(404).json({ error: 'Student not found' });
+      }
+
+      // Return leave records
+      res.status(200).json(student.leaves || []);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

@@ -1,6 +1,7 @@
 // import GradeTable from "src/sections/grade/gradeView";
-import { GradeView } from 'src/sections/grade/view/index';
 import { Helmet } from 'react-helmet-async';
+
+import { GradeView } from 'src/sections/grade/view/index';
 
 // import AddAssignmentView from 'src/sections/assignment/addAssignmentView';
 

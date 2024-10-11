@@ -2,9 +2,9 @@
 
 // import AddAssignmentView from 'src/sections/assignment/addAssignmentView';
 
-import { AssignmentPage } from 'src/sections/assignment/view/index';
-
 import { Helmet } from 'react-helmet-async';
+
+import { AssignmentPage } from 'src/sections/assignment/view/index';
 
 
 

@@ -33,8 +33,13 @@ const navConfig = [
     icon: icon('ic_user'),
   },
   {
-    title: 'Attendence',
-    path: '/attendence',
+    title: 'Student Attendence',
+    path: '/student-attendence',
+    icon: icon('ic_user'),
+  },
+  {
+    title: 'Staff Attendence',
+    path: '/staff-attendence',
     icon: icon('ic_user'),
   },
   {

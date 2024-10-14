@@ -9,8 +9,6 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 
 import { visuallyHidden } from './utils';
 
-// ----------------------------------------------------------------------
-
 export default function UserTableHead({
   order,
   orderBy,
@@ -34,7 +32,7 @@ export default function UserTableHead({
             onChange={onSelectAllClick}
           />
         </TableCell>
-
+        
         {headLabel.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -46,7 +44,7 @@ export default function UserTableHead({
               hideSortIcon
               active={orderBy === headCell.id}
               direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={onSort(headCell.id)}
+              onClick={headCell.id !== 'name' ? onSort(headCell.id) : undefined} // Disable sorting for 'name'
             >
               {headCell.label}
               {orderBy === headCell.id ? (

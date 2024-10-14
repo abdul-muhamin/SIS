@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Tooltip from '@mui/material/Tooltip';
@@ -9,7 +10,27 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import Iconify from 'src/components/iconify';
 
+import DeleteAllConfirmationModal from './view/deleteAllmodel';
+
 export default function UserTableToolbar({ numSelected, filterName, onFilterName, onDeleteAll }) {
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false); // State for modal
+
+  // Handle modal open
+  const handleOpenDeleteModal = () => {
+    setDeleteModalOpen(true);
+  };
+
+  // Handle modal close
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
+  };
+
+  // Trigger delete operation
+  const handleProceedDelete = () => {
+    onDeleteAll(); // Call the delete function passed from the parent component
+    handleCloseDeleteModal(); // Close the modal after deletion
+  };
+
   return (
     <Toolbar
       sx={{
@@ -45,7 +66,7 @@ export default function UserTableToolbar({ numSelected, filterName, onFilterName
 
       {numSelected > 0 ? (
         <Tooltip title="Delete All">
-          <IconButton onClick={onDeleteAll}> {/* Use onClick to trigger delete */}
+          <IconButton onClick={handleOpenDeleteModal}>
             <Iconify icon="eva:trash-2-fill" />
           </IconButton>
         </Tooltip>
@@ -56,6 +77,13 @@ export default function UserTableToolbar({ numSelected, filterName, onFilterName
           </IconButton>
         </Tooltip>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <DeleteAllConfirmationModal
+        open={deleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        onProceed={handleProceedDelete}
+      />
     </Toolbar>
   );
 }

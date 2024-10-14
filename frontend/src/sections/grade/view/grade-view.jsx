@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
@@ -8,13 +9,15 @@ import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
+
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
+
 import TableNoData from '../table-no-data';
 import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
-import AddStudentModal from './addStudentModel'; 
-import UpdateStudentModal from './updateGrade';
+import UpdateStudentModal from './updateGrade'; 
+import AddStudentModal from './addStudentModel';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
@@ -179,13 +182,13 @@ export default function UserPage() {
                 onRequestSort={handleSort}
                 onSelectAllClick={handleSelectAllClick}
                 headLabel={[
-                  { id: 'name', label: 'Name' },
-                  { id: 'idNumber', label: 'ID Number' },
-                  { id: 'Class', label: 'Class' },
-                  { id: 'fatherName', label: 'Father Name' },
-                  { id: 'motherName', label: 'Mother Name' },
-                  { id: 'Address', label: 'Address' },
-                  { id: 'status', label: 'Status' },
+                  { id: 'courseName', label: 'Course Name' },
+                  // { id: 'idNumber', label: 'ID Number' },
+                  { id: 'mid', label: 'Mid' },
+                  { id: 'final', label: 'Final' },
+                  // { id: 'motherName', label: 'Mother Name' },
+                  // { id: 'Address', label: 'Address' },
+                  // { id: 'status', label: 'Status' },
                   { id: '' },
                 ]}
               />
@@ -195,15 +198,17 @@ export default function UserPage() {
                   .map((row) => (
                     <UserTableRow
                       key={row._id}
-                      name={row.fullName}
+                      courseName={row.courseName}
                       row={row}
-                      avatarUrl={row?.photoUrl ?? '/default-avatar.jpg'}
-                      idNumber={row.idNumber}
-                      Class={row.class}
-                      fatherName={row.fatherName}
-                      motherName={row.motherName}
-                      Address={row.address}
-                      status={row.status}
+                      // avatarUrl={row?.photoUrl ?? '/default-avatar.jpg'}
+                      // idNumber={row.idNumber}
+                      mid={row.mid}
+                      final={row.final}
+                      // finals={row.final}
+                      // fatherName={row.final}
+                      // motherName={row.motherName}
+                      // Address={row.address}
+                      // status={row.status}
                       selected={selected.indexOf(row._id) !== -1}
                       handleClick={(event) => handleClick(event, row._id)}
                       onEdit={() => handleOpenUpdateModal(row)}

@@ -6,128 +6,64 @@ import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import MenuItem from '@mui/material/MenuItem';
-import TableCell from '@mui/material/TableCell';
-import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import TableCell from '@mui/material/TableCell';
 
-// import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 
-import DeleteConfirmationModal from './view/deleteModel'; // Import the delete modal
+UserTableRow.propTypes = {
+  row: PropTypes.object.isRequired,
+  title: PropTypes.string.isRequired,
+  assignment: PropTypes.string.isRequired,
+  selected: PropTypes.bool,
+  handleClick: PropTypes.func,
+  onEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+};
 
-// ----------------------------------------------------------------------
+export default function UserTableRow({ row, title, assignment, selected, handleClick, onEdit, onDelete }) {
+  const { _id } = row;
 
-export default function UserTableRow({
-  selected,
-  title,
-  assignment,
-  handleClick,
-  onEdit, // Add onEdit prop
-  onDelete, // Add onDelete prop for handling delete
-}) {
-  const [open, setOpen] = useState(null);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false); // State to manage delete modal visibility
+  const [openPopover, setOpenPopover] = useState(null);
 
-  const handleOpenMenu = (event) => {
-    setOpen(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setOpen(null);
-  };
-
-  const handleOpenDeleteModal = () => {
-    setDeleteModalOpen(true);
-    handleCloseMenu(); // Close the menu when delete is clicked
-  };
-
-  const handleCloseDeleteModal = () => {
-    setDeleteModalOpen(false);
-  };
-
-  const handleProceedDelete = () => {
-    onDelete(); // Call the delete handler passed from props
-    setDeleteModalOpen(false); // Close the modal after confirming delete
-  };
-
-  // Function to truncate the assignment to 5 words
-  const truncateAssignment = (text) => {
-    const words = text.split(' ');
-    return words.length > 7 ? `${words.slice(0, 7).join(' ')}...` : text;
-  };
+  const handleOpenPopover = (event) => setOpenPopover(event.currentTarget);
+  const handleClosePopover = () => setOpenPopover(null);
 
   return (
-    <>
-      <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
-        <TableCell padding="checkbox">
-          <Checkbox disableRipple checked={selected} onChange={handleClick} />
-        </TableCell>
+    <TableRow hover selected={selected}>
+      <TableCell padding="checkbox">
+        <Checkbox checked={selected} onClick={handleClick} />
+      </TableCell>
 
-        <TableCell component="th" scope="row" padding="none">
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <Typography variant="subtitle2" noWrap>
-              {truncateAssignment(title)}
-            </Typography>
-          </Stack>
-        </TableCell>
+      <TableCell>{title}</TableCell>
+      <TableCell>{assignment}</TableCell>
 
-        {/* Use the truncate function for the assignment */}
-        <TableCell>
-          <Typography variant="body2" noWrap>
-            {truncateAssignment(assignment)}
-          </Typography>
-        </TableCell>
-
-        <TableCell align="right">
-          <IconButton onClick={handleOpenMenu}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </TableCell>
-      </TableRow>
+      <TableCell align="right">
+        <IconButton color={openPopover ? 'inherit' : 'default'} onClick={handleOpenPopover}>
+          <Iconify icon="eva:more-vertical-fill" />
+        </IconButton>
+      </TableCell>
 
       <Popover
-        open={!!open}
-        anchorEl={open}
-        onClose={handleCloseMenu}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
+        open={Boolean(openPopover)}
+        anchorEl={openPopover}
+        onClose={handleClosePopover}
+        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        PaperProps={{
+          sx: { p: 1, width: 140, '& .MuiMenuItem-root': { px: 1, typography: 'body2', borderRadius: 0.75 } },
         }}
       >
-        <MenuItem
-          onClick={() => {
-            onEdit();
-            handleCloseMenu();
-          }}
-        >
-          <Iconify icon="solar:pen-bold" sx={{ mr: 1 }} />
+        <MenuItem onClick={() => { onEdit(); handleClosePopover(); }}>
+          <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
           Edit
         </MenuItem>
-        <MenuItem onClick={handleOpenDeleteModal} sx={{ color: 'error.main' }}>
-          <Iconify icon="solar:trash-bin-trash-bold" sx={{ mr: 1 }} />
+
+        <MenuItem onClick={() => { onDelete(); handleClosePopover(); }} sx={{ color: 'error.main' }}>
+          <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
           Delete
         </MenuItem>
       </Popover>
-
-      {/* Delete Confirmation Modal */}
-      <DeleteConfirmationModal
-        open={deleteModalOpen}
-        onClose={handleCloseDeleteModal}
-        onProceed={handleProceedDelete}
-      />
-    </>
+    </TableRow>
   );
 }
-
-UserTableRow.propTypes = {
-  selected: PropTypes.bool,
-  title: PropTypes.string,
-  assignment: PropTypes.string,
-  handleClick: PropTypes.func,
-  onEdit: PropTypes.func, // Add prop types for onEdit
-  onDelete: PropTypes.func, // Add prop types for onDelete
-};

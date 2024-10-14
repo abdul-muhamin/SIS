@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-
 import {
   Box,
   Grid,
@@ -13,6 +12,8 @@ import {
   DialogTitle,
   DialogActions,
   DialogContent,
+  InputLabel,
+  FormControl
 } from '@mui/material';
 
 const AddStudentModal = ({ open, onClose }) => {
@@ -72,7 +73,6 @@ const AddStudentModal = ({ open, onClose }) => {
       const result = await response.json();
       console.log('Student added successfully:', result);
 
-      // Reset form values
       setFormValues({
         fullName: '',
         email: '',
@@ -87,8 +87,6 @@ const AddStudentModal = ({ open, onClose }) => {
         status: '',
       });
       setSelectedFile(null);
-
-      // Close the modal after successful submission
       onClose();
     } catch (err) {
       console.error('Error adding student:', err.message);
@@ -102,7 +100,6 @@ const AddStudentModal = ({ open, onClose }) => {
       <DialogContent>
         <Box>
           <Grid container spacing={2}>
-            {/* Left Column */}
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
@@ -113,13 +110,14 @@ const AddStudentModal = ({ open, onClose }) => {
                 margin="normal"
               />
               <TextField
+              sx={{marginTop:"25px"}}
                 fullWidth
                 label="Email"
                 name="email"
                 type="email"
                 value={formValues.email}
                 onChange={handleChange}
-                margin="normal"
+                // margin="normal"
               />
               <TextField
                 fullWidth
@@ -155,25 +153,31 @@ const AddStudentModal = ({ open, onClose }) => {
               />
             </Grid>
 
-            {/* Right Column */}
             <Grid item xs={12} md={6}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <TextField name="photo" type="file" onChange={handleFileChange} />
-                {selectedFile && (
-                  <img
-                    src={URL.createObjectURL(selectedFile)}
-                    alt="Selected Preview"
-                    style={{
-                      marginTop: '10px',
-                      width: '100px',
-                      borderRadius: 50,
-                      height: '100px',
-                      objectFit: 'cover',
-                    }}
-                  />
-                )}
-                <Typography align="center">Photo</Typography>
-              </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent:"space-between" }}>
+    <TextField
+      name="photo"
+      type="file"
+      onChange={handleFileChange}
+      sx={{
+        width: '150px', // Adjust the width of the file input
+        // '& input': {
+        //   padding: '6px 8px',
+        // },
+      }}
+      // inputProps={{ style: { padding: '6px 8px' } }} // Ensure consistent padding
+    />
+    <img
+      src={selectedFile ? URL.createObjectURL(selectedFile) : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUbytATKdWLC03SIFVrlgdmQRk65j7uptVXw&s'}
+      alt="Selected Preview"
+      style={{
+        width: '90px',
+        height: '90px',
+        borderRadius: '50%',
+        objectFit: 'cover',
+      }}
+    />
+  </Box>
 
               <TextField
                 fullWidth
@@ -207,19 +211,19 @@ const AddStudentModal = ({ open, onClose }) => {
                 onChange={handleChange}
                 margin="normal"
               />
-
-              {/* Status Select Field */}
-              <Select
-                fullWidth
-                label="Status"
-                name="status"
-                value={formValues.status}
-                onChange={handleChange}
-                margin="normal"
-              >
-                <MenuItem value="Active">Active</MenuItem>
-                <MenuItem value="Banned">Banned</MenuItem>
-              </Select>
+        <FormControl fullWidth sx={{marginTop:"10px"}} >
+        <InputLabel id="demo-simple-select-label">Status</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={formValues.status}
+          label="Age"
+          onChange={handleChange}
+        >
+          <MenuItem value="Active">Active</MenuItem>
+          <MenuItem value="Banned">Banned</MenuItem>
+        </Select>
+      </FormControl>
             </Grid>
           </Grid>
         </Box>
@@ -242,7 +246,6 @@ const AddStudentModal = ({ open, onClose }) => {
   );
 };
 
-// Define prop types for validation
 AddStudentModal.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,

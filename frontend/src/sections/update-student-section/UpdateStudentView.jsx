@@ -30,7 +30,7 @@ export default function UpdateStudentView() {
 
   const handleSubmit = () => {
     // Form submission logic here
-    console.log('Form submitted:', formValues);
+    // console.log('Form submitted:', formValues);
   };
 
   return (

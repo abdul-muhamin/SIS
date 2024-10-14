@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
-
 import {
   Box,
   Grid,
@@ -13,9 +12,11 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 
-const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
+const UpdateStudentModal = ({ open, onClose, user, onUpdate }) => {
   const [formValues, setFormValues] = useState({
     fullName: '',
     email: '',
@@ -27,8 +28,8 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
     motherPhoneNumber: '',
     address: '',
     _id: '',
-    photo: '',
-    status: '', // Default status set to Active
+    photo: '', // Added photo property
+    status: 'Active', // Set default status to Active
   });
 
   const [selectedFile, setSelectedFile] = useState(null);
@@ -46,11 +47,11 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
         fatherPhoneNumber: user.fatherPhoneNumber || '',
         motherPhoneNumber: user.motherPhoneNumber || '',
         address: user.address || '',
-        status: user.status || 'Active', // Set to Active if user status is undefined
+        status: user.status || 'Active',
         _id: user._id || '',
         photo: user.photo ? `http://localhost:3001/uploads/${user.photo}` : '',
       });
-      setSelectedFile(null); // Reset selected file when user changes
+      setSelectedFile(null);
     }
   }, [user, open]);
 
@@ -78,7 +79,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
     formData.append('_id', formValues._id);
 
     if (selectedFile) {
-      formData.append('photo', selectedFile); // Add the selected file
+      formData.append('photo', selectedFile);
     }
 
     try {
@@ -88,11 +89,11 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update teacher');
+        throw new Error('Failed to update student');
       }
 
       const data = await response.json();
-      onUpdateUser(data);
+      onUpdate(data);
       onClose();
     } catch (error) {
       console.error('Error updating student:', error);
@@ -102,12 +103,9 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>Update Student</DialogTitle>
-      <DialogContent sx={{ padding: 2, maxHeight: '600px', overflow: 'hidden' }}>
-        {' '}
-        {/* Adjusted max height */}
-        <Box sx={{ padding: 2 }}>
+      <DialogContent>
+        <Box>
           <Grid container spacing={2}>
-            {/* Left Column */}
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
@@ -124,7 +122,8 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
                 type="email"
                 value={formValues.email}
                 onChange={handleChange}
-                margin="normal"
+                // margin="normal"
+                sx={{marginTop:"25px"}}
               />
               <TextField
                 fullWidth
@@ -160,41 +159,25 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
               />
             </Grid>
 
-            {/* Right Column */}
             <Grid item xs={12} md={6}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                {/* Display existing photo if available */}
-                {formValues.photo && !selectedFile && (
-                  <img
-                    src={formValues.photo}
-                    alt="Existing"
-                    style={{
-                      marginTop: '10px',
-                      width: '100px',
-                      borderRadius: 50,
-                      height: '100px',
-                      objectFit: 'cover',
-                    }}
-                  />
-                )}
-                {/* Input for file upload */}
-                <TextField name="photo" type="file" onChange={handleFileChange} />
-                {/* Display selected photo if a new file has been chosen */}
-                {selectedFile && (
-                  <img
-                    src={URL.createObjectURL(selectedFile)}
-                    alt="Selected Preview"
-                    style={{
-                      marginTop: '10px',
-                      width: '100px',
-                      height: '100px',
-                      objectFit: 'cover',
-                    }}
-                  />
-                )}
-                <Typography align="center">Photo</Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <TextField
+                  name="photo"
+                  type="file"
+                  onChange={handleFileChange}
+                  sx={{ width: '150px' }}
+                />
+                <img
+                  src={selectedFile ? URL.createObjectURL(selectedFile) : formValues.photo || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUbytATKdWLC03SIFVrlgdmQRk65j7uptVXw&s'}
+                  alt="Selected Preview"
+                  style={{
+                    width: '90px',
+                    height: '90px',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                  }}
+                />
               </Box>
-
               <TextField
                 fullWidth
                 label="Father Phone Number"
@@ -210,6 +193,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
                 value={formValues.motherPhoneNumber}
                 onChange={handleChange}
                 margin="normal"
+                
               />
               <TextField
                 fullWidth
@@ -219,27 +203,17 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
                 onChange={handleChange}
                 margin="normal"
               />
-              <Select
-                fullWidth
-                label="Status"
-                name="status"
-                value={formValues.status}
-                onChange={handleChange}
-                margin="normal"
-              >
-                <MenuItem value="Active">Active</MenuItem>
-                <MenuItem value="Banned">Banned</MenuItem>
-              </Select>
-              <TextField
-                sx={{ display: 'none' }}
-                fullWidth
-                label="Teacher ID"
-                name="_id"
-                value={formValues._id}
-                onChange={handleChange}
-                margin="normal"
-                disabled
-              />
+              <FormControl fullWidth sx={{marginTop:"10px"}}>
+                <InputLabel>Status</InputLabel>
+                <Select
+                  name="status"
+                  value={formValues.status}
+                  onChange={handleChange}
+                >
+                  <MenuItem value="Active">Active</MenuItem>
+                  <MenuItem value="Banned">Banned</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
           </Grid>
         </Box>
@@ -256,12 +230,11 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
   );
 };
 
-// Define prop types for validation
 UpdateStudentModal.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  user: PropTypes.object,
-  onUpdateUser: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired,
+  onUpdate: PropTypes.func.isRequired,
 };
 
 export default UpdateStudentModal;

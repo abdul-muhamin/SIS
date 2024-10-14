@@ -40,7 +40,7 @@ const AddStudentModal = ({ open, onClose }) => {
       }
 
       const result = await response.json();
-      console.log('Grades saved successfully:', result);
+      // console.log('Grades saved successfully:', result);
 
       // Clear input fields after submission
       setCourseName('');

@@ -43,7 +43,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
       }
 
       const result = await response.json();
-      console.log('Grades updated successfully:', result);
+      // console.log('Grades updated successfully:', result);
       onUpdateUser(result); // Call the parent update function
       onClose(); // Close the modal after updating
     } catch (error) {

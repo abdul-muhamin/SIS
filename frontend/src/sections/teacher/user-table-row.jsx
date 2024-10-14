@@ -76,7 +76,7 @@ export default function UserTableRow({
     setDeleteModalOpen(false); // Close the modal after confirming delete
   };
   const photoUrl = row.photoUrl || '/default-avatar.jpg';
-  console.log('Photo URL:', photoUrl);
+  // console.log('Photo URL:', photoUrl);
 
   return (
     <>

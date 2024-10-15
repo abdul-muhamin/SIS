@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
+
 import {
   Box,
   Grid,
@@ -8,12 +9,11 @@ import {
   Select,
   MenuItem,
   TextField,
-  Typography,
+  InputLabel,
   DialogTitle,
+  FormControl,
   DialogContent,
   DialogActions,
-  FormControl,
-  InputLabel,
 } from '@mui/material';
 
 const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {

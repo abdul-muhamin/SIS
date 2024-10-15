@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link , useNavigate } from 'react-router-dom';
 import { signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, signInWithEmailAndPassword } from 'firebase/auth';
 
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -7,7 +8,6 @@ import InputAdornment from '@mui/material/InputAdornment';
 import {
   Box,
   Card,
-  Link,
   Stack,
   Button,
   Divider,
@@ -34,7 +34,7 @@ export default function LoginView() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
+  const navigate = useNavigate();
   // Sign in with Email and Password
   const handleLoginWithEmail = async () => {
     setLoading(true);
@@ -161,7 +161,7 @@ export default function LoginView() {
 
           <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
             Don’t have an account?
-            <Link variant="subtitle2" sx={{ ml: 0.5 }}>
+            <Link to="/sign-up" variant="subtitle2" sx={{ ml: 0.5 }}>
               Get started
             </Link>
           </Typography>

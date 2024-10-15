@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { signOut } from "firebase/auth";
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -8,8 +9,9 @@ import { alpha } from '@mui/material/styles';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+
 import { account } from 'src/_mock/account';
-import { signOut } from "firebase/auth";
+
 import  {auth}  from "../../../firebase"; 
 
 

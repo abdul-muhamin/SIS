@@ -8,6 +8,7 @@ const path = require("path");
 const teacherRoutes = require("./routes/teacherRoute")
 const assignmentRoutes = require("./routes/assignmentRoute")
 const gradeRoutes = require("./routes/gradeRoute")
+const userRoutes = require("./routes/userRoute")
 
 const app = express();
 app.use(cors());
@@ -31,6 +32,7 @@ app.use('/api/students', studentRoutes);
 app.use('/api/teachers', teacherRoutes);
 app.use('/api/assignments', assignmentRoutes);
 app.use('/api/grades', gradeRoutes);
+app.use('/api/user', userRoutes);
 
 // Serve uploaded files statically
 app.use('/uploads', express.static('uploads'));

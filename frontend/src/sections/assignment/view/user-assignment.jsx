@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
@@ -11,12 +12,12 @@ import TablePagination from '@mui/material/TablePagination';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
-import { emptyRows, applyFilter, getComparator } from '../utils';
 
 import TableNoData from '../table-no-data';
 import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
-import AddStudentModal from './addStudentModel'; // Import the AddStudentModal
+import AddStudentModal from './addStudentModel';
+import { emptyRows, applyFilter, getComparator } from '../utils'; // Import the AddStudentModal
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
 import UpdateStudentModal from './updateStudentModel'; // Import the UpdateStudentModal

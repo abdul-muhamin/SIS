@@ -18,6 +18,7 @@ export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const StudentAttendence = lazy(()=> import ('src/pages/student-attendence'))
 export const StaffAttendence = lazy(()=> import ('src/pages/staff-attendence'))
+export const SignUp = lazy(()=>import ('src/pages/signup'))
 
 // ----------------------------------------------------------------------
 
@@ -45,11 +46,16 @@ export default function Router() {
         { path: 'grade', element: <GradePage /> },
         { path: 'student-attendence', element: <StudentAttendence /> },
         { path: 'staff-attendence', element: <StaffAttendence /> },
+        // { path: 'sign-up', element: <SignUp /> },
       ],
     },
     {
       path: '/',
       element: <LoginPage />,
+    },
+    {
+      path: '/sign-up',
+      element: <SignUp />,
     },
     {
       path: '404',

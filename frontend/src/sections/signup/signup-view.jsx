@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, signInWithEmailAndPassword } from 'firebase/auth';
+import { Link, useNavigate } from 'react-router-dom';
+import { signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, createUserWithEmailAndPassword } from 'firebase/auth';
 
 import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
@@ -7,41 +8,76 @@ import InputAdornment from '@mui/material/InputAdornment';
 import {
   Box,
   Card,
-  Link,
   Stack,
   Button,
+  Select,
   Divider,
+  MenuItem,
   TextField,
   IconButton,
   Typography,
+  InputLabel,
+  FormControl,
 } from '@mui/material';
-
-import { useRouter } from 'src/routes/hooks';
-
-import { auth } from 'src/firebase';
-// import { auth } from '../../firebase';  // Ensure this path is correct
-
+ 
+import { db, auth } from 'src/firebase'; // Import Firestore instance
+import { doc, setDoc } from 'firebase/firestore'; // Import Firestore methods
 import { bgGradient } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 
-export default function LoginView() {
+import { createRole} from './roleService';
+import { createRolePolicy} from './rolePolicyService';
+import {  createUserPolicy } from './userPolicyService'; // Import role, policy, and user policy functions
+
+export default function SignUpView() {
   const theme = useTheme();
-  const router = useRouter();
+  const navigate = useNavigate(); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [role, setRole] = useState('Student'); // Add role state
 
-  // Sign in with Email and Password
-  const handleLoginWithEmail = async () => {
+  // Sign up with Email and Password
+  const handleSignUpWithEmail = async () => {
     setLoading(true);
     setError('');
+
+    // Check if passwords match
+    if (password !== confirmPassword) {
+      setError("Passwords don't match");
+      setLoading(false);
+      return;
+    }
+
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      router.push('/dashboard');
+      // Create user with email and password
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      
+      // Get the user ID from the created user
+      const userId = userCredential.user.uid;
+
+      // Save user data to Firestore
+      await setDoc(doc(db, 'users', userId), { 
+        email,
+        role, // Save the selected role
+        createdAt: new Date(), // Optional: save the creation date
+      });
+
+      // Assign a role, role policy, and user policy
+      const roleId = userCredential.user.uid;  // Generate role ID
+      const policyId = userCredential.user.uid; // Generate policy ID
+
+      await createRole(roleId, role); // Save role
+      await createRolePolicy(policyId, roleId, '/api/your-url'); // Set role policy
+      await createUserPolicy('userPolicyID-generated', policyId, userId); // Set user policy
+
+      // Navigate to dashboard after successful sign-up
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -49,38 +85,51 @@ export default function LoginView() {
     }
   };
 
-  // Sign in with Google
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
-      router.push('/dashboard');
+      const result = await signInWithPopup(auth, provider);
+      const {user} = result;
+  
+      // Save user data to Firestore
+      await setDoc(doc(db, 'users', user.uid), {
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        provider: 'google',
+        createdAt: new Date(),
+      });
+  
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message);
     }
   };
 
-  // Sign in with Facebook
   const handleFacebookLogin = async () => {
     const provider = new FacebookAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
-      router.push('/dashboard');
+      const result = await signInWithPopup(auth, provider);
+      const {user} = result;
+  
+      // Save user data to Firestore
+      await setDoc(doc(db, 'users', user.uid), {
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        provider: 'facebook',
+        createdAt: new Date(),
+      });
+  
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message);
     }
   };
 
-  // Sign in with Twitter
-  // const handleTwitterLogin = async () => {
-  //   const provider = new TwitterAuthProvider();
-  //   try {
-  //     await signInWithPopup(auth, provider);
-  //     router.push('/dashboard');
-  //   } catch (err) {
-  //     setError(err.message);
-  //   }
-  // };
+  const handleChange = (event) => {
+    setRole(event.target.value); // Handle role change
+  };
 
   const renderForm = (
     <>
@@ -108,12 +157,13 @@ export default function LoginView() {
             ),
           }}
         />
+
         <TextField
-          name="password"
+          name="confirmPassword"
           label="Confirm Password"
           type={showPassword ? 'text' : 'password'}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -124,6 +174,21 @@ export default function LoginView() {
             ),
           }}
         />
+
+        <FormControl fullWidth>
+          <InputLabel id="role-select-label">Role</InputLabel>
+          <Select
+            labelId="role-select-label"
+            id="role-select"
+            value={role}
+            label="Role"
+            onChange={handleChange}
+          >
+            <MenuItem value="Student">Student</MenuItem>
+            <MenuItem value="Staff">Staff</MenuItem>
+            <MenuItem value="Super Admin">Super Admin</MenuItem>
+          </Select>
+        </FormControl>
       </Stack>
 
       {error && <Typography color="error">{error}</Typography>}
@@ -140,9 +205,9 @@ export default function LoginView() {
         variant="contained"
         color="inherit"
         loading={loading}
-        onClick={handleLoginWithEmail}
+        onClick={handleSignUpWithEmail}
       >
-        SignUp
+        Sign Up
       </LoadingButton>
     </>
   );
@@ -173,11 +238,11 @@ export default function LoginView() {
             maxWidth: 420,
           }}
         >
-          <Typography variant="h4">Sign in to Minimal</Typography>
+          <Typography variant="h4">Sign up for Minimal</Typography>
 
           <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
-            have an account?
-            <Link variant="subtitle2" sx={{ ml: 0.5 }}>
+            Already have an account?
+            <Link to="/" variant="subtitle2" style={{ marginLeft: 2 }}>
               Login
             </Link>
           </Typography>
@@ -204,24 +269,9 @@ export default function LoginView() {
             >
               <Iconify icon="eva:facebook-fill" color="#1877F2" />
             </Button>
-
-            <Button
-              fullWidth
-              size="large"
-              color="inherit"
-              variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-              // onClick={handleTwitterLogin}
-            >
-              <Iconify icon="eva:twitter-fill" color="#1C9CEA" />
-            </Button>
           </Stack>
 
-          <Divider sx={{ my: 3 }}>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              OR
-            </Typography>
-          </Divider>
+          <Divider sx={{ my: 3 }}>Or</Divider>
 
           {renderForm}
         </Card>

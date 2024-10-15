@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import Stack from '@mui/material/Stack';
 import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import MenuItem from '@mui/material/MenuItem';
-import IconButton from '@mui/material/IconButton';
 import TableCell from '@mui/material/TableCell';
+import IconButton from '@mui/material/IconButton';
 
 import Iconify from 'src/components/iconify';
 

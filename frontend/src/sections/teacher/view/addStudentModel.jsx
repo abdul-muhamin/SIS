@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+
 import {
   Box,
   Grid,
@@ -9,11 +10,11 @@ import {
   MenuItem,
   TextField,
   Typography,
-  DialogTitle,
-  DialogActions,
-  DialogContent,
   InputLabel,
-  FormControl
+  DialogTitle,
+  FormControl,
+  DialogActions,
+  DialogContent
 } from '@mui/material';
 
 const AddStudentModal = ({ open, onClose }) => {

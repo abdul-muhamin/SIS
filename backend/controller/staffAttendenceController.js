@@ -13,7 +13,7 @@ const formatDate = (dateInput) => {
 
 // Add or update attendance for a specific student
 exports.saveOrUpdateAttendance = async (req, res) => {
-  const { studentId } = req.params;
+  const { staffId } = req.params;
   let { date, clockIn, clockOut, leaveType } = req.body;
 
   try {
@@ -21,7 +21,7 @@ exports.saveOrUpdateAttendance = async (req, res) => {
     date = formatDate(date);
 
     // Find the student by studentId
-    const attendanceRecord = await Attendance.findOne({ studentId });
+    const attendanceRecord = await Attendance.findOne({ staffId });
 
     if (attendanceRecord) {
       // Check if there's an attendance for the specified date
@@ -63,7 +63,7 @@ exports.saveOrUpdateAttendance = async (req, res) => {
     } else {
       // Create a new record with the attendance if student doesn't exist
       const newAttendance = new Attendance({
-        studentId,
+        staffId,
         attendances: [
           {
             date,
@@ -95,7 +95,7 @@ exports.saveOrUpdateAttendance = async (req, res) => {
 
 // Get attendance for a student by date
 exports.getAttendanceByDate = async (req, res) => {
-  const { studentId } = req.params;
+  const { staffId } = req.params;
   let { date } = req.query;
 
   try {
@@ -104,7 +104,7 @@ exports.getAttendanceByDate = async (req, res) => {
 
     // Find attendance record for the student
     const attendanceRecord = await Attendance.findOne(
-      { studentId },
+      { staffId },
       // { "attendances._id": 0, "attendances.id": 0 } // Exclude _id and id from attendances array
     );
 

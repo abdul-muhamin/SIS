@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const staffSchema = new mongoose.Schema({
-  teacherId: {
+  staffId: {
     type: String,
     // required: true,
   },

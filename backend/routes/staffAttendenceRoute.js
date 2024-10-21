@@ -5,10 +5,10 @@ const router = express.Router();
 const staffAttendanceController = require('../controller/staffAttendenceController');
 
 // Get attendance for a student on a specific date
-router.get('/teachers/:studentId/teacherAttendance', staffAttendanceController.getAttendanceByDate);
+router.get('/teachers/:staffId/teacherAttendance', staffAttendanceController.getAttendanceByDate);
 
 // Save or update attendance for a student
-router.post('/teachers/:studentId/teacherAttendance', staffAttendanceController.saveOrUpdateAttendance);
+router.post('/teachers/:staffId/teacherAttendance', staffAttendanceController.saveOrUpdateAttendance);
 
 // Delete attendance for a student on a specific date
 // router.delete('/students/:studentId/attendance', studentAttendanceController.deleteAttendanceByDate);

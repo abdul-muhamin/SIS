@@ -9,6 +9,9 @@ const teacherRoutes = require("./routes/teacherRoute")
 const assignmentRoutes = require("./routes/assignmentRoute")
 const gradeRoutes = require("./routes/gradeRoute")
 const userRoutes = require("./routes/userRoute")
+const userDetailsRoutes = require('./routes/userDetailsRoute');
+const studnetAttendenceRoute = require('./routes/studentAttendenceRoute')
+const staffAttendenceRoute = require('./routes/staffAttendenceRoute')
 
 const app = express();
 app.use(cors());
@@ -33,6 +36,9 @@ app.use('/api/teachers', teacherRoutes);
 app.use('/api/assignments', assignmentRoutes);
 app.use('/api/grades', gradeRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api',userDetailsRoutes );
+app.use('/api',studnetAttendenceRoute );
+app.use('/api',staffAttendenceRoute );
 
 // Serve uploaded files statically
 app.use('/uploads', express.static('uploads'));

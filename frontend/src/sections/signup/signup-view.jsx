@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { Link, useNavigate } from 'react-router-dom';
 import { signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, createUserWithEmailAndPassword } from 'firebase/auth';
 
@@ -62,19 +63,20 @@ export default function SignUpView() {
       const userId = userCredential.user.uid;
 
       // Save user data to Firestore
-      await setDoc(doc(db, 'users', userId), { 
+      await setDoc(doc(db, 'user', userId), { 
         email,
         role, // Save the selected role
         createdAt: new Date(), // Optional: save the creation date
       });
 
       // Assign a role, role policy, and user policy
-      const roleId = userCredential.user.uid;  // Generate role ID
-      const policyId = userCredential.user.uid; // Generate policy ID
+      const roleId = userCredential.user.uid;  // Keep the role ID as user ID
+      const policyId = uuidv4(); // Generate a unique policy ID for the role policy
+      const userPolicyId = uuidv4(); // Generate a unique user policy ID
 
       await createRole(roleId, role); // Save role
       await createRolePolicy(policyId, roleId, '/api/your-url'); // Set role policy
-      await createUserPolicy('userPolicyID-generated', policyId, userId); // Set user policy
+      await createUserPolicy(userPolicyId, policyId, userId); // Set user policy
 
       // Navigate to dashboard after successful sign-up
       navigate('/dashboard');
@@ -186,6 +188,7 @@ export default function SignUpView() {
           >
             <MenuItem value="Student">Student</MenuItem>
             <MenuItem value="Staff">Staff</MenuItem>
+            <MenuItem value="Admin">Admin</MenuItem>
             <MenuItem value="Super Admin">Super Admin</MenuItem>
           </Select>
         </FormControl>

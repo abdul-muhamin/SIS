@@ -1,19 +1,17 @@
-import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
-
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types'; // Import PropTypes
 import {
-  Grid,
-  Button,
   Dialog,
-  TextField,
-  Typography,
   DialogTitle,
-  DialogActions,
   DialogContent,
+  DialogActions,
+  Button,
+  Typography,
+  Grid,
+  TextField,
 } from '@mui/material';
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 const AddStudentModal = ({ open, onClose, currentUser, attendanceData, setAttendanceData }) => {
   const [formValues, setFormValues] = useState({
@@ -23,11 +21,10 @@ const AddStudentModal = ({ open, onClose, currentUser, attendanceData, setAttend
     leaveType: '',
   });
 
-  const [leaveMessage, setLeaveMessage] = useState(''); 
+  const [leaveMessage, setLeaveMessage] = useState('');
   const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(''); 
+  const [successMessage, setSuccessMessage] = useState('');
 
-  // Fetch currentUser's attendance data when modal opens
   useEffect(() => {
     if (open && currentUser) {
       const existingData = attendanceData[currentUser._id] || {};
@@ -43,63 +40,58 @@ const AddStudentModal = ({ open, onClose, currentUser, attendanceData, setAttend
     }
   }, [currentUser, open, attendanceData]);
 
-  // Handle Clock-In click
   const handleClockIn = async () => {
     if (!formValues.date) {
       setError('Please set the date and time first!');
       return;
     }
 
-    const formattedClockIn = new Date(formValues.date).toLocaleTimeString();
+    const formattedClockIn = new Date(formValues.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     setFormValues((prev) => ({ ...prev, clockIn: formattedClockIn }));
     setError(null);
 
     await saveAttendanceData('clockIn', formattedClockIn);
   };
 
-  // Handle Clock-Out click
   const handleClockOut = async () => {
     if (!formValues.clockIn) {
       setError('Please clock in first before clocking out!');
       return;
     }
 
-    const formattedClockOut = new Date(formValues.date).toLocaleTimeString();
+    const formattedClockOut = new Date(formValues.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     setFormValues((prev) => ({ ...prev, clockOut: formattedClockOut }));
     setError(null);
 
     await saveAttendanceData('clockOut', formattedClockOut);
   };
 
-  // Handle Apply Full Leave click
   const handleApplyFullLeave = async () => {
     if (!formValues.date) {
       setError('Please set the date first!');
       return;
     }
 
-    setFormValues({ ...formValues, leaveType: 'Full Leave' });
+    setFormValues({ ...formValues, leaveType: 'FULL_LEAVE' });
     setLeaveMessage(`${currentUser.fullName} applied for full leave.`);
     setError(null);
 
-    await saveAttendanceData('leaveType', 'Full Leave');
+    await saveAttendanceData('leaveType', 'FULL_LEAVE');
   };
 
-  // Handle Apply Half Leave click
   const handleApplyHalfLeave = async () => {
     if (!formValues.date) {
       setError('Please set the date first!');
       return;
     }
 
-    setFormValues({ ...formValues, leaveType: 'Half Leave' });
+    setFormValues({ ...formValues, leaveType: 'HALF_LEAVE' });
     setLeaveMessage(`${currentUser.fullName} applied for half leave.`);
     setError(null);
 
-    await saveAttendanceData('leaveType', 'Half Leave');
+    await saveAttendanceData('leaveType', 'HALF_LEAVE');
   };
 
-  // Save attendance data to database
   const saveAttendanceData = async (key, value) => {
     try {
       const updatedAttendance = {
@@ -111,7 +103,7 @@ const AddStudentModal = ({ open, onClose, currentUser, attendanceData, setAttend
       };
       setAttendanceData(updatedAttendance);
 
-      const response = await fetch(`http://localhost:3001/api/teachers/${currentUser._id}/attendance`, {
+      const response = await fetch(`http://localhost:3001/api/teachers/${currentUser._id}/teacherAttendance`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -130,97 +122,152 @@ const AddStudentModal = ({ open, onClose, currentUser, attendanceData, setAttend
     }
   };
 
-  // Handle change for date picker
-  const handleDateChange = (newDate) => {
+//   const handleDateChange = (newDate) => {
+//     setFormValues({ ...formValues, date: newDate });
+//   };
+const handleDateChange = async (newDate) => {
     setFormValues({ ...formValues, date: newDate });
+  
+    
+    if (newDate) {
+      try {
+        
+        const response = await fetch(`http://localhost:3001/api/teachers/${currentUser._id}/teacherAttendance?date=${newDate.toISOString()}`);
+        
+        // Parse the response JSON
+        const data = await response.json();
+  
+        
+        if (data) {
+          setFormValues((prev) => ({
+            ...prev,
+            clockIn: data.clockIn || '',
+            clockOut: data.clockOut || '',
+            leaveType: data.leaveType || '',
+          }));
+        } else {
+          
+          setFormValues((prev) => ({
+            ...prev,
+            clockIn: '',
+            clockOut: '',
+            leaveType: '',
+          }));
+        }
+      } catch (err) {
+        console.error('Error fetching attendance data:', err);
+        setError('Failed to fetch attendance data');
+      }
+    }
   };
+  
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Dialog open={open} onClose={onClose}>
-        <DialogTitle>Add Attendance for {currentUser?.fullName}</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={2} sx={{ marginTop: '10px' }}>
-            <Grid item xs={12}>
-              <DateTimePicker
-                label="Date and Time"
-                value={formValues.date}
-                onChange={handleDateChange}
-                renderInput={(props) => <TextField {...props} fullWidth />}
-              />
-            </Grid>
+  <Dialog open={open} onClose={onClose}>
+    <DialogTitle>Add Attendance for {currentUser?.fullName}</DialogTitle>
+    <DialogContent>
+      <Grid container spacing={2} sx={{ marginTop: '10px' }}>
+        <Grid item xs={12}>
+          <DateTimePicker
+            label="Date and Time"
+            value={formValues.date}
+            onChange={handleDateChange}
+            renderInput={(props) => <TextField {...props} fullWidth />}
+          />
+        </Grid>
 
-            <Grid item xs={6}>
-              <Button variant="contained" color="primary" fullWidth onClick={handleClockIn}>
-                Clock In
-              </Button>
-            </Grid>
-            <Grid item xs={6}>
-              <Button variant="contained" color="primary" fullWidth onClick={handleClockOut}>
-                Clock Out
-              </Button>
-            </Grid>
+        {/* Buttons for Clock In and Clock Out */}
+        <Grid item xs={6}>
+          <Button variant="contained" color="primary" fullWidth onClick={handleClockIn}>
+            Clock In
+          </Button>
+        </Grid>
+        <Grid item xs={6}>
+          <Button variant="contained" color="primary" fullWidth onClick={handleClockOut}>
+            Clock Out
+          </Button>
+        </Grid>
 
-            {formValues.clockIn && (
-              <Grid item xs={6}>
-                <Typography variant="body1" sx={{ color: 'red' }} >Clock In: {formValues.clockIn}</Typography>
-              </Grid>
-            )}
-            {formValues.clockOut && (
-              <Grid item xs={6}>
-                <Typography variant="body1" sx={{ color: 'red' }}>Clock Out: {formValues.clockOut}</Typography>
-              </Grid>
-            )}
-
-            <Grid item xs={6}>
-              <Button variant="contained" color="secondary" fullWidth onClick={handleApplyFullLeave}>
-                Apply Full Leave
-              </Button>
-            </Grid>
-
-            <Grid item xs={6}>
-              <Button variant="contained" color="secondary" fullWidth onClick={handleApplyHalfLeave}>
-                Apply Half Leave
-              </Button>
-            </Grid>
-
-            {leaveMessage && (
-              <Grid item xs={12}>
-                <Typography variant="body1" sx={{ color: 'blue' }}>
-                  {leaveMessage}
-                </Typography>
-              </Grid>
-            )}
-
-            {error && (
-              <Grid item xs={12}>
-                <Typography variant="body2" color="error">
-                  {error}
-                </Typography>
-              </Grid>
-            )}
-
-            {successMessage && (
-              <Grid item xs={12}>
-                <Typography variant="body2" color="success">
-                  {successMessage}
-                </Typography>
-              </Grid>
-            )}
+        {/* Display Clock In and Clock Out times conditionally */}
+        {formValues.clockIn && !formValues.clockOut ? (
+          <Grid item xs={12}>
+            {/* Full width Clock In if Clock Out is not clicked */}
+            <Typography variant="body1" sx={{ color: 'green' }}>
+              Clock In: {formValues.clockIn}
+            </Typography>
           </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={onClose}>Close</Button>
-        </DialogActions>
-      </Dialog>
-    </LocalizationProvider>
+        ) : (
+          <>
+            {/* Split Clock In and Clock Out evenly when both are clicked */}
+            <Grid item xs={6}>
+              <Typography variant="body1" sx={{ color: 'green' }}>
+                Clock In: {formValues.clockIn}
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant="body1" sx={{ color: 'red' }}>
+                Clock Out: {formValues.clockOut}
+              </Typography>
+            </Grid>
+          </>
+        )}
+
+        {/* Apply Full and Half Leave */}
+        <Grid item xs={6}>
+          <Button variant="contained" color="secondary" fullWidth onClick={handleApplyFullLeave}>
+            Apply Full Leave
+          </Button>
+        </Grid>
+        <Grid item xs={6}>
+          <Button variant="contained" color="secondary" fullWidth onClick={handleApplyHalfLeave}>
+            Apply Half Leave
+          </Button>
+        </Grid>
+
+        {/* Leave Message */}
+        {leaveMessage && (
+          <Grid item xs={12}>
+            <Typography variant="body1" sx={{ color: 'blue' }}>
+              {leaveMessage}
+            </Typography>
+          </Grid>
+        )}
+
+        {/* Error and Success Messages */}
+        {error && (
+          <Grid item xs={12}>
+            <Typography variant="body2" color="error">
+              {error}
+            </Typography>
+          </Grid>
+        )}
+
+        {successMessage && (
+          <Grid item xs={12}>
+            <Typography variant="body2" color="success">
+              {successMessage}
+            </Typography>
+          </Grid>
+        )}
+      </Grid>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={onClose}>Close</Button>
+    </DialogActions>
+  </Dialog>
+</LocalizationProvider>
   );
 };
 
+// PropTypes validation
 AddStudentModal.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  currentUser: PropTypes.object,
+  currentUser: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    fullName: PropTypes.string.isRequired,
+  }).isRequired,
   attendanceData: PropTypes.object.isRequired,
   setAttendanceData: PropTypes.func.isRequired,
 };

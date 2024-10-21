@@ -172,7 +172,7 @@ export default function UserPage() {
   const handleDeleteAll = async () => {
     try {
       const deleteRequests = selected.map((id) =>
-        fetch(`http://localhost:3001/api/students/${id}`, {
+        fetch(`http://localhost:3001/api/teachers/${id}`, {
           method: 'DELETE',
         })
         

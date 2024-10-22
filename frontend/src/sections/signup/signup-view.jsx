@@ -43,49 +43,56 @@ export default function SignUpView() {
   const [error, setError] = useState('');
   const [role, setRole] = useState('Student'); // Add role state
 
-  // Sign up with Email and Password
-  const handleSignUpWithEmail = async () => {
-    setLoading(true);
-    setError('');
+// Sign up with Email and Password
+const handleSignUpWithEmail = async () => {
+  setLoading(true);
+  setError('');
 
-    // Check if passwords match
-    if (password !== confirmPassword) {
-      setError("Passwords don't match");
-      setLoading(false);
-      return;
-    }
+  // Check if passwords match
+  if (password !== confirmPassword) {
+    setError("Passwords don't match");
+    setLoading(false);
+    return;
+  }
 
-    try {
-      // Create user with email and password
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      
-      // Get the user ID from the created user
-      const userId = userCredential.user.uid;
+  try {
+    // Create user with email and password
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    
+    // Get the user ID from the created user
+    const userId = userCredential.user.uid;
 
-      // Save user data to Firestore
-      await setDoc(doc(db, 'user', userId), { 
-        email,
-        role, // Save the selected role
-        createdAt: new Date(), // Optional: save the creation date
-      });
+    // Convert role to uppercase before saving
+    const uppercaseRole = role.toUpperCase();
 
-      // Assign a role, role policy, and user policy
-      const roleId = userCredential.user.uid;  // Keep the role ID as user ID
-      const policyId = uuidv4(); // Generate a unique policy ID for the role policy
-      const userPolicyId = uuidv4(); // Generate a unique user policy ID
+    // Use the userId as the roleId (or generate a different roleId if needed)
+    const roleId = uuidv4(); // Alternatively, use a different role ID logic if necessary
 
-      await createRole(roleId, role); // Save role
-      await createRolePolicy(policyId, roleId, '/api/your-url'); // Set role policy
-      await createUserPolicy(userPolicyId, policyId, userId); // Set user policy
+    // Save user data to Firestore with roleId
+    await setDoc(doc(db, 'users', userId), { 
+      email,
+      role: uppercaseRole, // Save the role in uppercase
+      roleId, // Add roleId to Firestore
+      createdAt: new Date(), // Optional: save the creation date
+    });
 
-      // Navigate to dashboard after successful sign-up
-      navigate('/dashboard');
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Assign a role, role policy, and user policy
+    const policyId = uuidv4(); // Generate a unique policy ID for the role policy
+    const userPolicyId = uuidv4(); // Generate a unique user policy ID
+
+    await createRole(roleId, uppercaseRole); // Save role in uppercase
+    await createRolePolicy(policyId, roleId, '/api/your-url'); // Set role policy
+    await createUserPolicy(userPolicyId, policyId, userId); // Set user policy
+
+    // Navigate to dashboard after successful sign-up
+    navigate('/dashboard');
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();

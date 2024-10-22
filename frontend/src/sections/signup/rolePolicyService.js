@@ -4,7 +4,7 @@ import { db } from 'src/firebase';
 
 export const createRolePolicy = async (policyId, roleId, apiUrl) => {
   try {
-    await setDoc(doc(db, 'rolePolicie', policyId), {
+    await setDoc(doc(db, 'rolePolicies', policyId), {
       policyId,
       roleId,
       apiUrl,

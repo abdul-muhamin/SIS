@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Link, useNavigate } from 'react-router-dom';
-import { signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, createUserWithEmailAndPassword } from 'firebase/auth';
+import {
+  signInWithPopup,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  createUserWithEmailAndPassword,
+} from 'firebase/auth';
 
 import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
@@ -20,7 +25,7 @@ import {
   InputLabel,
   FormControl,
 } from '@mui/material';
- 
+
 import { db, auth } from 'src/firebase'; // Import Firestore instance
 import { doc, setDoc } from 'firebase/firestore'; // Import Firestore methods
 import { bgGradient } from 'src/theme/css';
@@ -28,13 +33,13 @@ import { bgGradient } from 'src/theme/css';
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 
-import { createRole} from './roleService';
-import { createRolePolicy} from './rolePolicyService';
-import {  createUserPolicy } from './userPolicyService'; // Import role, policy, and user policy functions
+import { createRole } from './roleService';
+import { createRolePolicy } from './rolePolicyService';
+import { createUserPolicy } from './userPolicyService'; // Import role, policy, and user policy functions
 
 export default function SignUpView() {
   const theme = useTheme();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -43,63 +48,65 @@ export default function SignUpView() {
   const [error, setError] = useState('');
   const [role, setRole] = useState('Student'); // Add role state
 
-// Sign up with Email and Password
-const handleSignUpWithEmail = async () => {
-  setLoading(true);
-  setError('');
+  // Sign up with Email and Password
+  const handleSignUpWithEmail = async () => {
+    setLoading(true);
+    setError('');
 
-  // Check if passwords match
-  if (password !== confirmPassword) {
-    setError("Passwords don't match");
-    setLoading(false);
-    return;
-  }
+    // Check if passwords match
+    if (password !== confirmPassword) {
+      setError("Passwords don't match");
+      setLoading(false);
+      return;
+    }
 
-  try {
-    // Create user with email and password
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    
-    // Get the user ID from the created user
-    const userId = userCredential.user.uid;
+    try {
+      // Create user with email and password
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-    // Convert role to uppercase before saving
-    const uppercaseRole = role.toUpperCase();
+      // Get the user ID from the created user
+      const userId = userCredential.user.uid;
 
-    // Use the userId as the roleId (or generate a different roleId if needed)
-    const roleId = uuidv4(); // Alternatively, use a different role ID logic if necessary
+      // Convert role to uppercase before saving
+      const uppercaseRole = role.toUpperCase();
 
-    // Save user data to Firestore with roleId
-    await setDoc(doc(db, 'users', userId), { 
-      email,
-      role: uppercaseRole, // Save the role in uppercase
-      roleId, // Add roleId to Firestore
-      createdAt: new Date(), // Optional: save the creation date
-    });
+      // Use the userId as the roleId (or generate a different roleId if needed)
+      const roleId = uuidv4(); // Alternatively, use a different role ID logic if necessary
 
-    // Assign a role, role policy, and user policy
-    const policyId = uuidv4(); // Generate a unique policy ID for the role policy
-    const userPolicyId = uuidv4(); // Generate a unique user policy ID
+      // Save user data to Firestore with roleId
+      //1.
+      await setDoc(doc(db, 'users', userId), {
+        email,
+        role: uppercaseRole, // Save the role in uppercase
+        roleId, // Add roleId to Firestore
+        createdAt: new Date(), // Optional: save the creation date
+        Name: email.toUpperCase(),
+      });
 
-    await createRole(roleId, uppercaseRole); // Save role in uppercase
-    await createRolePolicy(policyId, roleId, '/api/your-url'); // Set role policy
-    await createUserPolicy(userPolicyId, policyId, userId); // Set user policy
+      // Assign a role, role policy, and user policy
+      const policyId = uuidv4(); // Generate a unique policy ID for the role policy
+      const userPolicyId = uuidv4(); // Generate a unique user policy ID
 
-    // Navigate to dashboard after successful sign-up
-    navigate('/dashboard');
-  } catch (err) {
-    setError(err.message);
-  } finally {
-    setLoading(false);
-  }
-};
+      //2. Get role policy for user and its Role ==> []
+      //3. for loop {createUserPolicy}
 
+      //await createUserPolicy(userPolicyId, policyId, userId); // Set user policy
+
+      // Navigate to dashboard after successful sign-up
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
-      const {user} = result;
-  
+      const { user } = result;
+
       // Save user data to Firestore
       await setDoc(doc(db, 'users', user.uid), {
         email: user.email,
@@ -108,7 +115,7 @@ const handleSignUpWithEmail = async () => {
         provider: 'google',
         createdAt: new Date(),
       });
-  
+
       navigate('/dashboard');
     } catch (err) {
       setError(err.message);
@@ -119,8 +126,8 @@ const handleSignUpWithEmail = async () => {
     const provider = new FacebookAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
-      const {user} = result;
-  
+      const { user } = result;
+
       // Save user data to Firestore
       await setDoc(doc(db, 'users', user.uid), {
         email: user.email,
@@ -129,7 +136,7 @@ const handleSignUpWithEmail = async () => {
         provider: 'facebook',
         createdAt: new Date(),
       });
-  
+
       navigate('/dashboard');
     } catch (err) {
       setError(err.message);

@@ -12,6 +12,7 @@ const userRoutes = require("./routes/userRoute")
 const userDetailsRoutes = require('./routes/userDetailsRoute');
 const studnetAttendenceRoute = require('./routes/studentAttendenceRoute')
 const staffAttendenceRoute = require('./routes/staffAttendenceRoute')
+const rolesRoute = require('./routes/roleRoute')
 
 const app = express();
 app.use(cors());
@@ -39,6 +40,7 @@ app.use('/api/user', userRoutes);
 app.use('/api',userDetailsRoutes );
 app.use('/api',studnetAttendenceRoute );
 app.use('/api',staffAttendenceRoute );
+app.use('/api/roles',rolesRoute );
 
 // Serve uploaded files statically
 app.use('/uploads', express.static('uploads'));

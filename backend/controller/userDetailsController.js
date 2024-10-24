@@ -5,7 +5,7 @@ const getUserDetails = async (req, res) => {
     const { userId } = req.params;
 
     // Fetch user details
-    const userDoc = await db.collection('user').doc(userId).get();
+    const userDoc = await db.collection('users').doc(userId).get();
     if (!userDoc.exists) {
       return res.status(404).json({ message: 'User not found' });
     }

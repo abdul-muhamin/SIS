@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types'; // Import PropTypes
+import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react'; // Import PropTypes
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import {
+  Grid,
   Dialog,
+  Button,
+  TextField,
+  Typography,
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button,
-  Typography,
-  Grid,
-  TextField,
 } from '@mui/material';
-import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 const AddStudentModal = ({ open, onClose, currentUser, attendanceData, setAttendanceData }) => {
   const [formValues, setFormValues] = useState({

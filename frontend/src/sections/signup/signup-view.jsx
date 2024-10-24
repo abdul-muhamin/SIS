@@ -1,15 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Link, useNavigate } from 'react-router-dom';
 import {
+  createUserWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
   FacebookAuthProvider,
-  createUserWithEmailAndPassword,
 } from 'firebase/auth';
-
+import { doc, setDoc } from 'firebase/firestore';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
 import {
   Box,
@@ -25,17 +24,10 @@ import {
   InputLabel,
   FormControl,
 } from '@mui/material';
-
-import { db, auth } from 'src/firebase'; // Import Firestore instance
-import { doc, setDoc } from 'firebase/firestore'; // Import Firestore methods
-import { bgGradient } from 'src/theme/css';
-
+import { alpha, useTheme } from '@mui/material/styles';
+import { db, auth } from 'src/firebase';
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
-
-import { createRole } from './roleService';
-import { createRolePolicy } from './rolePolicyService';
-import { createUserPolicy } from './userPolicyService'; // Import role, policy, and user policy functions
 
 export default function SignUpView() {
   const theme = useTheme();
@@ -46,14 +38,49 @@ export default function SignUpView() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [role, setRole] = useState('Student'); // Add role state
+  const [role, setRole] = useState('');
+  const [roles, setRoles] = useState([]);
+  const [rolePolicies, setRolePolicies] = useState([]);
+
+  // Fetch roles and policies dynamically
+  useEffect(() => {
+    const fetchRolesAndPolicies = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/roles/getRolesAndPolicies');
+        
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          console.log('Fetched roles data:', data);
+          setRoles(data.roles || []);
+        } else {
+          throw new Error('Response is not in JSON format');
+        }
+      } catch (err) {
+        console.error('Error fetching roles:', err.message || err);
+      }
+    };
+  
+    fetchRolesAndPolicies();
+  }, []);
+
+  // Fetch role policies when a role is selected
+  const fetchRolePolicies = async (roleId) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/roles/getRolePolicies/${roleId}`);
+      const data = await response.json();
+      console.log('Fetched role policies:', data);
+      setRolePolicies(data.policies || []);
+    } catch (err) {
+      console.error('Error fetching role policies:', err.message || err);
+    }
+  };
 
   // Sign up with Email and Password
   const handleSignUpWithEmail = async () => {
     setLoading(true);
     setError('');
 
-    // Check if passwords match
     if (password !== confirmPassword) {
       setError("Passwords don't match");
       setLoading(false);
@@ -63,36 +90,32 @@ export default function SignUpView() {
     try {
       // Create user with email and password
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-
-      // Get the user ID from the created user
       const userId = userCredential.user.uid;
 
-      // Convert role to uppercase before saving
-      const uppercaseRole = role.toUpperCase();
+      // Get the selected role and policy
+      const selectedRole = roles.find((r) => r.roleName === role);
+      const selectedRoleId = selectedRole?.roleId || uuidv4();
+      const selectedPolicy = rolePolicies[0]; // Assuming you want the first policy
+      const policyId = selectedPolicy?.policyId || uuidv4();
 
-      // Use the userId as the roleId (or generate a different roleId if needed)
-      const roleId = uuidv4(); // Alternatively, use a different role ID logic if necessary
-
-      // Save user data to Firestore with roleId
-      //1.
+      // Save the user data in the 'users' collection
       await setDoc(doc(db, 'users', userId), {
         email,
-        role: uppercaseRole, // Save the role in uppercase
-        roleId, // Add roleId to Firestore
-        createdAt: new Date(), // Optional: save the creation date
-        Name: email.toUpperCase(),
+        role,
+        roleId: selectedRoleId,
+        createdAt: new Date(),
       });
 
-      // Assign a role, role policy, and user policy
-      const policyId = uuidv4(); // Generate a unique policy ID for the role policy
-      const userPolicyId = uuidv4(); // Generate a unique user policy ID
+      // Create a new entry in the 'userPolicies' collection
+      const userPolicyId = uuidv4(); // Generate a unique ID for this entry
+      await setDoc(doc(db, 'userPolicies', userPolicyId), {
+        userId,
+        roleId: selectedRoleId,
+        policyId,
+        createdAt: new Date(),
+      });
 
-      //2. Get role policy for user and its Role ==> []
-      //3. for loop {createUserPolicy}
-
-      //await createUserPolicy(userPolicyId, policyId, userId); // Set user policy
-
-      // Navigate to dashboard after successful sign-up
+      // Navigate to the dashboard after successful sign-up
       navigate('/dashboard');
     } catch (err) {
       setError(err.message);
@@ -107,7 +130,6 @@ export default function SignUpView() {
       const result = await signInWithPopup(auth, provider);
       const { user } = result;
 
-      // Save user data to Firestore
       await setDoc(doc(db, 'users', user.uid), {
         email: user.email,
         displayName: user.displayName,
@@ -128,7 +150,6 @@ export default function SignUpView() {
       const result = await signInWithPopup(auth, provider);
       const { user } = result;
 
-      // Save user data to Firestore
       await setDoc(doc(db, 'users', user.uid), {
         email: user.email,
         displayName: user.displayName,
@@ -143,8 +164,15 @@ export default function SignUpView() {
     }
   };
 
+  // Handle role change and fetch role policies
   const handleChange = (event) => {
-    setRole(event.target.value); // Handle role change
+    const selectedRole = event.target.value;
+    setRole(selectedRole);
+
+    const selectedRoleId = roles.find((r) => r.roleName === selectedRole)?.roleId;
+    if (selectedRoleId) {
+      fetchRolePolicies(selectedRoleId);
+    }
   };
 
   const renderForm = (
@@ -155,6 +183,8 @@ export default function SignUpView() {
           label="Email address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          error={Boolean(error)}
+          helperText={error}
         />
 
         <TextField
@@ -163,6 +193,8 @@ export default function SignUpView() {
           type={showPassword ? 'text' : 'password'}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          error={Boolean(error)}
+          helperText={error}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -180,6 +212,8 @@ export default function SignUpView() {
           type={showPassword ? 'text' : 'password'}
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
+          error={Boolean(error)}
+          helperText={error}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -200,15 +234,14 @@ export default function SignUpView() {
             label="Role"
             onChange={handleChange}
           >
-            <MenuItem value="Student">Student</MenuItem>
-            <MenuItem value="Staff">Staff</MenuItem>
-            <MenuItem value="Admin">Admin</MenuItem>
-            <MenuItem value="Super Admin">Super Admin</MenuItem>
+            {roles.map((roleType) => (
+              <MenuItem key={roleType.roleId} value={roleType.roleName}>
+                {roleType.roleName}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
       </Stack>
-
-      {error && <Typography color="error">{error}</Typography>}
 
       <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
         <Link variant="subtitle2" underline="hover">
@@ -230,15 +263,7 @@ export default function SignUpView() {
   );
 
   return (
-    <Box
-      sx={{
-        ...bgGradient({
-          color: alpha(theme.palette.background.default, 0.9),
-          imgUrl: '/assets/background/overlay_4.jpg',
-        }),
-        height: 1,
-      }}
-    >
+    <Box>
       <Logo
         sx={{
           position: 'fixed',
@@ -270,10 +295,10 @@ export default function SignUpView() {
               size="large"
               color="inherit"
               variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
+              sx={{ borderColor: alpha(theme.palette.grey[500], 0.32) }}
               onClick={handleGoogleLogin}
             >
-              <Iconify icon="eva:google-fill" color="#DF3E30" />
+              <Iconify icon="eva:google-fill" color="#DF3E30" width={24} />
             </Button>
 
             <Button
@@ -281,14 +306,18 @@ export default function SignUpView() {
               size="large"
               color="inherit"
               variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
+              sx={{ borderColor: alpha(theme.palette.grey[500], 0.32) }}
               onClick={handleFacebookLogin}
             >
-              <Iconify icon="eva:facebook-fill" color="#1877F2" />
+              <Iconify icon="eva:facebook-fill" color="#1877F2" width={24} />
             </Button>
           </Stack>
 
-          <Divider sx={{ my: 3 }}>Or</Divider>
+          <Divider sx={{ my: 3 }}>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              or sign up with email
+            </Typography>
+          </Divider>
 
           {renderForm}
         </Card>

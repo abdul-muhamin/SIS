@@ -16,7 +16,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-//createRoleswithPolicies
+// createRoleswithPolicies
 
 // Initialize Firestore
 export const db = getFirestore(app);

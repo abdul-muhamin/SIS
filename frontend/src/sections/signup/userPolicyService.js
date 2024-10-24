@@ -2,11 +2,11 @@ import { doc, setDoc } from 'firebase/firestore';
 
 import { db } from 'src/firebase';
 
-export const createUserPolicy = async (userPolicyId, policyId, userId) => {
+export const createUserPolicy = async (userPolicyId, rolepolicyId, userId) => {
   try {
     await setDoc(doc(db, 'userPolicies', userPolicyId), {
       userPolicyId,
-      policyId,
+      rolepolicyId,
       userId,
     });
   } catch (error) {

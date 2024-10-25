@@ -1,5 +1,6 @@
-import { useState } from 'react';
 import { signOut } from "firebase/auth";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -10,46 +11,39 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-import { account } from 'src/_mock/account';
+import { auth } from "../../../firebase";
 
-import  {auth}  from "../../../firebase"; 
-
-
-// ----------------------------------------------------------------------
-
+// Define the menu options
 const MENU_OPTIONS = [
-  {
-    label: 'Home',
-    icon: 'eva:home-fill',
-  },
-  {
-    label: 'Profile',
-    icon: 'eva:person-fill',
-  },
-  {
-    label: 'Settings',
-    icon: 'eva:settings-2-fill',
-  },
+  { label: 'Home', icon: 'eva:home-fill' },
+  { label: 'Profile', icon: 'eva:person-fill' },
+  { label: 'Settings', icon: 'eva:settings-2-fill' },
 ];
-
-// ----------------------------------------------------------------------
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
+  const [user, setUser] = useState({ displayName: '', email: '', photoURL: '' });
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    const {currentUser} = auth;
+    if (currentUser) {
+      setUser({
+        displayName: currentUser.displayName || 'User',
+        email: currentUser.email || 'No email provided',
+        photoURL: currentUser.photoURL || '',
+      });
+    }
+  }, []); // Empty dependency array to only run on mount
 
-  const handleOpen = (event) => {
-    setOpen(event.currentTarget);
-  };
+  const handleOpen = (event) => setOpen(event.currentTarget);
+  const handleClose = () => setOpen(null);
 
-  const handleClose = () => {
-    setOpen(null);
-  };
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      alert("User logged out successfully")
-      console.log("User logged out successfully");
-      // You can redirect the user or update UI state after logging out
+      alert("User logged out successfully");
+      navigate('/login'); // Redirect to login page after logout
     } catch (error) {
       console.error("Error logging out:", error);
     }
@@ -70,15 +64,15 @@ export default function AccountPopover() {
         }}
       >
         <Avatar
-          src={account.photoURL}
-          alt={account.displayName}
+          src={user.photoURL}
+          alt={user.displayName}
           sx={{
             width: 36,
             height: 36,
             border: (theme) => `solid 2px ${theme.palette.background.default}`,
           }}
         >
-          {account.displayName.charAt(0).toUpperCase()}
+          {user.displayName.charAt(0).toUpperCase()}
         </Avatar>
       </IconButton>
 
@@ -99,10 +93,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2 }}>
           <Typography variant="subtitle2" noWrap>
-            {account.displayName}
+            {user.displayName}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+            {user.email}
           </Typography>
         </Box>
 
@@ -115,11 +109,11 @@ export default function AccountPopover() {
         ))}
 
         <Divider sx={{ borderStyle: 'dashed', m: 0 }} />
+        
         <MenuItem
           disableRipple
           disableTouchRipple
           onClick={handleLogout}
-
           sx={{ typography: 'body2', color: 'error.main', py: 1.5 }}
         >
           Logout

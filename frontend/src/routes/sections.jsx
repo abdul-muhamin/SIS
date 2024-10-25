@@ -1,7 +1,8 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense   } from 'react';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
-import DashboardLayout from 'src/layouts/dashboard';
+// import { useState , useEffect } from 'react';
+import DashboardLayout from 'src/layouts/dashboard'; 
 
 export const IndexPage = lazy(() => import('src/pages/app'));
 export const Teacher = lazy(() => import('src/pages/teacher'));
@@ -23,6 +24,7 @@ export const SignUp = lazy(()=>import ('src/pages/signup'))
 // ----------------------------------------------------------------------
 
 export default function Router() {
+  
   const routes = useRoutes([
     {
       element: (

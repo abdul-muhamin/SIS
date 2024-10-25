@@ -14,45 +14,47 @@ const createRolesWithPolicies = async () => {
     // STAFF Role
     const uuidForStaffRole = uuidv4(); // Use a unique UUID for the role
     const rolePoliciesStaff = [
-      { id: uuidv4(), URL: '/staff-dashboard', roleId: uuidForStaffRole },
-      { id: uuidv4(), URL: '/staff-attendance', roleId: uuidForStaffRole },
-      { id: uuidv4(), URL: '/staff-attendance-report', roleId: uuidForStaffRole },
-      { id: uuidv4(), URL: '/assignment-report', roleId: uuidForStaffRole },
+      { id: uuidv4(), URL: '/staff-dashboard', roleId: uuidForStaffRole, order: 1, URL_Name: 'Staff Dashboard', URL_Desc: '' },
+      { id: uuidv4(), URL: '/staff-attendance', roleId: uuidForStaffRole, order: 2, URL_Name: 'Staff Attendance', URL_Desc: '' },
+      { id: uuidv4(), URL: '/staff-attendance-report', roleId: uuidForStaffRole, order: 3, URL_Name: 'Staff Attendance Report', URL_Desc: '' },
+      { id: uuidv4(), URL: '/assignment-report', roleId: uuidForStaffRole, order: 4, URL_Name: 'Assignment Report', URL_Desc: '' },
     ];
 
-    // // Create STAFF role
+    // Create STAFF role
     await setDoc(doc(db, 'roles', uuidForStaffRole), {
       roleId: uuidForStaffRole,
       roleName: 'STAFF',
     });
 
-    // // Create STAFF role policies
+    // Create STAFF role policies
     await Promise.all(
       rolePoliciesStaff.map(async (policy) => {
         await setDoc(doc(db, 'rolespolicies', policy.id), {
           roleId: policy.roleId,
           URL: policy.URL,
+          order: policy.order,
+          URL_Name: policy.URL_Name,
+          URL_Desc: policy.URL_Desc,
         });
       })
     );
 
-
-    // super admin
+    // SUPER ADMIN Role
     const uuidForSuperAdminRole = uuidv4(); // Use a unique UUID for the role
     const rolePoliciesSuperAdmin = [
-      { id: uuidv4(), URL: '/super-admin-dashboard', roleId: uuidForSuperAdminRole },
-      { id: uuidv4(), URL: '/admin-dashboard', roleId: uuidForSuperAdminRole },
-      { id: uuidv4(), URL: '/staff-dashboard', roleId: uuidForSuperAdminRole },
-      { id: uuidv4(), URL: '/student-dashboard', roleId: uuidForSuperAdminRole },
-      { id: uuidv4(), URL: '/student', roleId: uuidForSuperAdminRole },
-      { id: uuidv4(), URL: '/grade', roleId: uuidForSuperAdminRole },
-      { id: uuidv4(), URL: '/staff', roleId: uuidForSuperAdminRole },
-      { id: uuidv4(), URL: '/assignment', roleId: uuidForSuperAdminRole },
-      { id: uuidv4(), URL: '/student-attendence', roleId: uuidForSuperAdminRole },
-      { id: uuidv4(), URL: '/staff-attendence', roleId: uuidForSuperAdminRole },
-      { id: uuidv4(), URL: '/student-attendence-report', roleId: uuidForSuperAdminRole },
-      { id: uuidv4(), URL: '/assignment-report', roleId: uuidForSuperAdminRole },
-      { id: uuidv4(), URL: '/staff-attendence-report', roleId: uuidForSuperAdminRole },
+      { id: uuidv4(), URL: '/super-admin-dashboard', roleId: uuidForSuperAdminRole, order: 1, URL_Name: 'Super Admin Dashboard', URL_Desc: '' },
+      { id: uuidv4(), URL: '/admin-dashboard', roleId: uuidForSuperAdminRole, order: 2, URL_Name: 'Admin Dashboard', URL_Desc: '' },
+      { id: uuidv4(), URL: '/staff-dashboard', roleId: uuidForSuperAdminRole, order: 3, URL_Name: 'Staff Dashboard', URL_Desc: '' },
+      { id: uuidv4(), URL: '/student-dashboard', roleId: uuidForSuperAdminRole, order: 4, URL_Name: 'Student Dashboard', URL_Desc: '' },
+      { id: uuidv4(), URL: '/student', roleId: uuidForSuperAdminRole, order: 8, URL_Name: 'Student', URL_Desc: '' },
+      { id: uuidv4(), URL: '/grade', roleId: uuidForSuperAdminRole, order: 13, URL_Name: 'Grade', URL_Desc: '' },
+      { id: uuidv4(), URL: '/staff', roleId: uuidForSuperAdminRole, order: 5, URL_Name: 'Staff', URL_Desc: '' },
+      { id: uuidv4(), URL: '/assignment', roleId: uuidForSuperAdminRole, order: 11, URL_Name: 'Assignment', URL_Desc: '' },
+      { id: uuidv4(), URL: '/student-attendance', roleId: uuidForSuperAdminRole, order: 9, URL_Name: 'Student Attendance', URL_Desc: '' },
+      { id: uuidv4(), URL: '/staff-attendance', roleId: uuidForSuperAdminRole, order: 6, URL_Name: 'Staff Attendance', URL_Desc: '' },
+      { id: uuidv4(), URL: '/student-attendance-report', roleId: uuidForSuperAdminRole, order: 10, URL_Name: 'Student Attendance Report', URL_Desc: '' },
+      { id: uuidv4(), URL: '/assignment-report', roleId: uuidForSuperAdminRole, order: 12, URL_Name: 'Assignment Report', URL_Desc: '' },
+      { id: uuidv4(), URL: '/staff-attendance-report', roleId: uuidForSuperAdminRole, order: 7, URL_Name: 'Staff Attendance Report', URL_Desc: '' },
     ];
 
     // Create SUPER ADMIN role
@@ -61,57 +63,62 @@ const createRolesWithPolicies = async () => {
       roleName: 'SUPER_ADMIN',
     });
 
-  // //   // Create SUPER ADIMN role policies
+    // Create SUPER ADMIN role policies
     await Promise.all(
       rolePoliciesSuperAdmin.map(async (policy) => {
         await setDoc(doc(db, 'rolespolicies', policy.id), {
           roleId: policy.roleId,
           URL: policy.URL,
+          order: policy.order,
+          URL_Name: policy.URL_Name,
+          URL_Desc: policy.URL_Desc,
         });
       })
     );
 
-  //   // ADMIN
+    // ADMIN Role
     const uuidForAdminRole = uuidv4(); // Use a unique UUID for the role
     const rolePoliciesAdmin = [
-      { id: uuidv4(), URL: '/admin-dashboard', roleId: uuidForAdminRole },
-      { id: uuidv4(), URL: '/student', roleId: uuidForAdminRole },
-      { id: uuidv4(), URL: '/grade', roleId: uuidForAdminRole },
-      { id: uuidv4(), URL: '/staff', roleId: uuidForAdminRole },
-      { id: uuidv4(), URL: '/assignment', roleId: uuidForAdminRole },
+      { id: uuidv4(), URL: '/admin-dashboard', roleId: uuidForAdminRole, order: 1, URL_Name: 'Admin Dashboard', URL_Desc: '' },
+      { id: uuidv4(), URL: '/student', roleId: uuidForAdminRole, order: 3, URL_Name: 'Student', URL_Desc: '' },
+      { id: uuidv4(), URL: '/grade', roleId: uuidForAdminRole, order: 5, URL_Name: 'Grade', URL_Desc: '' },
+      { id: uuidv4(), URL: '/staff', roleId: uuidForAdminRole, order: 2, URL_Name: 'Staff', URL_Desc: '' },
+      { id: uuidv4(), URL: '/assignment', roleId: uuidForAdminRole, order: 4, URL_Name: 'Assignment', URL_Desc: '' },
     ];
 
-  //   // Create ADMIN role
+    // Create ADMIN role
     await setDoc(doc(db, 'roles', uuidForAdminRole), {
       roleId: uuidForAdminRole,
       roleName: 'ADMIN',
     });
 
-  //   // Create ADIMN role policies
+    // Create ADMIN role policies
     await Promise.all(
       rolePoliciesAdmin.map(async (policy) => {
         await setDoc(doc(db, 'rolespolicies', policy.id), {
           roleId: policy.roleId,
           URL: policy.URL,
+          order: policy.order,
+          URL_Name: policy.URL_Name,
+          URL_Desc: policy.URL_Desc,
         });
       })
     );
 
-  //   // STUDENT Role
+    // STUDENT Role
     const uuidForStudentRole = uuidv4(); // Use a new UUID for STUDENT role
     const rolePoliciesStudent = [
-      { id: uuidv4(), URL: '/student-dashboard', roleId: uuidForStudentRole },
-      { id: uuidv4(), URL: '/student-attendance', roleId: uuidForStudentRole },
-      { id: uuidv4(), URL: '/student-attendance-report', roleId: uuidForStudentRole },
-      { id: uuidv4(), URL: '/student-report', roleId: uuidForStudentRole },
+      { id: uuidv4(), URL: '/student-dashboard', roleId: uuidForStudentRole, order: 1, URL_Name: 'Student Dashboard', URL_Desc: '' },
+      { id: uuidv4(), URL: '/student-attendance', roleId: uuidForStudentRole, order: 2, URL_Name: 'Student Attendance', URL_Desc: '' },
+      { id: uuidv4(), URL: '/student-attendance-report', roleId: uuidForStudentRole, order: 3, URL_Name: 'Student Attendance Report', URL_Desc: '' },
+      { id: uuidv4(), URL: '/student-report', roleId: uuidForStudentRole, order: 4, URL_Name: 'Student Report', URL_Desc: '' },
     ];
 
-  //   // Create STUDENT role
+    // Create STUDENT role
     await setDoc(doc(db, 'roles', uuidForStudentRole), {
       roleId: uuidForStudentRole,
       roleName: 'STUDENT',
-    },
-  );
+    });
 
     // Create STUDENT role policies
     await Promise.all(
@@ -119,6 +126,9 @@ const createRolesWithPolicies = async () => {
         await setDoc(doc(db, 'rolespolicies', policy.id), {
           roleId: policy.roleId,
           URL: policy.URL,
+          order: policy.order,
+          URL_Name: policy.URL_Name,
+          URL_Desc: policy.URL_Desc,
         });
       })
     );

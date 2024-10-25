@@ -1,14 +1,17 @@
-import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { useState, useEffect } from 'react';
+// import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc ,collection, query, where, getDocs } from 'firebase/firestore';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  createUserWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
   FacebookAuthProvider,
+  createUserWithEmailAndPassword,
 } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+
 import LoadingButton from '@mui/lab/LoadingButton';
+import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
 import {
   Box,
@@ -24,8 +27,9 @@ import {
   InputLabel,
   FormControl,
 } from '@mui/material';
-import { alpha, useTheme } from '@mui/material/styles';
+
 import { db, auth } from 'src/firebase';
+
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 
@@ -40,18 +44,15 @@ export default function SignUpView() {
   const [error, setError] = useState('');
   const [role, setRole] = useState('');
   const [roles, setRoles] = useState([]);
-  const [rolePolicies, setRolePolicies] = useState([]);
 
-  // Fetch roles and policies dynamically
+  // Fetch roles dynamically
   useEffect(() => {
-    const fetchRolesAndPolicies = async () => {
+    const fetchRoles = async () => {
       try {
         const response = await fetch('http://localhost:3001/api/roles/getRolesAndPolicies');
-        
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
           const data = await response.json();
-          console.log('Fetched roles data:', data);
           setRoles(data.roles || []);
         } else {
           throw new Error('Response is not in JSON format');
@@ -60,23 +61,14 @@ export default function SignUpView() {
         console.error('Error fetching roles:', err.message || err);
       }
     };
-  
-    fetchRolesAndPolicies();
+
+    fetchRoles();
   }, []);
+// fetch and join 
 
-  // Fetch role policies when a role is selected
-  const fetchRolePolicies = async (roleId) => {
-    try {
-      const response = await fetch(`http://localhost:3001/api/roles/getRolePolicies/${roleId}`);
-      const data = await response.json();
-      console.log('Fetched role policies:', data);
-      setRolePolicies(data.policies || []);
-    } catch (err) {
-      console.error('Error fetching role policies:', err.message || err);
-    }
-  };
 
-  // Sign up with Email and Password
+
+
   const handleSignUpWithEmail = async () => {
     setLoading(true);
     setError('');
@@ -88,34 +80,43 @@ export default function SignUpView() {
     }
 
     try {
-      // Create user with email and password
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const userId = userCredential.user.uid;
 
-      // Get the selected role and policy
-      const selectedRole = roles.find((r) => r.roleName === role);
-      const selectedRoleId = selectedRole?.roleId || uuidv4();
-      const selectedPolicy = rolePolicies[0]; // Assuming you want the first policy
-      const policyId = selectedPolicy?.policyId || uuidv4();
+      // Use the selected role or assign a default role if not selected
+      const selectedRole = roles.find((r) => r.roleName === role) || roles[0];
+      if (!selectedRole) {
+        setError('Please select a valid role');
+        setLoading(false);
+        return;
+      }
+
+      const selectedRoleId = selectedRole.roleId;
 
       // Save the user data in the 'users' collection
       await setDoc(doc(db, 'users', userId), {
         email,
-        role,
+        role: selectedRole.roleName,
         roleId: selectedRoleId,
         createdAt: new Date(),
       });
 
-      // Create a new entry in the 'userPolicies' collection
-      const userPolicyId = uuidv4(); // Generate a unique ID for this entry
-      await setDoc(doc(db, 'userPolicies', userPolicyId), {
-        userId,
-        roleId: selectedRoleId,
-        policyId,
-        createdAt: new Date(),
+      // Fetch and save role policies
+      const policiesResponse = await fetch(`http://localhost:3001/api/roles/getRolePolicies/${selectedRoleId}`);
+      const policiesData = await policiesResponse.json();
+      const policies = policiesData.rolePolicies || [];
+
+      const userPolicyPromises = policies.map(async (policy) => {
+        const userPolicyId = uuidv4();
+        return setDoc(doc(db, 'userPolicies', userPolicyId), {
+          ...policy,
+          userId,
+          userPolicyId,
+        });
       });
 
-      // Navigate to the dashboard after successful sign-up
+      await Promise.all(userPolicyPromises);
+      localStorage.setItem('userPolicies', JSON.stringify(policies));
       navigate('/dashboard');
     } catch (err) {
       setError(err.message);
@@ -123,56 +124,53 @@ export default function SignUpView() {
       setLoading(false);
     }
   };
+  
 
-  const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider();
+  const handleSocialLogin = async (provider) => {
     try {
       const result = await signInWithPopup(auth, provider);
       const { user } = result;
 
+      // Use the first role as a default
+      const selectedRole = roles[0]; // Prompt user to choose if required
       await setDoc(doc(db, 'users', user.uid), {
         email: user.email,
         displayName: user.displayName,
         photoURL: user.photoURL,
-        provider: 'google',
+        provider: provider instanceof GoogleAuthProvider ? 'google' : 'facebook',
+        role: selectedRole?.roleName,
+        roleId: selectedRole?.roleId,
         createdAt: new Date(),
       });
 
+      // Fetch and save role policies
+      const policiesResponse = await fetch(`http://localhost:3001/api/roles/getRolePolicies/${selectedRole.roleId}`);
+      const policiesData = await policiesResponse.json();
+      const policies = policiesData.rolePolicies || [];
+
+      const userPolicyPromises = policies.map(async (policy) => {
+        const userPolicyId = uuidv4();
+        return setDoc(doc(db, 'userPolicies', userPolicyId), {
+          ...policy,
+          userId: user.uid,
+          userPolicyId,
+        });
+      });
+
+      await Promise.all(userPolicyPromises);
+      localStorage.setItem('userPolicies', JSON.stringify(policies));
       navigate('/dashboard');
     } catch (err) {
       setError(err.message);
     }
   };
 
-  const handleFacebookLogin = async () => {
-    const provider = new FacebookAuthProvider();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const { user } = result;
+  const handleGoogleLogin = () => handleSocialLogin(new GoogleAuthProvider());
+  const handleFacebookLogin = () => handleSocialLogin(new FacebookAuthProvider());
 
-      await setDoc(doc(db, 'users', user.uid), {
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-        provider: 'facebook',
-        createdAt: new Date(),
-      });
-
-      navigate('/dashboard');
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  // Handle role change and fetch role policies
+  // Handle role change
   const handleChange = (event) => {
-    const selectedRole = event.target.value;
-    setRole(selectedRole);
-
-    const selectedRoleId = roles.find((r) => r.roleName === selectedRole)?.roleId;
-    if (selectedRoleId) {
-      fetchRolePolicies(selectedRoleId);
-    }
+    setRole(event.target.value);
   };
 
   const renderForm = (
@@ -235,8 +233,8 @@ export default function SignUpView() {
             onChange={handleChange}
           >
             {roles.map((roleType) => (
-              <MenuItem key={roleType.roleId} value={roleType.roleName}>
-                {roleType.roleName}
+              <MenuItem key={roleType?.roleId} value={roleType?.roleName}>
+                {roleType?.roleName}
               </MenuItem>
             ))}
           </Select>
@@ -298,7 +296,7 @@ export default function SignUpView() {
               sx={{ borderColor: alpha(theme.palette.grey[500], 0.32) }}
               onClick={handleGoogleLogin}
             >
-              <Iconify icon="eva:google-fill" color="#DF3E30" width={24} />
+              <Iconify icon="eva:google-fill" color="#DF4930" />
             </Button>
 
             <Button
@@ -309,13 +307,13 @@ export default function SignUpView() {
               sx={{ borderColor: alpha(theme.palette.grey[500], 0.32) }}
               onClick={handleFacebookLogin}
             >
-              <Iconify icon="eva:facebook-fill" color="#1877F2" width={24} />
+              <Iconify icon="eva:facebook-fill" color="#1877F2" />
             </Button>
           </Stack>
 
           <Divider sx={{ my: 3 }}>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              or sign up with email
+              OR
             </Typography>
           </Divider>
 

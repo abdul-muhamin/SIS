@@ -97,7 +97,7 @@ const AddStudentModal = ({ open, onClose }) => {
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>Add Student</DialogTitle>
+      <DialogTitle>Add Staff</DialogTitle>
       <DialogContent>
         <Box>
           <Grid container spacing={2}>
@@ -176,6 +176,7 @@ const AddStudentModal = ({ open, onClose }) => {
         height: '90px',
         borderRadius: '50%',
         objectFit: 'cover',
+        border: '5px solid grey'
       }}
     />
   </Box>
@@ -206,7 +207,7 @@ const AddStudentModal = ({ open, onClose }) => {
               />
               <TextField
                 fullWidth
-                label="Student ID"
+                label="Staff ID"
                 name="studentId"
                 value={formValues.studentId}
                 onChange={handleChange}
@@ -240,7 +241,7 @@ const AddStudentModal = ({ open, onClose }) => {
           Cancel
         </Button>
         <Button onClick={handleSubmit} color="primary">
-          Add Teacher
+          Add Staff
         </Button>
       </DialogActions>
     </Dialog>

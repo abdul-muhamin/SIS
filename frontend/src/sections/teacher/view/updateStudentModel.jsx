@@ -28,6 +28,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdate }) => {
     motherPhoneNumber: '',
     address: '',
     _id: '',
+    studentId: '',
     photo: '', // Added photo property
     status: 'Active', // Set default status to Active
   });
@@ -48,6 +49,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdate }) => {
         motherPhoneNumber: user.motherPhoneNumber || '',
         address: user.address || '',
         status: user.status || 'Active',
+        studentId: user.studentId || '',
         _id: user._id || '',
         photo: user.photo ? `http://localhost:3001/uploads/${user.photo}` : '',
       });
@@ -102,7 +104,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdate }) => {
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>Update Student</DialogTitle>
+      <DialogTitle>Update Staff</DialogTitle>
       <DialogContent>
         <Box>
           <Grid container spacing={2}>
@@ -200,6 +202,14 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdate }) => {
                 label="Address"
                 name="address"
                 value={formValues.address}
+                onChange={handleChange}
+                margin="normal"
+              />
+              <TextField
+                fullWidth
+                label="Staff ID"
+                name="studentId"
+                value={formValues.studentId}
                 onChange={handleChange}
                 margin="normal"
               />

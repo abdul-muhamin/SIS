@@ -31,6 +31,7 @@ const createRolesWithPolicies = async () => {
       rolePoliciesStaff.map(async (policy) => {
         await setDoc(doc(db, 'rolespolicies', policy.id), {
           roleId: policy.roleId,
+          rolePolicyId:policy.id,
           URL: policy.URL,
           order: policy.order,
           URL_Name: policy.URL_Name,
@@ -68,6 +69,7 @@ const createRolesWithPolicies = async () => {
       rolePoliciesSuperAdmin.map(async (policy) => {
         await setDoc(doc(db, 'rolespolicies', policy.id), {
           roleId: policy.roleId,
+          rolePolicyId:policy.id,
           URL: policy.URL,
           order: policy.order,
           URL_Name: policy.URL_Name,
@@ -97,6 +99,7 @@ const createRolesWithPolicies = async () => {
       rolePoliciesAdmin.map(async (policy) => {
         await setDoc(doc(db, 'rolespolicies', policy.id), {
           roleId: policy.roleId,
+          rolePolicyId:policy.id,
           URL: policy.URL,
           order: policy.order,
           URL_Name: policy.URL_Name,
@@ -125,6 +128,7 @@ const createRolesWithPolicies = async () => {
       rolePoliciesStudent.map(async (policy) => {
         await setDoc(doc(db, 'rolespolicies', policy.id), {
           roleId: policy.roleId,
+          rolePolicyId:policy.id,
           URL: policy.URL,
           order: policy.order,
           URL_Name: policy.URL_Name,

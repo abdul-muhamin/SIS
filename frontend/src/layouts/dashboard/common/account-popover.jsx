@@ -42,8 +42,8 @@ export default function AccountPopover() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      alert("User logged out successfully");
-      navigate('/login'); // Redirect to login page after logout
+      // alert("User logged out successfully");
+      navigate('/'); // Redirect to login page after logout
     } catch (error) {
       console.error("Error logging out:", error);
     }

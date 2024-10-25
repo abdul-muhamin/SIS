@@ -1,6 +1,8 @@
+import { query, where, getDocs, collection } from 'firebase/firestore';
+
+import { db } from 'src/firebase';
+
 import SvgColor from 'src/components/svg-color';
-import { doc, setDoc ,collection, query, where, getDocs } from 'firebase/firestore';
-import { db, auth } from 'src/firebase';
 // ----------------------------------------------------------------------
 
 const icon = (name) => (
@@ -10,42 +12,45 @@ const icon = (name) => (
 // Function to get dynamic navConfig based on localStorage
 export const getNavConfig = () => {
   const fetchAndJoinPolicies = async (userId, roleId) => {
-    console.log('abc')
+  //  debugger 
+   console.log('Function started');
     try {
-      // Fetch user policies based on userId
-      // debugger
+      // Query user policies based on userId
       const userPoliciesQuery = query(
         collection(db, 'userPolicies'),
         where('userId', '==', userId)
       );
-      console.log( "userPoliciesQuery" , userPoliciesQuery)
+      // console.log('User Policies Query:', userPoliciesQuery);
+  
+      // Fetch user policies
+      const userPoliciesSnapshot = await getDocs(userPoliciesQuery);
+      const userPolicies = userPoliciesSnapshot.docs.map((doc1) => doc1.data());
+      // console.log('User Policies:', userPolicies);
+  
+      // Query role policies based on roleId
       const rolePoliciesQuery = query(
-
-        collection(db, 'rolePolicies'),
+        collection(db, 'rolespolicies'),
         where('roleId', '==', roleId)
       );
+      // console.log('Role Policies Query:', rolePoliciesQuery);
+  
+      // Fetch role policies
       const rolePoliciesSnapshot = await getDocs(rolePoliciesQuery);
-      console.log(rolePoliciesSnapshot)
-      const userPoliciesSnapshot = await getDocs(userPoliciesQuery);
-      const userPolicies = userPoliciesSnapshot.docs.map((col) => col.data());
+      const rolePolicies = rolePoliciesSnapshot.docs.map((doc1) => doc1.data());
+      // console.log('Role Policies:', rolePolicies);
   
-      // Fetch role policies based on roleId
-      const rolePolicies = rolePoliciesSnapshot.docs.map((col) => col.data());
-  
-      // Combine policies - You can adjust this based on how you want to join them
+      // Combine policies
       const combinedPolicies = [...userPolicies, ...rolePolicies];
+      // console.log('Combined Policies:', combinedPolicies);
       
-      // Log the combined policies
-      console.log('Combined Policies:', combinedPolicies);
-  
     } catch (err) {
       console.error('Error fetching policies:', err);
     }
   };
   
-  // Call the function with a specific userId and roleId for testing
-  // Example values, replace these with real IDs when calling the function
-  fetchAndJoinPolicies('69siAkQnyad0iQ54W9HLLiVt7p32', '88a45b4e-6785-4c45-a1cc-e39214924b03');
+  // Call the function with specific userId and roleId for testing
+  fetchAndJoinPolicies('VBEpxI3lV6PIw2agZgzfVM8NePx1', 'bb712ebe-874b-496d-92cc-ba343a483586');
+  
   const userPolicies = JSON.parse(localStorage.getItem('userPolicies')) || [];
 
   // Sort policies by 'order' field

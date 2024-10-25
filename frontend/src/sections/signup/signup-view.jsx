@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { useState, useEffect } from 'react';
 // import { doc, setDoc } from 'firebase/firestore';
-import { doc, setDoc ,collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   signInWithPopup,
@@ -96,6 +96,7 @@ export default function SignUpView() {
       // Save the user data in the 'users' collection
       await setDoc(doc(db, 'users', userId), {
         email,
+        userId,
         role: selectedRole.roleName,
         roleId: selectedRoleId,
         createdAt: new Date(),
@@ -107,9 +108,11 @@ export default function SignUpView() {
       const policies = policiesData.rolePolicies || [];
 
       const userPolicyPromises = policies.map(async (policy) => {
+        const { rolePolicyId, roleId } = policy;
         const userPolicyId = uuidv4();
         return setDoc(doc(db, 'userPolicies', userPolicyId), {
-          ...policy,
+          rolePolicyId,
+          roleId,
           userId,
           userPolicyId,
         });

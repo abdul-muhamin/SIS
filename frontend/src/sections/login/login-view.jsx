@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link , useNavigate } from 'react-router-dom';
 import { signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, signInWithEmailAndPassword } from 'firebase/auth';
-
+import { doc, getDoc } from 'firebase/firestore'; // Import Firestore functions
+// import { db } from 'src/firebase';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -18,7 +19,7 @@ import {
 
 import { useRouter } from 'src/routes/hooks';
 
-import { auth } from 'src/firebase';
+import { auth , db } from 'src/firebase';
 // import { auth } from '../../firebase';  // Ensure this path is correct
 
 import { bgGradient } from 'src/theme/css';
@@ -40,8 +41,30 @@ export default function LoginView() {
     setLoading(true);
     setError('');
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      router.push('/dashboard');
+      // Step 1: Sign in with email and password
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userId = userCredential.user.uid; // Get the user ID from the sign-in response
+  
+      // Step 2: Fetch user data from Firestore
+      const userDocRef = doc(db, 'users', userId); // Reference to the user document
+      const userDoc = await getDoc(userDocRef);
+  
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        
+        // Step 3: Fetch user policies
+        const policiesResponse = await fetch(`http://localhost:3001/api/roles/getRolePolicies/${userData.roleId}`);
+        const policiesData = await policiesResponse.json();
+        const policies = policiesData.rolePolicies || [];
+  
+        // Optionally: Store policies in local storage
+        localStorage.setItem('userPolicies', JSON.stringify(policies));
+  
+        // Navigate to the dashboard
+        router.push('/dashboard');
+      } else {
+        setError('User data not found.');
+      }
     } catch (err) {
       setError(err.message);
     } finally {

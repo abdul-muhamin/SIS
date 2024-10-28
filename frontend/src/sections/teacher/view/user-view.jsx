@@ -169,7 +169,7 @@ export default function UserPage() {
   return (
     <Container sx={{ height: { lg: '60vh' } }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
-        <Typography variant="h4">Teachers</Typography>
+        <Typography variant="h4">Staff</Typography>
         <Button
           variant="contained"
           color="inherit"
@@ -206,7 +206,7 @@ export default function UserPage() {
                   { id: 'fatherName', label: 'Father Name' },
                   { id: 'motherName', label: 'Mother Name' },
                   { id: 'Address', label: 'Address' },
-                  { id: 'studentId', label: 'Staff ID' },
+                  // { id: 'studentId', label: 'Staff ID' },
                   { id: 'status', label: 'Status' },
                   { id: '' },
                 ]}

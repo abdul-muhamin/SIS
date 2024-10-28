@@ -28,6 +28,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
     motherPhoneNumber: '',
     address: '',
     _id: '',
+    studentId:'',
     photo: '', // Added photo property
     status: 'Active', // Set default status to Active
   });
@@ -47,6 +48,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
         fatherPhoneNumber: user.fatherPhoneNumber || '',
         motherPhoneNumber: user.motherPhoneNumber || '',
         address: user.address || '',
+        studentId: user.studentId || '',
         status: user.status || 'Active',
         _id: user._id || '',
         photo: user.photo ? `http://localhost:3001/uploads/${user.photo}` : '',
@@ -76,6 +78,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
     formData.append('motherPhoneNumber', formValues.motherPhoneNumber);
     formData.append('address', formValues.address);
     formData.append('status', formValues.status);
+    formData.append('studentId', formValues.studentId);
     formData.append('_id', formValues._id);
 
     if (selectedFile) {
@@ -175,6 +178,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
                     height: '90px',
                     borderRadius: '50%',
                     objectFit: 'cover',
+                    border: '5px solid grey'
                   }}
                 />
               </Box>
@@ -200,6 +204,14 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
                 label="Address"
                 name="address"
                 value={formValues.address}
+                onChange={handleChange}
+                margin="normal"
+              />
+              <TextField
+                fullWidth
+                label="Student ID"
+                name="studentId"
+                value={formValues.studentId}
                 onChange={handleChange}
                 margin="normal"
               />

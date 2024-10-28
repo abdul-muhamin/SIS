@@ -78,6 +78,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdate }) => {
     formData.append('motherPhoneNumber', formValues.motherPhoneNumber);
     formData.append('address', formValues.address);
     formData.append('status', formValues.status);
+    formData.append('studentId', formValues.studentId);
     formData.append('_id', formValues._id);
 
     if (selectedFile) {
@@ -174,9 +175,10 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdate }) => {
                   alt="Selected Preview"
                   style={{
                     width: '90px',
-                    height: '90px',
-                    borderRadius: '50%',
-                    objectFit: 'cover',
+        height: '90px',
+        borderRadius: '50%',
+        objectFit: 'cover',
+        border: '5px solid grey'
                   }}
                 />
               </Box>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
+import { doc, getDoc } from 'firebase/firestore';
 import { Link , useNavigate } from 'react-router-dom';
-import { signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore'; // Import Firestore functions
+import { signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, signInWithEmailAndPassword } from 'firebase/auth'; // Import Firestore functions
 // import { db } from 'src/firebase';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
@@ -19,7 +19,7 @@ import {
 
 import { useRouter } from 'src/routes/hooks';
 
-import { auth , db } from 'src/firebase';
+import { db , auth } from 'src/firebase';
 // import { auth } from '../../firebase';  // Ensure this path is correct
 
 import { bgGradient } from 'src/theme/css';

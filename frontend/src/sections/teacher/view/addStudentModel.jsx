@@ -29,7 +29,7 @@ const AddStudentModal = ({ open, onClose }) => {
     motherPhoneNumber: '',
     address: '',
     studentId: '',
-    status: 'Active', // Status field
+    status: '', // Status field
   });
 
   const [error, setError] = useState(null);

@@ -30,7 +30,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
     _id: '',
     studentId:'',
     photo: '', // Added photo property
-    status: 'Active', // Set default status to Active
+    status: '', // Set default status to Active
   });
 
   const [selectedFile, setSelectedFile] = useState(null);

@@ -1,6 +1,3 @@
-import { query, where, getDocs, collection } from 'firebase/firestore';
-
-import { db } from 'src/firebase';
 
 import SvgColor from 'src/components/svg-color';
 // ----------------------------------------------------------------------
@@ -11,45 +8,45 @@ const icon = (name) => (
 
 // Function to get dynamic navConfig based on localStorage
 export const getNavConfig = () => {
-  const fetchAndJoinPolicies = async (userId, roleId) => {
-  //  debugger 
-   console.log('Function started');
-    try {
-      // Query user policies based on userId
-      const userPoliciesQuery = query(
-        collection(db, 'userPolicies'),
-        where('userId', '==', userId)
-      );
-      // console.log('User Policies Query:', userPoliciesQuery);
+  // const fetchAndJoinPolicies = async (userId, roleId) => {
+  // //  debugger 
+  //  console.log('Function started');
+  //   try {
+  //     // Query user policies based on userId
+  //     const userPoliciesQuery = query(
+  //       collection(db, 'userPolicies'),
+  //       where('userId', '==', userId)
+  //     );
+  //     // console.log('User Policies Query:', userPoliciesQuery);
   
-      // Fetch user policies
-      const userPoliciesSnapshot = await getDocs(userPoliciesQuery);
-      const userPolicies = userPoliciesSnapshot.docs.map((doc1) => doc1.data());
-      // console.log('User Policies:', userPolicies);
+  //     // Fetch user policies
+  //     const userPoliciesSnapshot = await getDocs(userPoliciesQuery);
+  //     const userPolicies = userPoliciesSnapshot.docs.map((doc1) => doc1.data());
+  //     // console.log('User Policies:', userPolicies);
   
-      // Query role policies based on roleId
-      const rolePoliciesQuery = query(
-        collection(db, 'rolespolicies'),
-        where('roleId', '==', roleId)
-      );
-      // console.log('Role Policies Query:', rolePoliciesQuery);
+  //     // Query role policies based on roleId
+  //     const rolePoliciesQuery = query(
+  //       collection(db, 'rolespolicies'),
+  //       where('roleId', '==', roleId)
+  //     );
+  //     // console.log('Role Policies Query:', rolePoliciesQuery);
   
-      // Fetch role policies
-      const rolePoliciesSnapshot = await getDocs(rolePoliciesQuery);
-      const rolePolicies = rolePoliciesSnapshot.docs.map((doc1) => doc1.data());
-      // console.log('Role Policies:', rolePolicies);
+  //     // Fetch role policies
+  //     const rolePoliciesSnapshot = await getDocs(rolePoliciesQuery);
+  //     const rolePolicies = rolePoliciesSnapshot.docs.map((doc1) => doc1.data());
+  //     // console.log('Role Policies:', rolePolicies);
   
-      // Combine policies
-      const combinedPolicies = [...userPolicies, ...rolePolicies];
-      // console.log('Combined Policies:', combinedPolicies);
+  //     // Combine policies
+  //     const combinedPolicies = [...userPolicies, ...rolePolicies];
+  //     // console.log('Combined Policies:', combinedPolicies);
       
-    } catch (err) {
-      console.error('Error fetching policies:', err);
-    }
-  };
+  //   } catch (err) {
+  //     console.error('Error fetching policies:', err);
+  //   }
+  // };
   
-  // Call the function with specific userId and roleId for testing
-  fetchAndJoinPolicies('VBEpxI3lV6PIw2agZgzfVM8NePx1', 'bb712ebe-874b-496d-92cc-ba343a483586');
+  // // Call the function with specific userId and roleId for testing
+  // fetchAndJoinPolicies('VBEpxI3lV6PIw2agZgzfVM8NePx1', 'bb712ebe-874b-496d-92cc-ba343a483586');
   
   const userPolicies = JSON.parse(localStorage.getItem('userPolicies')) || [];
 

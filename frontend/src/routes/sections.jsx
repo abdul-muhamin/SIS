@@ -11,7 +11,6 @@ export const UserPage = lazy(() => import('src/pages/student'));
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const GradePage = lazy(() => import('src/pages/gradePage'));
 export const StudentPage = lazy(() => import('src/pages/add-student'));
-// export const UpdateStudentPage = lazy(() => import('src/pages/update-student'));
 export const AdminPanel = lazy(() => import('src/pages/admin-panel'));
 export const AddAssignment = lazy(() => import('src/pages/add-assignment'));
 export const AddAssignmentUserPage = lazy(() => import('src/pages/assignment-user'));
@@ -21,6 +20,7 @@ export const StudentAttendence = lazy(()=> import ('src/pages/student-attendence
 export const StaffAttendence = lazy(()=> import ('src/pages/staff-attendence'))
 export const SignUp = lazy(()=>import ('src/pages/signup'))
 export const Schedule = lazy(()=>import ('src/pages/schedule'))
+export const AppointmentChatbot = lazy(()=>import ('src/pages/appointmentChatBot'))
 
 // ----------------------------------------------------------------------
 
@@ -50,6 +50,7 @@ export default function Router() {
         { path: 'student-attendance', element: <StudentAttendence /> },
         { path: 'staff-attendance', element: <StaffAttendence /> },
         { path: 'schedule', element: <Schedule /> },
+        { path: 'appointment-chatbot', element: <AppointmentChatbot /> },
         // { path: 'sign-up', element: <SignUp /> },
       ],
     },

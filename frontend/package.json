@@ -20,6 +20,8 @@
     "vite:build": "vite build"
   },
   "dependencies": {
+    "@chatbotkit/react": "^1.14.1",
+    "@chatbotkit/sdk": "^1.12.0",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@faker-js/faker": "^8.1.0",
@@ -30,6 +32,7 @@
     "antd": "^5.21.6",
     "apexcharts": "^3.43.0",
     "axios": "^1.7.7",
+    "clsx": "^2.1.1",
     "date-fns": "^2.30.0",
     "dayjs": "^1.11.13",
     "firebase": "^10.13.2",

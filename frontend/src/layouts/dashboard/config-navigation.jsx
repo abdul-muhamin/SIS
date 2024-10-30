@@ -9,7 +9,6 @@ const icon = (name) => (
 // Function to get dynamic navConfig based on localStorage
 export const getNavConfig = () => {
   // const fetchAndJoinPolicies = async (userId, roleId) => {
-  // //  debugger 
   //  console.log('Function started');
   //   try {
   //     // Query user policies based on userId

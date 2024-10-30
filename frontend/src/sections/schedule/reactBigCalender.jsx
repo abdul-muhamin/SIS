@@ -2,6 +2,7 @@ import moment from "moment";
 import React, { useState, useEffect } from "react";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { Calendar, momentLocalizer } from "react-big-calendar";
+
 import DeleteConfirmationModal from "./deleteModel"; // Your delete modal
 import AddEventModal from "./addModel"; // Your add event modal
 

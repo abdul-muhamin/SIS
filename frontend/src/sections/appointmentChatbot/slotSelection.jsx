@@ -1,35 +1,28 @@
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import { ConversationContext } from '@chatbotkit/react';
-
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 
 export default function SlotSelectionForm({ slots }) {
   const { request } = useContext(ConversationContext);
 
+  // Capture the selected slot
   const captureSlot = (slot) => {
     request('captureSlot', { slot });
   };
 
   return (
-    <Box display="flex" flexDirection="column" gap={2}>
-      <Typography variant="body2" color="textSecondary">
-        Please select an available slot to book an appointment:
-      </Typography>
-      <Box display="flex" flexWrap="wrap" gap={2}>
-        {slots.map(({ slot }, index) => (
-          <Paper
+    <Box>
+      <Typography variant="body2">Please select an available slot:</Typography>
+      <Box display="flex" flexWrap="wrap" gap={1}>
+        {slots.map((slot, index) => (
+          <Button
             key={index}
-            onClick={() => captureSlot(slot)}
-            sx={{
-              p: 2,
-              cursor: 'pointer',
-              transition: '0.3s',
-              '&:hover': { boxShadow: 3, transform: 'translateY(-2px)' }
-            }}
+            variant="outlined"
+            onClick={() => captureSlot(slot.slot)} // Assuming slot has a 'slot' property
           >
-            {slot}
-          </Paper>
+            {`${slot.date} at ${slot.time}`} {/* Adjust based on your slot structure */}
+          </Button>
         ))}
       </Box>
     </Box>
@@ -39,7 +32,9 @@ export default function SlotSelectionForm({ slots }) {
 SlotSelectionForm.propTypes = {
   slots: PropTypes.arrayOf(
     PropTypes.shape({
-      slot: PropTypes.string.isRequired,
+      date: PropTypes.string.isRequired,  // Assuming the slot structure contains date
+      time: PropTypes.string.isRequired,   // Assuming the slot structure contains time
+      duration: PropTypes.number,           // Assuming the slot structure contains duration
     })
   ).isRequired,
 };

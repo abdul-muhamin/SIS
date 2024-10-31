@@ -1,19 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ChatMessage } from '@chatbotkit/react';
 
-import { Box } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 
-export default function BotMessage({ text, children, ...props }) {
+function BotMessage({ text, children }) {
   return (
-    <Box display="flex" alignItems="flex-end" {...props}>
-      {text ? (
-        <ChatMessage
-          text={text}
-          className="bg-white rounded-lg shadow-md p-4 prose"
-        />
-      ) : null}
-      {children}
+    <Box display="flex" justifyContent="flex-start" marginBottom={1}>
+      <Paper elevation={3} sx={{ backgroundColor: 'white', color: 'black', padding: 2, borderRadius: 2 }}>
+        <Typography>{text}</Typography>
+        {children}
+      </Paper>
     </Box>
   );
 }
@@ -22,3 +18,5 @@ BotMessage.propTypes = {
   text: PropTypes.string,
   children: PropTypes.node,
 };
+
+export default BotMessage;

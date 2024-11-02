@@ -25,8 +25,9 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
   }, [user]);
 
   const handleUpdate = async () => {
+    const url= import.meta.env.VITE_APP_URL;
     try {
-      const response = await fetch(`http://localhost:3001/api/grades/${user._id}`, {
+      const response = await fetch(`${url}/api/grades/${user._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

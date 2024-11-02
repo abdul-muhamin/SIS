@@ -33,9 +33,10 @@ const AddStudentModal = ({ open, onClose, currentUser, attendanceData, setAttend
         clockIn: existingData.clockIn || '',
         clockOut: existingData.clockOut || '',
         leaveType: existingData.leaveType || '',
+        
       });
       setError(null);
-      setSuccessMessage('');
+      // setSuccessMessage('');
       setLeaveMessage('');
     }
   }, [currentUser, open, attendanceData]);
@@ -93,6 +94,7 @@ const AddStudentModal = ({ open, onClose, currentUser, attendanceData, setAttend
   };
 
   const saveAttendanceData = async (key, value) => {
+    const url= import.meta.env.VITE_APP_URL;
     try {
       const updatedAttendance = {
         ...attendanceData,
@@ -103,7 +105,7 @@ const AddStudentModal = ({ open, onClose, currentUser, attendanceData, setAttend
       };
       setAttendanceData(updatedAttendance);
 
-      const response = await fetch(`http://localhost:3001/api/teachers/${currentUser._id}/teacherAttendance`, {
+      const response = await fetch(`${url}/api/teachers/${currentUser._id}/teacherAttendance`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -115,24 +117,23 @@ const AddStudentModal = ({ open, onClose, currentUser, attendanceData, setAttend
         throw new Error('Failed to save attendance data');
       }
 
-      setSuccessMessage('Attendance data saved successfully!');
+      // setSuccessMessage('Attendance data saved successfully!');
     } catch (err) {
       console.error('Error saving attendance:', err);
       setError('Failed to save attendance data');
     }
   };
 
-//   const handleDateChange = (newDate) => {
-//     setFormValues({ ...formValues, date: newDate });
-//   };
+
 const handleDateChange = async (newDate) => {
     setFormValues({ ...formValues, date: newDate });
   
     
     if (newDate) {
+      const url= import.meta.env.VITE_APP_URL;
       try {
         
-        const response = await fetch(`http://localhost:3001/api/teachers/${currentUser._id}/teacherAttendance?date=${newDate.toISOString()}`);
+        const response = await fetch(`${url}/api/teachers/${currentUser._id}/teacherAttendance?date=${newDate.toISOString()}`);
         
         // Parse the response JSON
         const data = await response.json();
@@ -225,14 +226,13 @@ const handleDateChange = async (newDate) => {
           </Button>
         </Grid>
 
-        {/* Leave Message */}
-        {leaveMessage && (
+        
           <Grid item xs={12}>
             <Typography variant="body1" sx={{ color: 'blue' }}>
-              {leaveMessage}
+            {formValues?.leaveType}
             </Typography>
           </Grid>
-        )}
+        
 
         {/* Error and Success Messages */}
         {error && (
@@ -243,13 +243,13 @@ const handleDateChange = async (newDate) => {
           </Grid>
         )}
 
-        {successMessage && (
+        {/* {successMessage && (
           <Grid item xs={12}>
             <Typography variant="body2" color="success">
               {successMessage}
             </Typography>
           </Grid>
-        )}
+        )} */}
       </Grid>
     </DialogContent>
     <DialogActions>

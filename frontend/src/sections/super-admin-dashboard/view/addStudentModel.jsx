@@ -93,6 +93,7 @@ const AddStudentModal = ({ open, onClose, currentUser, attendanceData, setAttend
   };
 
   const saveAttendanceData = async (key, value) => {
+    const url =import.meta.env.VITE_APP_URL;
     try {
       const updatedAttendance = {
         ...attendanceData,
@@ -103,7 +104,7 @@ const AddStudentModal = ({ open, onClose, currentUser, attendanceData, setAttend
       };
       setAttendanceData(updatedAttendance);
 
-      const response = await fetch(`http://localhost:3001/api/students/${currentUser._id}/attendance`, {
+      const response = await fetch(`${url}/api/students/${currentUser._id}/attendance`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -126,13 +127,14 @@ const AddStudentModal = ({ open, onClose, currentUser, attendanceData, setAttend
 //     setFormValues({ ...formValues, date: newDate });
 //   };
 const handleDateChange = async (newDate) => {
+  const url =import.meta.env.VITE_APP_URL;
     setFormValues({ ...formValues, date: newDate });
   
     
     if (newDate) {
       try {
         
-        const response = await fetch(`http://localhost:3001/api/students/${currentUser._id}/attendance?date=${newDate.toISOString()}`);
+        const response = await fetch(`${url}/api/students/${currentUser._id}/attendance?date=${newDate.toISOString()}`);
         
         // Parse the response JSON
         const data = await response.json();

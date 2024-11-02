@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Button, Grid, Typography, Paper, Tooltip, Dialog, DialogContent } from '@mui/material';
 import { format } from 'date-fns';
 import QRCode from 'react-qr-code';
+import React, { useState } from 'react';
+
+import { Grid, Paper, Button, Dialog, Tooltip, Typography, DialogContent } from '@mui/material';
 
 function StudentDashboard() {
   const [clockInTime, setClockInTime] = useState(null);
@@ -17,9 +18,10 @@ function StudentDashboard() {
 
   // API call to save attendance data
   const saveAttendanceData = async (data) => {
+    const url= import.meta.env.VITE_APP_URL;
     const currentUser = '6716a417b7ffb4aef7e8f964';
     try {
-      const response = await fetch(`http://localhost:3001/api/teachers/${currentUser}/teacherAttendance`, {
+      const response = await fetch(`${url}/api/teachers/${currentUser}/teacherAttendance`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

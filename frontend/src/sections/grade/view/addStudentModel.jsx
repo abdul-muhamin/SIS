@@ -22,8 +22,9 @@ const AddStudentModal = ({ open, onClose }) => {
 
   // Handle form submission to save data to the database
   const handleSubmit = async () => {
+    const url= import.meta.env.VITE_APP_URL;
     try {
-      const response = await fetch('http://localhost:3001/api/grades', {
+      const response = await fetch(`${url}/api/grades`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

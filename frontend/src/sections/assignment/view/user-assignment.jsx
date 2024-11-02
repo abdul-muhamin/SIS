@@ -36,8 +36,9 @@ export default function UserPage() {
   const [currentUser, setCurrentUser] = useState(null);
 
   const fetchUsers = async () => {
+    const url= import.meta.env.VITE_APP_URL;
     try {
-      const response = await fetch('http://localhost:3001/api/assignments');
+      const response = await fetch(`${url}/api/assignments`);
       if (!response.ok) {
         throw new Error('Failed to fetch users');
       }
@@ -54,8 +55,9 @@ export default function UserPage() {
 
   const deleteUser = async (id) => {
     if (!id) return;
+    const url= import.meta.env.VITE_APP_URL;
     try {
-      const response = await fetch(`http://localhost:3001/api/assignments/${id}`, {
+      const response = await fetch(`${url}/api/assignments/${id}`, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete user');
@@ -82,8 +84,9 @@ export default function UserPage() {
   };
 
   const handleUpdateUser = async (updatedUser) => {
+    const url= import.meta.env.VITE_APP_URL;
     try {
-      const response = await fetch(`http://localhost:3001/api/assignments/${updatedUser._id}`, {
+      const response = await fetch(`${url}/api/assignments/${updatedUser._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedUser),
@@ -141,9 +144,10 @@ export default function UserPage() {
   };
 
   const handleDeleteAll = async () => {
+    const url= import.meta.env.VITE_APP_URL;
     try {
       const deleteRequests = selected.map((id) =>
-        fetch(`http://localhost:3001/api/assignments/${id}`, {
+        fetch(`${url}/api/assignments/${id}`, {
           method: 'DELETE',
         })
       );

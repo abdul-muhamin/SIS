@@ -37,6 +37,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdate }) => {
 
   // Load user data when the modal opens
   useEffect(() => {
+    const url= import.meta.env.VITE_APP_URL;
     if (user) {
       setFormValues({
         fullName: user.fullName || '',
@@ -51,7 +52,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdate }) => {
         status: user.status || 'Active',
         studentId: user.studentId || '',
         _id: user._id || '',
-        photo: user.photo ? `http://localhost:3001/uploads/${user.photo}` : '',
+        photo: user.photo ? `${url}/uploads/${user.photo}` : '',
       });
       setSelectedFile(null);
     }
@@ -67,6 +68,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdate }) => {
   };
 
   const handleSubmit = async () => {
+    const url= import.meta.env.VITE_APP_URL;
     const formData = new FormData();
     formData.append('fullName', formValues.fullName);
     formData.append('email', formValues.email);
@@ -86,7 +88,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdate }) => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/api/teachers/${formValues._id}`, {
+      const response = await fetch(`${url}/api/teachers/${formValues._id}`, {
         method: 'PUT',
         body: formData,
       });

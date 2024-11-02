@@ -93,6 +93,7 @@ const AddStudentModal = ({ open, onClose, currentUser, attendanceData, setAttend
   };
 
   const saveAttendanceData = async (key, value) => {
+    const url= import.meta.env.VITE_APP_URL;
     try {
       const updatedAttendance = {
         ...attendanceData,
@@ -103,7 +104,7 @@ const AddStudentModal = ({ open, onClose, currentUser, attendanceData, setAttend
       };
       setAttendanceData(updatedAttendance);
 
-      const response = await fetch(`http://localhost:3001/api/students/${currentUser._id}/attendance`, {
+      const response = await fetch(`${url}/api/students/${currentUser._id}/attendance`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -130,9 +131,10 @@ const handleDateChange = async (newDate) => {
   
     
     if (newDate) {
+      const url= import.meta.env.VITE_APP_URL;
       try {
         
-        const response = await fetch(`http://localhost:3001/api/students/${currentUser._id}/attendance?date=${newDate.toISOString()}`);
+        const response = await fetch(`${url}/api/students/${currentUser._id}/attendance?date=${newDate.toISOString()}`);
         
         // Parse the response JSON
         const data = await response.json();
@@ -226,13 +228,11 @@ const handleDateChange = async (newDate) => {
         </Grid>
 
         {/* Leave Message */}
-        {leaveMessage && (
-          <Grid item xs={12}>
+        <Grid item xs={12}>
             <Typography variant="body1" sx={{ color: 'blue' }}>
-              {leaveMessage}
+            {formValues?.leaveType}
             </Typography>
           </Grid>
-        )}
 
         {/* Error and Success Messages */}
         {error && (

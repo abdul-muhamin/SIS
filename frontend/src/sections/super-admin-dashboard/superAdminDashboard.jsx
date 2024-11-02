@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Typography, Grid, Paper } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+
+import { Box, Grid, Paper, Typography } from '@mui/material';
+
 // import StudenAttendece from "src/sections/student-attendence/view/user-view"
 import Index from "src/sections/super-admin-dashboard/view/user-view"
 

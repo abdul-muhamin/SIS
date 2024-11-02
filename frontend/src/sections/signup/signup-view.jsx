@@ -72,7 +72,7 @@ export default function SignUpView() {
   const handleSignUpWithEmail = async () => {
     setLoading(true);
     setError('');
-
+    const url= import.meta.env.VITE_APP_URL;
     if (password !== confirmPassword) {
       setError("Passwords don't match");
       setLoading(false);
@@ -103,7 +103,7 @@ export default function SignUpView() {
       });
 
       // Fetch and save role policies
-      const policiesResponse = await fetch(`http://localhost:3001/api/roles/getRolePolicies/${selectedRoleId}`);
+      const policiesResponse = await fetch(`${url}/api/roles/getRolePolicies/${selectedRoleId}`);
       const policiesData = await policiesResponse.json();
       const policies = policiesData.rolePolicies || [];
 
@@ -130,6 +130,7 @@ export default function SignUpView() {
   
 
   const handleSocialLogin = async (provider) => {
+    const url= import.meta.env.VITE_APP_URL;
     try {
       const result = await signInWithPopup(auth, provider);
       const { user } = result;
@@ -147,7 +148,7 @@ export default function SignUpView() {
       });
 
       // Fetch and save role policies
-      const policiesResponse = await fetch(`http://localhost:3001/api/roles/getRolePolicies/${selectedRole.roleId}`);
+      const policiesResponse = await fetch(`${url}/api/roles/getRolePolicies/${selectedRole.roleId}`);
       const policiesData = await policiesResponse.json();
       const policies = policiesData.rolePolicies || [];
 

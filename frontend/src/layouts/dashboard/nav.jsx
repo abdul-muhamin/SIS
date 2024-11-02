@@ -14,7 +14,7 @@ import { RouterLink } from 'src/routes/components';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
-import { account } from 'src/_mock/account';
+import { auth } from 'src/firebase';
 
 import Logo from 'src/components/logo';
 import Scrollbar from 'src/components/scrollbar';
@@ -26,8 +26,22 @@ import { getNavConfig } from './config-navigation';  // Import the dynamic funct
 
 export default function Nav({ openNav, onCloseNav }) {
   const [navConfig, setNavConfig] = useState(getNavConfig()); // Initialize state with navConfig
+  const [userData, setUserData] = useState({ displayName: '', avatarText: '' });
   const pathname = usePathname();
   const upLg = useResponsive('up', 'lg');
+
+  useEffect(() => {
+    // Fetch the user data from Firebase on mount
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        const {email} = user;
+        const firstLetter = email.charAt(0).toUpperCase();
+        setUserData({ displayName: email, avatarText: firstLetter });
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     // Update navConfig when user policies change in localStorage
@@ -51,8 +65,7 @@ export default function Nav({ openNav, onCloseNav }) {
     if (openNav) {
       onCloseNav();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+  }, [pathname, onCloseNav, openNav]);
 
   const renderAccount = (
     <Box
@@ -67,14 +80,13 @@ export default function Nav({ openNav, onCloseNav }) {
         bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
       }}
     >
-      <Avatar src={account.photoURL} alt="photoURL" />
+      <Avatar>{userData.avatarText}</Avatar>
 
       <Box sx={{ ml: 2 }}>
-        <Typography variant="subtitle2">{account.displayName}</Typography>
-
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {account.role}
-        </Typography>
+        <Typography variant="subtitle2">{userData.displayName}</Typography>
+        {/* <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          User
+        </Typography> */}
       </Box>
     </Box>
   );

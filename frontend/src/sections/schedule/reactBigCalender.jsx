@@ -47,10 +47,11 @@ export default function ReactBigCalendar() {
   const handleAddEvent = async (newEvent) => {
     const user = JSON.parse(localStorage.getItem("user"));
     const userId = user?.userId;
+    const url= import.meta.env.VITE_APP_URL;
 
     const eventToPost = { ...newEvent, userId };
     try {
-        const response = await fetch("http://localhost:3001/api/schedule/events", {
+        const response = await fetch(`${url}/api/schedule/events`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -78,10 +79,11 @@ export default function ReactBigCalendar() {
 
   // Function to handle event deletion
   const handleDeleteConfirmation = async () => {
+    const url= import.meta.env.VITE_APP_URL;
     if (!eventToDelete) return;
 
     try {
-      const response = await fetch(`http://localhost:3001/api/schedule/events/${eventToDelete._id}`, {
+      const response = await fetch(`${url}/api/schedule/events/${eventToDelete._id}`, {
         method: "DELETE",
       });
       if (!response.ok) throw new Error("Failed to delete event");

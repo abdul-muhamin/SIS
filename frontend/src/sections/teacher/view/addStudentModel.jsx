@@ -45,6 +45,7 @@ const AddStudentModal = ({ open, onClose }) => {
   };
 
   const handleSubmit = async (e) => {
+    const url= import.meta.env.VITE_APP_URL;
     try {
       e.preventDefault();
 
@@ -62,7 +63,7 @@ const AddStudentModal = ({ open, onClose }) => {
       formData.append('status', formValues.status);
       formData.append('photo', selectedFile);
 
-      const response = await fetch('http://localhost:3001/api/teachers', {
+      const response = await fetch(`${url}/api/teachers`, {
         method: 'POST',
         body: formData,
       });

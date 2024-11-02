@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
-import { Button, Tooltip, Toolbar, IconButton, OutlinedInput, InputAdornment } from '@mui/material';
+
+import { Button, Toolbar, OutlinedInput, InputAdornment } from '@mui/material';
+
 import Iconify from 'src/components/iconify';
 
 export default function UserTableToolbar({ filterName, onFilterName }) {

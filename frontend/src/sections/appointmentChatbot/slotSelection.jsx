@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import { ConversationContext } from '@chatbotkit/react';
+
 import { Box, Button, Typography } from '@mui/material';
 
 export default function SlotSelectionForm({ slots }) {

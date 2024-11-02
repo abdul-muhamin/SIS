@@ -40,6 +40,7 @@ export default function LoginView() {
   const handleLoginWithEmail = async () => {
     setLoading(true);
     setError('');
+    const url= import.meta.env.VITE_APP_URL;
     try {
       // Step 1: Sign in with email and password
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -53,7 +54,7 @@ export default function LoginView() {
         const userData = userDoc.data();
         
         // Step 3: Fetch user policies
-        const policiesResponse = await fetch(`http://localhost:3001/api/roles/getRolePolicies/${userData.roleId}`);
+        const policiesResponse = await fetch(`${url}/api/roles/getRolePolicies/${userData.roleId}`);
         const policiesData = await policiesResponse.json();
         const policies = policiesData.rolePolicies || [];
   

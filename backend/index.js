@@ -20,7 +20,7 @@ const chatbotRoute = require('./routes/appointmentRoute'); // Chatbot route
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001; // Use environment variable for port
+const PORT = process.env.PORT; // Use environment variable for port
 
 // Middleware setup
 app.use(cors());

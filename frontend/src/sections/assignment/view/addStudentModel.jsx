@@ -27,10 +27,11 @@ const AddStudentModal = ({ open, onClose }) => {
   };
 
   const handleSubmit = async (e) => {
+    const url= import.meta.env.VITE_APP_URL;
     try {
       e.preventDefault();
 
-      const response = await fetch('http://localhost:3001/api/assignments', {
+      const response = await fetch(`${url}/api/assignments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

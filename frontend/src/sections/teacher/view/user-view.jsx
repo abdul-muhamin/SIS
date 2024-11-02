@@ -38,8 +38,9 @@ export default function UserPage() {
 
   // Fetch users from the API
   const fetchUsers = async () => {
+    const url= import.meta.env.VITE_APP_URL;
     try {
-      const response = await fetch('http://localhost:3001/api/teachers');
+      const response = await fetch(`${url}/api/teachers`);
       if (!response.ok) throw new Error('Failed to fetch users');
       const data = await response.json();
       setUsers(data);
@@ -54,12 +55,13 @@ export default function UserPage() {
 
   // Delete user
   const deleteUser = async (id) => {
+    const url= import.meta.env.VITE_APP_URL;
     if (!id) {
       console.error('Error: user id is undefined');
       return;
     }
     try {
-      const response = await fetch(`http://localhost:3001/api/teachers/${id}`, {
+      const response = await fetch(`${url}/api/teachers/${id}`, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete user');
@@ -88,8 +90,9 @@ export default function UserPage() {
 
   // Handle updated user data
   const handleUpdateUser = async (updatedUser) => {
+    const url= import.meta.env.VITE_APP_URL;
     try {
-      const response = await fetch(`http://localhost:3001/api/teachers/${updatedUser._id}`, {
+      const response = await fetch(`${url}/api/teachers/${updatedUser._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedUser),
@@ -146,9 +149,10 @@ export default function UserPage() {
 };
 
   const handleDeleteAll = async () => {
+    const url= import.meta.env.VITE_APP_URL;
     try {
       const deleteRequests = selected.map((id) =>
-        fetch(`http://localhost:3001/api/teachers/${id}`, { method: 'DELETE' })
+        fetch(`${url}/api/teachers/${id}`, { method: 'DELETE' })
       );
       await Promise.all(deleteRequests);
       setSelected([]);

@@ -1,6 +1,7 @@
 import { signOut } from "firebase/auth";
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { doc, getDoc, getFirestore } from "firebase/firestore";
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -11,9 +12,10 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-import { auth } from "../../../firebase";
+import { auth } from "../../../firebase"; // Import Firestore methods
 
-// Define the menu options
+const db = getFirestore(); // Initialize Firestore
+
 const MENU_OPTIONS = [
   { label: 'Home', icon: 'eva:home-fill' },
   { label: 'Profile', icon: 'eva:person-fill' },
@@ -22,19 +24,30 @@ const MENU_OPTIONS = [
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
-  const [user, setUser] = useState({ displayName: '', email: '', photoURL: '' });
+  const [user, setUser] = useState({ displayName: '', email: '', role: '' });
   const navigate = useNavigate();
   
   useEffect(() => {
-    const {currentUser} = auth;
+    const fetchUserRole = async (currentUser) => {
+      try {
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        if (userDoc.exists()) {
+          setUser({
+            displayName: currentUser.email.split('@')[0],
+            email: currentUser.email,
+            role: userDoc.data().role || 'No role defined', // Fetch role from Firestore
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching user role:", error);
+      }
+    };
+
+    const { currentUser } = auth;
     if (currentUser) {
-      setUser({
-        displayName: currentUser.displayName || 'User',
-        email: currentUser.email || 'No email provided',
-        photoURL: currentUser.photoURL || '',
-      });
+      fetchUserRole(currentUser);
     }
-  }, []); // Empty dependency array to only run on mount
+  }, []); 
 
   const handleOpen = (event) => setOpen(event.currentTarget);
   const handleClose = () => setOpen(null);
@@ -42,8 +55,7 @@ export default function AccountPopover() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      // alert("User logged out successfully");
-      navigate('/'); // Redirect to login page after logout
+      navigate('/'); 
     } catch (error) {
       console.error("Error logging out:", error);
     }
@@ -63,16 +75,8 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar
-          src={user.photoURL}
-          alt={user.displayName}
-          sx={{
-            width: 36,
-            height: 36,
-            border: (theme) => `solid 2px ${theme.palette.background.default}`,
-          }}
-        >
-          {user.displayName.charAt(0).toUpperCase()}
+        <Avatar sx={{ width: 36, height: 36, border: (theme) => `solid 2px ${theme.palette.background.default}` }}>
+          {user.email ? user.email.charAt(0).toUpperCase() : ''}
         </Avatar>
       </IconButton>
 
@@ -83,20 +87,15 @@ export default function AccountPopover() {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         PaperProps={{
-          sx: {
-            p: 0,
-            mt: 1,
-            ml: 0.75,
-            width: 200,
-          },
+          sx: { p: 0, mt: 1, ml: 0.75, width: 200 },
         }}
       >
         <Box sx={{ my: 1.5, px: 2 }}>
           <Typography variant="subtitle2" noWrap>
-            {user.displayName}
+            {user.email}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {user.email}
+            {user.role}
           </Typography>
         </Box>
 

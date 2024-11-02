@@ -1,23 +1,19 @@
 import { useState, useEffect } from 'react';
 
 import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
-import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
-import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
-import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
 import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
 import AddStudentModal from './addStudentModel'; // Import the AddStudentModal
-import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../toolbar';
+import TableEmptyRows from '../table-empty-rows';
 import UpdateStudentModal from './updateStudentModel'; // Import the UpdateStudentModal
 import { applyFilter, getComparator } from '../utils';
 
@@ -42,8 +38,9 @@ export default function UserPage() {
 
   // Fetch users from the API
   const fetchUsers = async () => {
+    const url =import.meta.env.VITE_APP_URL;
     try {
-      const response = await fetch('http://localhost:3001/api/students'); // Adjust the URL as necessary
+      const response = await fetch(`${url}/api/students`); // Adjust the URL as necessary
       if (!response.ok) {
         throw new Error('Failed to fetch users');
       }
@@ -66,7 +63,8 @@ export default function UserPage() {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:3001/api/students/${id}`, {
+      const url =import.meta.env.VITE_APP_URL;
+      const response = await fetch(`${url}/api/students/${id}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
@@ -105,8 +103,9 @@ export default function UserPage() {
 
   // Handle updated user data
   const handleUpdateUser = async (updatedUser) => {
+    const url =import.meta.env.VITE_APP_URL;
     try {
-      const response = await fetch(`http://localhost:3001/api/students/${updatedUser._id}`, {
+      const response = await fetch(`${url}/api/students/${updatedUser._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -170,9 +169,10 @@ export default function UserPage() {
   };
 
   const handleDeleteAll = async () => {
+    const url =import.meta.env.VITE_APP_URL;
     try {
       const deleteRequests = selected.map((id) =>
-        fetch(`http://localhost:3001/api/students/${id}`, {
+        fetch(`${url}/api/students/${id}`, {
           method: 'DELETE',
         })
         

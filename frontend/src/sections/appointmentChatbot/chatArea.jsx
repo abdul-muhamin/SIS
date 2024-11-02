@@ -1,6 +1,8 @@
-import React, { useContext, useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { ChatInput, ConversationContext } from '@chatbotkit/react';
+
 import { Box, Paper } from '@mui/material';
+
 import BotMessage from './botMessage';
 import UserMessage from './userMessage';
 

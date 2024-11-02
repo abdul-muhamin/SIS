@@ -47,15 +47,16 @@ const createRolesWithPolicies = async () => {
       { id: uuidv4(), URL: '/admin-dashboard', roleId: uuidForSuperAdminRole, order: 2, URL_Name: 'Admin Dashboard', URL_Desc: '' },
       { id: uuidv4(), URL: '/staff-dashboard', roleId: uuidForSuperAdminRole, order: 3, URL_Name: 'Staff Dashboard', URL_Desc: '' },
       { id: uuidv4(), URL: '/student-dashboard', roleId: uuidForSuperAdminRole, order: 4, URL_Name: 'Student Dashboard', URL_Desc: '' },
-      { id: uuidv4(), URL: '/student', roleId: uuidForSuperAdminRole, order: 8, URL_Name: 'Student', URL_Desc: '' },
-      { id: uuidv4(), URL: '/grade', roleId: uuidForSuperAdminRole, order: 13, URL_Name: 'Grade', URL_Desc: '' },
       { id: uuidv4(), URL: '/staff', roleId: uuidForSuperAdminRole, order: 5, URL_Name: 'Staff', URL_Desc: '' },
-      { id: uuidv4(), URL: '/assignment', roleId: uuidForSuperAdminRole, order: 11, URL_Name: 'Assignment', URL_Desc: '' },
-      { id: uuidv4(), URL: '/student-attendance', roleId: uuidForSuperAdminRole, order: 9, URL_Name: 'Student Attendance', URL_Desc: '' },
-      { id: uuidv4(), URL: '/staff-attendance', roleId: uuidForSuperAdminRole, order: 6, URL_Name: 'Staff Attendance', URL_Desc: '' },
-      { id: uuidv4(), URL: '/student-attendance-report', roleId: uuidForSuperAdminRole, order: 10, URL_Name: 'Student Attendance Report', URL_Desc: '' },
-      { id: uuidv4(), URL: '/assignment-report', roleId: uuidForSuperAdminRole, order: 12, URL_Name: 'Assignment Report', URL_Desc: '' },
+      { id: uuidv4(), URL: '/admin-staff-attendance', roleId: uuidForSuperAdminRole, order: 6, URL_Name: 'Staff Attendance', URL_Desc: '' },
       { id: uuidv4(), URL: '/staff-attendance-report', roleId: uuidForSuperAdminRole, order: 7, URL_Name: 'Staff Attendance Report', URL_Desc: '' },
+      { id: uuidv4(), URL: '/student', roleId: uuidForSuperAdminRole, order: 8, URL_Name: 'Student', URL_Desc: '' },
+      { id: uuidv4(), URL: '/admin-student-attendance', roleId: uuidForSuperAdminRole, order: 9, URL_Name: 'Student Attendance', URL_Desc: '' },
+      { id: uuidv4(), URL: '/student-attendance-report', roleId: uuidForSuperAdminRole, order: 10, URL_Name: 'Student Attendance Report', URL_Desc: '' },
+      { id: uuidv4(), URL: '/assignment', roleId: uuidForSuperAdminRole, order: 11, URL_Name: 'Assignment', URL_Desc: '' },
+      { id: uuidv4(), URL: '/assignment-report', roleId: uuidForSuperAdminRole, order: 12, URL_Name: 'Assignment Report', URL_Desc: '' },
+      { id: uuidv4(), URL: '/grade', roleId: uuidForSuperAdminRole, order: 13, URL_Name: 'Grade', URL_Desc: '' },
+      { id: uuidv4(), URL: '/schedule', roleId: uuidForSuperAdminRole, order: 14, URL_Name: 'Staff Attendance Report', URL_Desc: '' },
     ];
 
     // Create SUPER ADMIN role
@@ -82,10 +83,11 @@ const createRolesWithPolicies = async () => {
     const uuidForAdminRole = uuidv4(); // Use a unique UUID for the role
     const rolePoliciesAdmin = [
       { id: uuidv4(), URL: '/admin-dashboard', roleId: uuidForAdminRole, order: 1, URL_Name: 'Admin Dashboard', URL_Desc: '' },
-      { id: uuidv4(), URL: '/student', roleId: uuidForAdminRole, order: 3, URL_Name: 'Student', URL_Desc: '' },
-      { id: uuidv4(), URL: '/grade', roleId: uuidForAdminRole, order: 5, URL_Name: 'Grade', URL_Desc: '' },
       { id: uuidv4(), URL: '/staff', roleId: uuidForAdminRole, order: 2, URL_Name: 'Staff', URL_Desc: '' },
+      { id: uuidv4(), URL: '/student', roleId: uuidForAdminRole, order: 3, URL_Name: 'Student', URL_Desc: '' },
       { id: uuidv4(), URL: '/assignment', roleId: uuidForAdminRole, order: 4, URL_Name: 'Assignment', URL_Desc: '' },
+      { id: uuidv4(), URL: '/grade', roleId: uuidForAdminRole, order: 5, URL_Name: 'Grade', URL_Desc: '' },
+      { id: uuidv4(), URL: '/schedule', roleId: uuidForSuperAdminRole, order: 6, URL_Name: 'Staff Attendance Report', URL_Desc: '' },
     ];
 
     // Create ADMIN role

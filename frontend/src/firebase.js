@@ -4,13 +4,15 @@ import { getFirestore } from 'firebase/firestore';
 import { getAuth, GoogleAuthProvider, FacebookAuthProvider } from 'firebase/auth';
 
 // Your web app's Firebase configuration
+const api_Key = import.meta.env.VITE_APP_FIREBASE_API
+const app_id = import.meta.env.VITE_APP_FIREBASE_APP_ID
 const firebaseConfig = {
-  apiKey: 'AIzaSyDJ5HdvQFWOnBvDuzSTqEuKVZ-kRGAsVhE',
+  apiKey: api_Key,
   authDomain: 'student-portal-73cbd.firebaseapp.com',
   projectId: 'student-portal-73cbd',
   storageBucket: 'student-portal-73cbd.appspot.com',
   messagingSenderId: '175911220594',
-  appId: '1:175911220594:web:54c3f4aacdb3fb72de59eb',
+  appId: app_id,
 };
 
 // Initialize Firebase

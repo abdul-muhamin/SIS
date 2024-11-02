@@ -1,6 +1,7 @@
 import React from 'react';
-import { Container, Typography } from '@mui/material';
 import ConversationManager from '@chatbotkit/react/components/ConversationManager';
+
+import { Container, Typography } from '@mui/material';
 
 import ChatArea from './chatArea';
 

@@ -8,6 +8,7 @@ const icon = (name) => (
 
 // Function to get dynamic navConfig based on localStorage
 export const getNavConfig = () => {
+  
   // const fetchAndJoinPolicies = async (userId, roleId) => {
   //  console.log('Function started');
   //   try {

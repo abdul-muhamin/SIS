@@ -1,6 +1,8 @@
 // attendance.controller.js
 
+const {isOnTime} = require('../services/utils');
 const Attendance = require('../models/studentattendenceModel');
+const moment = require('moment');
 
 // Helper function to format date as YYYY-MM-DD
 const formatDate = (dateInput) => {
@@ -13,7 +15,7 @@ const formatDate = (dateInput) => {
 
 // Add or update attendance for a specific student
 exports.saveOrUpdateAttendance = async (req, res) => {
-  const { staffId } = req.params;
+  const { studentId } = req.params;
   let { date, clockIn, clockOut, leaveType } = req.body;
 
   try {
@@ -21,7 +23,7 @@ exports.saveOrUpdateAttendance = async (req, res) => {
     date = formatDate(date);
 
     // Find the student by studentId
-    const attendanceRecord = await Attendance.findOne({ staffId });
+    const attendanceRecord = await Attendance.findOne({ studentId });
 
     if (attendanceRecord) {
       // Check if there's an attendance for the specified date
@@ -63,7 +65,7 @@ exports.saveOrUpdateAttendance = async (req, res) => {
     } else {
       // Create a new record with the attendance if student doesn't exist
       const newAttendance = new Attendance({
-        staffId,
+        studentId,
         attendances: [
           {
             date,
@@ -95,7 +97,7 @@ exports.saveOrUpdateAttendance = async (req, res) => {
 
 // Get attendance for a student by date
 exports.getAttendanceByDate = async (req, res) => {
-  const { staffId } = req.params;
+  const { studentId } = req.params;
   let { date } = req.query;
 
   try {
@@ -104,7 +106,7 @@ exports.getAttendanceByDate = async (req, res) => {
 
     // Find attendance record for the student
     const attendanceRecord = await Attendance.findOne(
-      { staffId },
+      { studentId },
       // { "attendances._id": 0, "attendances.id": 0 } // Exclude _id and id from attendances array
     );
 
@@ -132,6 +134,118 @@ exports.getAttendanceByDate = async (req, res) => {
     return res.status(500).json({ error: 'An error occurred while fetching attendance.' });
   }
 };
+//fetch students attendance record where attendences.date = inputdate 
+// attendance.date , clockin , clockout , studentId 
+exports.getAllAttendanceByDate = async (req, res) => {
+  const { date } = req.query;
+  const dateObject = new Date(date);
+  try {
+    // Ensure date is in YYYY-MM-DD format
+    const formattedDate = formatDate(dateObject);
+
+    // Fetch attendance records for all students on the specified date
+    const attendanceRecords = await Attendance.find({
+      'attendances.date': formattedDate,
+    });
+
+    if (!attendanceRecords.length) {
+      return res.status(404).json({ message: 'No attendance records found for this date.' });
+    }
+
+    // Prepare the response
+    const response = attendanceRecords.map(record => ({
+      studentId: record.studentId, // Corrected this line
+      attendances: record.attendances.filter(att => att.date === formattedDate)
+    }));
+
+    return res.status(200).json({ attendanceData: response });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'An error occurred while fetching attendance.' });
+  }
+};
+
+
+
+// New controller method to classify students based on attendance
+exports.getAttendanceSummaryForToday = async (req, res) => {
+  const { date } = req.query;
+  const dateObject = new Date(date);
+  const formattedDate = moment(new Date(dateObject)).format("YYYY-MM-DD");
+ // Get formatteddate's date in YYYY-MM-DD format
+  console.log('Today\'s date:', formattedDate);
+
+  // Define start and end times with formatteddate's date included
+  const onTimeStart = new Date(`${formattedDate}T07:45:00`);
+  const onTimeEnd = new Date(`${formattedDate}T08:00:00 `);
+  const earlyDepartureTime = new Date(`${formattedDate}T12:00:00 PM`);
+
+  try {
+    // Fetch attendance records for all students for formatteddate
+    const attendanceRecords = await Attendance.find({
+      'attendances.date': formattedDate,
+    });
+
+    console.log('Attendance records:', attendanceRecords.length);
+    const summary = {
+      onTimeCount: 0,
+      absentcount: 0,
+      lateArrivals: 0,
+      earlyDepartures: 0,
+      timeOff: 0,
+    };
+    if (attendanceRecords.length==0) {
+      return res.status(200).json({ summary });
+    }
+    console.log('Attendance records:', attendanceRecords.length);
+
+    // Initialize summary object with counts
+
+    // Process each attendance record
+    attendanceRecords.forEach(record => {
+      const todayAttendance = record.attendances.find(att => att.date === formattedDate);
+      // if (!todayAttendance) return; // Skip if no attendance for formatteddate
+
+      const { clockIn, clockOut } = todayAttendance;
+      console.log(`Student ID: ${record.studentId}, Clock In: ${clockIn}, Clock Out: ${clockOut}`);
+
+      // Check attendance conditions and classify accordingly
+      // if (!clockIn && !clockOut) {
+      //   summary.timeOff++;
+      // } else if (!clockIn) {
+      //   summary.absentcount++;
+      // } else {
+        const clockInTime = new Date(`${formattedDate}T${clockIn}:00`);
+        const clockOutTime = clockOut ? new Date(`${formattedDate}T${clockOut}:00`) : null;
+
+        console.log(`Parsed Times - Clock In: ${clockInTime}, Clock Out: ${clockOutTime}`);
+
+        // Check if on-time or late
+        if (isOnTime(todayAttendance ,formattedDate )) {
+          summary.onTimeCount++;}
+         else {
+          summary.lateArrivals++;
+        }
+
+        // // Check early departure
+        // if (clockOutTime && clockOutTime <= earlyDepartureTime) {
+        //   summary.earlyDepartures++;
+        // }
+        
+      }
+  // }}
+    );
+
+    console.log('Attendance Summary:', summary);
+    return res.status(200).json({ summary });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'An error occurred while fetching attendance summary.' });
+  }
+};
+
+
+
 
 
 // Delete attendance for a student on a specific date

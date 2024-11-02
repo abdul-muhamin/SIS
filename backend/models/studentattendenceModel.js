@@ -1,81 +1,42 @@
-// const mongoose = require('mongoose');
-
-// const attendanceSchema = new mongoose.Schema({
-//   studentId: {
-//     type: String,
-//     // required: true,
-//   },
-//   attendances: [
-//     {
-//       // id: {
-//       //   type: mongoose.Schema.Types.ObjectId, // This can be generated automatically
-//       //   default: () => new mongoose.Types.ObjectId(), // Automatically generate an ObjectId
-//       // },
-//       date: {
-//         type: String,
-//         // required: true, // Stored as 'YYYY-MM-DD'
-//       },
-//       clockIn: {
-//         type: String,
-//         default: '', // Store as time (HH:mm format or string)
-//       },
-//       clockOut: {
-//         type: String,
-//         default: '',
-//       },
-//       leaveType: {
-//         type: String,
-//         default: '',
-//       },
-//       isArchived: {
-//         type: Boolean,
-//         default: false, // Default value for isArchived
-//       },
-//     },
-//   ],
-// }, { collection: 'student_attendance', _id: false }); // Specify the collection name here
-
-// const Attendance = mongoose.model('Attendance', attendanceSchema);
-
-// module.exports = Attendance;
-
 const mongoose = require('mongoose');
 
-const attendanceSchema = new mongoose.Schema({
-  studentId: {
-    type: String,
-    // required: true,
-  },
-  attendances: [
-    {
-    //   id: {
-    //     type: mongoose.Schema.Types.ObjectId, // This can be generated automatically
-    //     default: () => new mongoose.Types.ObjectId(), // Automatically generate an ObjectId
-    //   },
-      date: {
-        type: String,
-        // required: true, // Stored as 'YYYY-MM-DD'
-      },
-      clockIn: {
-        type: String,
-        default: '', // Store as time (HH:mm format or string)
-      },
-      clockOut: {
-        type: String,
-        default: '',
-      },
-      leaveType: {
-        type: String,
-        default: '',
-      },
-      isArchived: {
-        type: Boolean,
-        default: false, // Default value for isArchived
-      },
+// Attendance Schema
+const attendanceSchema = new mongoose.Schema(
+  {
+    studentId: {
+      type: mongoose.Schema.Types.ObjectId, // Use ObjectId for references to the Student model
+      ref: 'student', // Assuming you have a Student model
+      // required: true, // It's often important to ensure a studentId is always present
     },
-  ],
-}, { collection: 'student_attendance' }); 
+    attendances: [
+      {
+        date: {
+          type: String,
+          // required: true, // It’s usually a good practice to enforce this
+        },
+        clockIn: {
+          type: String,
+          default: '', // Consider using a Date type for better time management
+        },
+        clockOut: {
+          type: String,
+          default: '',
+        },
+        leaveType: {
+          type: String,
+          default: '',
+        },
+        isArchived: {
+          type: Boolean,
+          default: false, // Default value for isArchived
+        },
+      },
+    ],
+  },
+  { collection: 'student_attendance' }
+);
 
+// Create and export Attendance model
 const Attendance = mongoose.model('Attendance', attendanceSchema);
 
 module.exports = Attendance;

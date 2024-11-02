@@ -10,7 +10,7 @@ export const BlogPage = lazy(() => import('src/pages/blog'));
 export const UserPage = lazy(() => import('src/pages/student'));
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const GradePage = lazy(() => import('src/pages/gradePage'));
-export const StudentPage = lazy(() => import('src/pages/add-student'));
+// export const StudentPage = lazy(() => import('src/pages/add-student'));
 export const AdminPanel = lazy(() => import('src/pages/admin-panel'));
 export const AddAssignment = lazy(() => import('src/pages/add-assignment'));
 export const AddAssignmentUserPage = lazy(() => import('src/pages/assignment-user'));
@@ -44,7 +44,7 @@ export default function Router() {
         { path: 'staff', element: <Teacher /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
-        { path: 'student', element: <StudentPage /> },
+        // { path: 'student', element: <StudentPage /> },
         // { path: 'update-student', element: <UpdateStudentPage /> },
         { path: 'add-assignment', element: <AddAssignment /> },
         { path: 'admin-panel', element: <AdminPanel /> },

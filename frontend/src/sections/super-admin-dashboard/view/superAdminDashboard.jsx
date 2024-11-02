@@ -1,18 +1,34 @@
 import React, { useState, useEffect } from 'react';
 
 import { Box, Grid, Paper, Typography } from '@mui/material';
-
-// import StudenAttendece from "src/sections/student-attendence/view/user-view"
-import Index from "src/sections/super-admin-dashboard/view/user-view"
+import Index from "./user-view"
 
 function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [totalStudents, setTotalStudents] = useState(0); // State for total students
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
     return () => clearInterval(timer);
+  }, []);
+  useEffect(() => {
+    const fetchTotalStudents = async () => {
+      const url = import.meta.env.VITE_APP_URL;
+      try {
+        const response = await fetch(`${url}/api/students`); // Adjust URL if needed
+        if (!response.ok) {
+          throw new Error('Failed to fetch students');
+        }
+        const data = await response.json();
+        setTotalStudents(data.length); // Assuming the API returns an array of students
+      } catch (error) {
+        console.error('Error fetching total students:', error);
+      }
+    };
+
+    fetchTotalStudents(); // Fetch total students on component mount
   }, []);
 
   const formattedTime = currentTime.toLocaleTimeString();
@@ -23,7 +39,7 @@ function Dashboard() {
   });
 
   const stats = [
-    { title: 'Total Students', value: 452, note: '2 new employees added!' },
+    { title: 'Total Students', value: totalStudents, note: '2 new employees added!' },
     { title: 'On Time', value: 360, note: '-10% Less than yesterday' },
     { title: 'Absent', value: 30, note: '+3% Increase than yesterday' },
     { title: 'Late Arrival', value: 62, note: '+3% Increase than yesterday' },

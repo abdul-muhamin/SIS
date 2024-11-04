@@ -53,7 +53,7 @@ export default function UserPage() {
     }
 
     try {
-      const formattedDate = selectedDate.toISOString().split('T')[0];
+      const formattedDate = selectedDate.toLocaleDateString('en-CA');
       console.log('Fetching attendance for date:', formattedDate);
       const response = await fetch(`${url}/api//students/attendances?date=${formattedDate}`);
       if (!response.ok) {
@@ -129,7 +129,7 @@ export default function UserPage() {
   return (
     <Container sx={{ height: { lg: '60vh' } }}>
       <Card>
-        <Toolbar sx={{ height: 96, display: 'flex', alignItems: 'center', gap: 2, p: 1 }}>
+        <Toolbar sx={{ height: 96, display: 'flex', alignItems: 'center', gap: 3, p: 1 }}>
           <div style={{ fontWeight: 'bold', color: '#3f3f46' }}>Attendance Overview</div>
           <OutlinedInput
             value={filterName}
@@ -140,7 +140,7 @@ export default function UserPage() {
                 <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled', width: 20, height: 20 }} />
               </InputAdornment>
             }
-            sx={{ width: 240, borderRadius: 2 }}
+            sx={{ width: 400, borderRadius: 2 }}
           />
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
@@ -154,7 +154,9 @@ export default function UserPage() {
             variant="contained"
             sx={{
               bgcolor: '#6C5CE7',
+              direction: 'flex-end',
               color: 'white',
+              textAlign:'',
               textTransform: 'none',
               borderRadius: 2,
               padding: '8px 16px',
@@ -193,7 +195,7 @@ export default function UserPage() {
                       idNumber={row.idNumber}
                       name={row.fullName}
                       status={row.status}
-                      date={selectedDate ? selectedDate.toLocaleDateString('en-US') : 'No Date'}
+                      date={selectedDate ? selectedDate.toLocaleDateString('en-CA') : 'No Date'}
                       clockIn={row.attendance?.[0]?.clockIn ?? 'No Clock In'}
                       clockOut={row.attendance?.[0]?.clockOut ?? 'No Clock Out'}
                     />

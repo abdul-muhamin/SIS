@@ -1,6 +1,6 @@
 // attendance.controller.js
 
-const {isOnTime} = require('../services/utils');
+const {isOnTime , isAbsent , isEarlyDeparture ,isTimeOff} = require('../services/utils');
 const Attendance = require('../models/studentattendenceModel');
 const moment = require('moment');
 
@@ -171,70 +171,52 @@ exports.getAllAttendanceByDate = async (req, res) => {
 exports.getAttendanceSummaryForToday = async (req, res) => {
   const { date } = req.query;
   const dateObject = new Date(date);
-  const formattedDate = moment(new Date(dateObject)).format("YYYY-MM-DD");
- // Get formatteddate's date in YYYY-MM-DD format
-  console.log('Today\'s date:', formattedDate);
-
-  // Define start and end times with formatteddate's date included
-  const onTimeStart = new Date(`${formattedDate}T07:45:00`);
-  const onTimeEnd = new Date(`${formattedDate}T08:00:00 `);
-  const earlyDepartureTime = new Date(`${formattedDate}T12:00:00 PM`);
+  const formattedDate = moment(dateObject).format("YYYY-MM-DD");
 
   try {
-    // Fetch attendance records for all students for formatteddate
     const attendanceRecords = await Attendance.find({
       'attendances.date': formattedDate,
     });
 
-    console.log('Attendance records:', attendanceRecords.length);
     const summary = {
       onTimeCount: 0,
-      absentcount: 0,
+      absentCount: 0,
       lateArrivals: 0,
       earlyDepartures: 0,
       timeOff: 0,
     };
-    if (attendanceRecords.length==0) {
+
+    if (attendanceRecords.length === 0) {
       return res.status(200).json({ summary });
     }
-    console.log('Attendance records:', attendanceRecords.length);
 
-    // Initialize summary object with counts
-
-    // Process each attendance record
     attendanceRecords.forEach(record => {
       const todayAttendance = record.attendances.find(att => att.date === formattedDate);
-      // if (!todayAttendance) return; // Skip if no attendance for formatteddate
+
+      if (!todayAttendance) return;
 
       const { clockIn, clockOut } = todayAttendance;
-      console.log(`Student ID: ${record.studentId}, Clock In: ${clockIn}, Clock Out: ${clockOut}`);
 
-      // Check attendance conditions and classify accordingly
-      // if (!clockIn && !clockOut) {
-      //   summary.timeOff++;
-      // } else if (!clockIn) {
-      //   summary.absentcount++;
-      // } else {
+      if (isAbsent(todayAttendance)) {
+        summary.absentCount++;
+      }
+       if (isTimeOff(todayAttendance)) {
+        summary.timeOff++;
+      } else {
         const clockInTime = new Date(`${formattedDate}T${clockIn}:00`);
         const clockOutTime = clockOut ? new Date(`${formattedDate}T${clockOut}:00`) : null;
 
-        console.log(`Parsed Times - Clock In: ${clockInTime}, Clock Out: ${clockOutTime}`);
-
-        // Check if on-time or late
-        if (isOnTime(todayAttendance ,formattedDate )) {
-          summary.onTimeCount++;}
-         else {
+        if (isOnTime(todayAttendance, formattedDate)) {
+          summary.onTimeCount++;
+        } else {
           summary.lateArrivals++;
         }
 
-        // // Check early departure
-        // if (clockOutTime && clockOutTime <= earlyDepartureTime) {
-        //   summary.earlyDepartures++;
-        // }
-        
+        if (clockOutTime && isEarlyDeparture(todayAttendance)) {
+          summary.earlyDepartures++;
+        }
       }
-  // }}
-    );
+    });
 
     console.log('Attendance Summary:', summary);
     return res.status(200).json({ summary });

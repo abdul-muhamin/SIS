@@ -4,7 +4,7 @@
 const Calendar = require('../models/appointment');
 
 async function handleMessages(req, res) {
-    debugger
+    
   const { messages } = req.body;""
   if (!messages || messages.length === 0) {
     return res.status(400).json({ status: 'error', message: 'No messages provided' });
@@ -52,7 +52,6 @@ Failure to follow these rules will result in a decline of the appointment and cu
 
   // Retrieve calendar events from MongoDB
   const calendarEvents = await Calendar.find();
-debugger
   response.data = {
     backstory,
     calendar: calendarEvents,

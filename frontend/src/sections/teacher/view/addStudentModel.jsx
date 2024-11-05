@@ -205,16 +205,16 @@ const AddStudentModal = ({ open, onClose }) => {
       name="photo"
       type="file"
       onChange={handleFileChange}
-      sx={{
-        width: '150px', // Adjust the width of the file input
-        // '& input': {
-        //   padding: '6px 8px',
-        // },
-      }}
+      // sx={{
+      //   width: '150px', // Adjust the width of the file input
+      //   // '& input': {
+      //   //   padding: '6px 8px',
+      //   // },
+      // }}
       // inputProps={{ style: { padding: '6px 8px' } }} // Ensure consistent padding
     />
     <Grid item xs={12} sx={{ textAlign: 'center'}}>
-          <QRCode value={formValues.qrCodeData} size={50} />
+          <QRCode value={formValues.email} size={50} />
         </Grid>
     <img
       src={selectedFile ? URL.createObjectURL(selectedFile) : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUbytATKdWLC03SIFVrlgdmQRk65j7uptVXw&s'}
@@ -236,6 +236,7 @@ const AddStudentModal = ({ open, onClose }) => {
                 value={formValues.fatherPhoneNumber}
                 onChange={handleChange}
                 margin="normal"
+                sx={{marginBottom:'0px'}}
               />
               <TextField
                 fullWidth
@@ -262,7 +263,7 @@ const AddStudentModal = ({ open, onClose }) => {
                 onChange={handleChange}
                 margin="normal"
               />
-        <FormControl fullWidth sx={{marginTop:"10px"}} >
+        <FormControl fullWidth sx={{marginTop:"15px"}} >
         <InputLabel id="demo-simple-select-label">Status</InputLabel>
         <Select
           labelId="demo-simple-select-label"

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
-import React, { useState, useEffect } from 'react';
 import QRCode from 'react-qr-code';
+import React, { useState, useEffect } from 'react';
+
 import {
   Box,
   Grid,

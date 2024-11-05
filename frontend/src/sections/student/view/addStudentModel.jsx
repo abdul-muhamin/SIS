@@ -202,12 +202,12 @@ const AddStudentModal = ({ open, onClose }) => {
                   name="photo"
                   type="file"
                   onChange={handleFileChange}
-                  sx={{
-                    width: '150px',
-                  }}
+                  //  sx={{
+                  //   width: '150px',
+                  // }}
                 />
                 <Grid item xs={12} sx={{ textAlign: 'center'}}>
-          <QRCode value={formValues.qrCodeData} size={50} />
+          <QRCode value={formValues.email} size={50} />
         </Grid>
                 <img
                   src={
@@ -232,6 +232,7 @@ const AddStudentModal = ({ open, onClose }) => {
                 value={formValues.fatherPhoneNumber}
                 onChange={handleChange}
                 margin="normal"
+                sx={{marginBottom:'10px'}}
               />
               <TextField
                 fullWidth
@@ -239,7 +240,8 @@ const AddStudentModal = ({ open, onClose }) => {
                 name="motherPhoneNumber"
                 value={formValues.motherPhoneNumber}
                 onChange={handleChange}
-                margin="normal"
+                marginB="normal"
+                sx={{marginTop:'2px'}}
               />
               <TextField
                 fullWidth
@@ -258,7 +260,7 @@ const AddStudentModal = ({ open, onClose }) => {
                 onChange={handleChange}
                 margin="normal"
               />
-              <FormControl fullWidth sx={{ marginTop: '10px' }}>
+              <FormControl fullWidth sx={{ marginTop: '15px' }}>
                 <InputLabel>Status</InputLabel>
                 <Select
                   value={formValues.status}

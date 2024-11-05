@@ -174,7 +174,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdate }) => {
                   name="photo"
                   type="file"
                   onChange={handleFileChange}
-                  sx={{ width: '150px' }}
+                  // sx={{ width: '150px' }}
                 />
                 <Grid item xs={12} sx={{ textAlign: 'center'}}>
           <QRCode value={formValues.qrCode} size={50} />
@@ -198,6 +198,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdate }) => {
                 value={formValues.fatherPhoneNumber}
                 onChange={handleChange}
                 margin="normal"
+                sx={{marginBottom:'0px'}}
               />
               <TextField
                 fullWidth
@@ -225,7 +226,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdate }) => {
                 onChange={handleChange}
                 margin="normal"
               />
-              <FormControl fullWidth sx={{marginTop:"10px"}}>
+              <FormControl fullWidth sx={{marginTop:"15px"}}>
                 <InputLabel>Status</InputLabel>
                 <Select
                   name="status"

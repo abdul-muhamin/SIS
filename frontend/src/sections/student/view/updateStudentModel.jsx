@@ -210,8 +210,9 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
                 margin="normal"
               />
               <TextField
+              disabled
                 fullWidth
-                label="Student ID"
+                label="ID"
                 name="studentId"
                 value={formValues.studentId}
                 onChange={handleChange}

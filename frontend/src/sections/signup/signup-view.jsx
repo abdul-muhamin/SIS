@@ -37,6 +37,7 @@ export default function SignUpView() {
   const theme = useTheme();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
+  const [fullName,setFullName ] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -69,64 +70,86 @@ export default function SignUpView() {
 
 
 
-  const handleSignUpWithEmail = async () => {
-    setLoading(true);
-    setError('');
-    const url= import.meta.env.VITE_APP_URL;
-    if (password !== confirmPassword) {
-      setError("Passwords don't match");
+const handleSignUpWithEmail = async () => {
+  setLoading(true);
+  setError('');
+  const url = import.meta.env.VITE_APP_URL;
+
+  if (password !== confirmPassword) {
+    setError("Passwords don't match");
+    setLoading(false);
+    return;
+  }
+
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userId = userCredential.user.uid;
+
+    const selectedRole = roles.find((r) => r.roleName === role);
+    if (!selectedRole) {
+      setError('Please select a valid role');
       setLoading(false);
       return;
     }
 
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const userId = userCredential.user.uid;
+    // debugger
+    const selectedRoleId = selectedRole.roleId;
+    // Check if the role requires saving data in MongoDB
+    if (role === 'STUDENT' || role === 'STAFF') {
+      const apiEndpoint = role === 'STUDENT' ? '/api/students' : '/api/teachers';
+      const idField = role === 'STUDENT' ? 'studentId' : 'staffId';
 
-      // Use the selected role or assign a default role if not selected
-      const selectedRole = roles.find((r) => r.roleName === role) || roles[0];
-      if (!selectedRole) {
-        setError('Please select a valid role');
-        setLoading(false);
-        return;
-      }
-
-      const selectedRoleId = selectedRole.roleId;
-
-      // Save the user data in the 'users' collection
-      await setDoc(doc(db, 'users', userId), {
-        email,
-        userId,
-        role: selectedRole.roleName,
-        roleId: selectedRoleId,
-        createdAt: new Date(),
+      // Save the user data in MongoDB based on the selected role
+      await fetch(`${url}${apiEndpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          fullName,
+          [idField]: userId,
+          role: selectedRole.roleName,
+        }),
       });
-
-      // Fetch and save role policies
-      const policiesResponse = await fetch(`${url}/api/roles/getRolePolicies/${selectedRoleId}`);
-      const policiesData = await policiesResponse.json();
-      const policies = policiesData.rolePolicies || [];
-
-      const userPolicyPromises = policies.map(async (policy) => {
-        const { rolePolicyId, roleId } = policy;
-        const userPolicyId = uuidv4();
-        return setDoc(doc(db, 'userPolicies', userPolicyId), {
-          rolePolicyId,
-          roleId,
-          userId,
-          userPolicyId,
-        });
-      });
-
-      await Promise.all(userPolicyPromises);
-      localStorage.setItem('userPolicies', JSON.stringify(policies));
-      navigate('/dashboard');
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
     }
-  };
+
+    // Save user data in Firebase for all roles
+    await setDoc(doc(db, 'users', userId), {
+      email,
+      fullName,
+      userId,
+      role: selectedRole.roleName,
+      roleId: selectedRoleId,
+      createdAt: new Date(),
+    });
+
+    // Fetch and save role policies
+    const policiesResponse = await fetch(`${url}/api/roles/getRolePolicies/${selectedRoleId}`);
+    const policiesData = await policiesResponse.json();
+    const policies = policiesData.rolePolicies || [];
+
+    const userPolicyPromises = policies.map(async (policy) => {
+      const userPolicyId = uuidv4();
+      return setDoc(doc(db, 'userPolicies', userPolicyId), {
+        rolePolicyId: policy.rolePolicyId,
+        roleId: policy.roleId,
+        userId,
+        userPolicyId,
+      });
+    });
+
+    await Promise.all(userPolicyPromises);
+    navigate('/');
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+
   
 
   const handleSocialLogin = async (provider) => {
@@ -180,6 +203,14 @@ export default function SignUpView() {
   const renderForm = (
     <>
       <Stack spacing={3}>
+      <TextField
+          name="fullName"
+          label="Full Name"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          error={Boolean(error)}
+          helperText={error}
+        />
         <TextField
           name="email"
           label="Email address"
@@ -327,3 +358,7 @@ export default function SignUpView() {
     </Box>
   );
 }
+
+
+
+

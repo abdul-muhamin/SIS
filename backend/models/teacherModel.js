@@ -26,7 +26,7 @@ const TeacherSchema = new mongoose.Schema({
     fatherPhoneNumber: String,
     motherPhoneNumber: String,
     address: String,
-    studentId: String,
+    staffId: String,
     photo: String, // Photo file name
     status: String,
     attendance: [AttendanceSchema], // Array of attendance records

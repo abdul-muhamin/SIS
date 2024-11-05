@@ -20,8 +20,6 @@ import {
 import { useRouter } from 'src/routes/hooks';
 
 import { db , auth } from 'src/firebase';
-// import { auth } from '../../firebase';  // Ensure this path is correct
-
 import { bgGradient } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
@@ -40,31 +38,26 @@ export default function LoginView() {
   const handleLoginWithEmail = async () => {
     setLoading(true);
     setError('');
-    const url= import.meta.env.VITE_APP_URL;
-    try {
-      // Step 1: Sign in with email and password
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const userId = userCredential.user.uid; // Get the user ID from the sign-in response
+    const url = import.meta.env.VITE_APP_URL;
   
-      // Step 2: Fetch user data from Firestore
-      const userDocRef = doc(db, 'users', userId); // Reference to the user document
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userId = userCredential.user.uid;
+  
+      // Fetch user data from Firestore
+      const userDocRef = doc(db, 'users', userId);
       const userDoc = await getDoc(userDocRef);
   
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        
-        // Step 3: Fetch user policies
         const policiesResponse = await fetch(`${url}/api/roles/getRolePolicies/${userData.roleId}`);
         const policiesData = await policiesResponse.json();
         const policies = policiesData.rolePolicies || [];
   
-        // Optionally: Store policies in local storage
         localStorage.setItem('userPolicies', JSON.stringify(policies));
-  
-        // Navigate to the dashboard
         router.push('/dashboard');
       } else {
-        setError('User data not found.');
+        setError('User data not found in Firestore.');
       }
     } catch (err) {
       setError(err.message);
@@ -72,6 +65,7 @@ export default function LoginView() {
       setLoading(false);
     }
   };
+  
 
   // Sign in with Google
   const handleGoogleLogin = async () => {

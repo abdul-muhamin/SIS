@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
+import { doc, getDoc, getFirestore } from "firebase/firestore";
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -23,25 +24,33 @@ import { NAV } from './config-layout';
 import { getNavConfig } from './config-navigation';  // Import the dynamic function
 
 // ----------------------------------------------------------------------
-
+const db = getFirestore();
 export default function Nav({ openNav, onCloseNav }) {
   const [navConfig, setNavConfig] = useState(getNavConfig()); // Initialize state with navConfig
-  const [userData, setUserData] = useState({ displayName: '', avatarText: '' });
+  const [user, setUser] = useState({ displayName: '', avatarText: '' });
   const pathname = usePathname();
   const upLg = useResponsive('up', 'lg');
 
   useEffect(() => {
-    // Fetch the user data from Firebase on mount
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        const {email} = user;
-        const firstLetter = email.charAt(0).toUpperCase();
-        setUserData({ displayName: email, avatarText: firstLetter });
+    const fetchUserRole = async (currentUser) => {
+      try {
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        if (userDoc.exists()) {
+          setUser({
+            displayName: currentUser.email.split('@')[0],
+            email: currentUser.email,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching user role:", error);
       }
-    });
+    };
 
-    return () => unsubscribe();
-  }, []);
+    const { currentUser } = auth;
+    if (currentUser) {
+      fetchUserRole(currentUser);
+    }
+  }, []); 
 
   useEffect(() => {
     // Update navConfig when user policies change in localStorage
@@ -80,10 +89,10 @@ export default function Nav({ openNav, onCloseNav }) {
         bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
       }}
     >
-      <Avatar>{userData.avatarText}</Avatar>
+      <Avatar>{user.avatarText}</Avatar>
 
       <Box sx={{ ml: 2 }}>
-        <Typography variant="subtitle2">{userData.displayName}</Typography>
+        <Typography variant="subtitle2">{user.displayName}</Typography>
         {/* <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           User
         </Typography> */}

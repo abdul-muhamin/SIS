@@ -210,7 +210,7 @@ export default function UserPage() {
                   { id: 'fatherName', label: 'Father Name' },
                   { id: 'motherName', label: 'Mother Name' },
                   { id: 'Address', label: 'Address' },
-                  // { id: 'studentId', label: 'Staff ID' },
+                  // { id: 'staffId', label: 'Staff ID' },
                   { id: 'status', label: 'Status' },
                   { id: '' },
                 ]}
@@ -231,7 +231,7 @@ export default function UserPage() {
                       motherPhoneName={row.motherPhoneName}
                       motherName={row.motherName}
                       Address={row.address}
-                      studentId={row.studentId}
+                      staffId={row.staffId}
                       status={row.status}
                       selected={selected.indexOf(row._id) !== -1} // Check if this row is selected
                       handleClick={(event) => handleClick(event, row._id)} // Toggle selection on checkbox click

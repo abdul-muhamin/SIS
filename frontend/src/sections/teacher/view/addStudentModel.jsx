@@ -1,5 +1,7 @@
-import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useState , useEffect} from 'react';
+import { doc, setDoc  } from 'firebase/firestore';
+import {createUserWithEmailAndPassword,} from 'firebase/auth';
 
 import {
   Box,
@@ -17,6 +19,8 @@ import {
   DialogContent
 } from '@mui/material';
 
+import {  db , auth} from 'src/firebase';
+
 const AddStudentModal = ({ open, onClose }) => {
   const [formValues, setFormValues] = useState({
     fullName: '',
@@ -28,12 +32,14 @@ const AddStudentModal = ({ open, onClose }) => {
     fatherPhoneNumber: '',
     motherPhoneNumber: '',
     address: '',
-    studentId: '',
+    staffId: '',
     status: '', // Status field
   });
 
   const [error, setError] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [roles , setRoles] = useState([])
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,11 +50,58 @@ const AddStudentModal = ({ open, onClose }) => {
     setSelectedFile(event.target.files[0]);
   };
 
-  const handleSubmit = async (e) => {
-    const url= import.meta.env.VITE_APP_URL;
-    try {
-      e.preventDefault();
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/roles/getRolesAndPolicies');
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          setRoles(data.roles || []);
+        } else {
+          throw new Error('Response is not in JSON format');
+        }
+      } catch (err) {
+        console.error('Error fetching roles:', err.message || err);
+      }
+    };
 
+    fetchRoles();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const url = import.meta.env.VITE_APP_URL;
+    setError(null);
+    setLoading(true);
+  
+    try {
+      const selectedRole = roles.find((r) => r.roleName === 'STAFF') || roles[0];
+      if (!selectedRole) {
+        setError('Please select a valid role');
+        setLoading(false);
+        return;
+      }
+  
+      const selectedRoleId = selectedRole.roleId;
+  
+      // Sign up the staff in Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(auth, formValues.email, formValues.email);
+      const { user } = userCredential;
+  
+      // Add user data to Firestore with `user.uid` as the document ID
+      await setDoc(doc(db, 'users', user.uid), {
+        userId: user.uid,
+        fullName: formValues.fullName,
+        roleId: selectedRoleId,
+        role: 'STAFF',
+        email: formValues.email,
+        // status: formValues.status || 'Active',
+      });
+  
+      console.log('Staff added successfully with role ID:', selectedRoleId);
+  
+      // Add other details to your backend
       const formData = new FormData();
       formData.append('fullName', formValues.fullName);
       formData.append('email', formValues.email);
@@ -59,42 +112,31 @@ const AddStudentModal = ({ open, onClose }) => {
       formData.append('fatherPhoneNumber', formValues.fatherPhoneNumber);
       formData.append('motherPhoneNumber', formValues.motherPhoneNumber);
       formData.append('address', formValues.address);
-      formData.append('studentId', formValues.studentId);
+      formData.append('staffId', user.uid);
       formData.append('status', formValues.status);
       formData.append('photo', selectedFile);
-
+  
       const response = await fetch(`${url}/api/teachers`, {
         method: 'POST',
         body: formData,
       });
-
+  
       if (!response.ok) {
-        throw new Error('Failed to add student');
+        throw new Error('Failed to add staff');
       }
-
-      const result = await response.json();
-      console.log('Student added successfully:', result);
-
-      setFormValues({
-        fullName: '',
-        email: '',
-        class: '',
-        idNumber: '',
-        fatherName: '',
-        motherName: '',
-        fatherPhoneNumber: '',
-        motherPhoneNumber: '',
-        address: '',
-        studentId: '',
-        status: '',
-      });
+  
+      console.log('Staff added to backend successfully');
+      setFormValues({ ...formValues });
       setSelectedFile(null);
       onClose();
     } catch (err) {
-      console.error('Error adding student:', err.message);
+      console.error('Error adding staff:', err.message);
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
+  
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
@@ -207,10 +249,11 @@ const AddStudentModal = ({ open, onClose }) => {
                 margin="normal"
               />
               <TextField
+              disabled
                 fullWidth
-                label="Staff ID"
-                name="studentId"
-                value={formValues.studentId}
+                label="ID"
+                name="staffId"
+                value={formValues.staffId}
                 onChange={handleChange}
                 margin="normal"
               />

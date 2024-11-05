@@ -16,7 +16,7 @@ const teacherController = {
         fatherPhoneNumber,
         motherPhoneNumber,
         address,
-        studentId,
+        staffId,
         status
       } = req.body;
 
@@ -33,7 +33,7 @@ const teacherController = {
         fatherPhoneNumber,
         motherPhoneNumber,
         address,
-        studentId,
+        staffId,
         photo,
         status,
         attendance: [] // Initialize attendance as an empty array
@@ -74,8 +74,8 @@ const teacherController = {
   // Get student by ID
   getStudentById: async (req, res) => {
     try {
-      const studentId = req.params.id;
-      const student = await StudentModel.findById(studentId);
+      const staffId = req.params.id;
+      const student = await StudentModel.findById(staffId);
 
       if (!student) {
         return res.status(404).json({ error: "Student not found" });
@@ -97,7 +97,7 @@ const teacherController = {
   // Update student by ID
   updateStudentById: async (req, res) => {
     try {
-      const studentId = req.params.id;
+      const staffId = req.params.id;
       const updatedData = req.body;
 
       if (req.file) {
@@ -105,7 +105,7 @@ const teacherController = {
         updatedData.photo = req.file.filename;
       }
 
-      const updatedStudent = await StudentModel.findByIdAndUpdate(studentId, updatedData, { new: true });
+      const updatedStudent = await StudentModel.findByIdAndUpdate(staffId, updatedData, { new: true });
 
       if (!updatedStudent) {
         return res.status(404).json({ error: "Student not found" });
@@ -127,9 +127,9 @@ const teacherController = {
   // Delete student by ID
   deleteStudentById: async (req, res) => {
     try {
-      const studentId = req.params.id;
+      const staffId = req.params.id;
 
-      const deletedStudent = await StudentModel.findByIdAndDelete(studentId);
+      const deletedStudent = await StudentModel.findByIdAndDelete(staffId);
 
       if (!deletedStudent) {
         return res.status(404).json({ error: "Student not found" });
@@ -144,11 +144,11 @@ const teacherController = {
   // Add attendance record for a student
   addAttendance: async (req, res) => {
     try {
-      const studentId = req.params.id;
+      const staffId = req.params.id;
       const { date, clockIn, clockOut } = req.body;
 
       // Find the student and update attendance
-      const student = await StudentModel.findById(studentId);
+      const student = await StudentModel.findById(staffId);
       if (!student) {
         return res.status(404).json({ error: 'Student not found' });
       }
@@ -172,8 +172,8 @@ const teacherController = {
   // Get attendance for a student
   getAttendance: async (req, res) => {
     try {
-      const studentId = req.params.id;
-      const student = await StudentModel.findById(studentId);
+      const staffId = req.params.id;
+      const student = await StudentModel.findById(staffId);
 
       if (!student) {
         return res.status(404).json({ error: 'Student not found' });
@@ -187,11 +187,11 @@ const teacherController = {
   },
   applyLeave: async (req, res) => {
     try {
-      const studentId = req.params.id;
+      const staffId = req.params.id;
       const { date, type } = req.body; // Type will be either 'full' or 'half'
 
       // Find the student and update leave records
-      const student = await StudentModel.findById(studentId);
+      const student = await StudentModel.findById(staffId);
       if (!student) {
         return res.status(404).json({ error: 'Student not found' });
       }
@@ -215,8 +215,8 @@ const teacherController = {
   // Get all leaves for a student
   getLeaves: async (req, res) => {
     try {
-      const studentId = req.params.id;
-      const student = await StudentModel.findById(studentId);
+      const staffId = req.params.id;
+      const student = await StudentModel.findById(staffId);
 
       if (!student) {
         return res.status(404).json({ error: 'Student not found' });

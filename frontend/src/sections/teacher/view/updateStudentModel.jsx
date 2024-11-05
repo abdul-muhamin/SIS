@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import QRCode from 'react-qr-code';
 import React, { useState, useEffect } from 'react';
 
 import {
@@ -28,6 +29,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdate }) => {
     motherPhoneNumber: '',
     address: '',
     _id: '',
+    qrCode:'',
     staffId: '',
     photo: '', // Added photo property
     status: '', // Set default status to Active
@@ -49,6 +51,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdate }) => {
         fatherPhoneNumber: user.fatherPhoneNumber || '',
         motherPhoneNumber: user.motherPhoneNumber || '',
         address: user.address || '',
+        qrCode: user.qrCode || '',
         status: user.status || 'Active',
         staffId: user.staffId || '',
         _id: user._id || '',
@@ -80,6 +83,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdate }) => {
     formData.append('motherPhoneNumber', formValues.motherPhoneNumber);
     formData.append('address', formValues.address);
     formData.append('status', formValues.status);
+    formData.append('qrCode', formValues.qrCode);
     formData.append('staffId', formValues.staffId);
     formData.append('_id', formValues._id);
 
@@ -172,6 +176,9 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdate }) => {
                   onChange={handleFileChange}
                   sx={{ width: '150px' }}
                 />
+                <Grid item xs={12} sx={{ textAlign: 'center'}}>
+          <QRCode value={formValues.qrCode} size={50} />
+        </Grid>
                 <img
                   src={selectedFile ? URL.createObjectURL(selectedFile) : formValues.photo || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUbytATKdWLC03SIFVrlgdmQRk65j7uptVXw&s'}
                   alt="Selected Preview"

@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import QRCode from 'react-qr-code';
 import { useState  , useEffect} from 'react';
 import { doc, setDoc  } from 'firebase/firestore';
 import {createUserWithEmailAndPassword,} from 'firebase/auth';
@@ -32,6 +33,7 @@ const AddStudentModal = ({ open, onClose }) => {
     fatherPhoneNumber: '',
     motherPhoneNumber: '',
     address: '',
+    qrCode:'',
     studentId: '',
     status: 'Active', // Status field
   });
@@ -100,7 +102,7 @@ const AddStudentModal = ({ open, onClose }) => {
       });
   
       console.log('Staff added successfully with role ID:', selectedRoleId);
-  
+      const qrCodeData = `${formValues.email},${formValues.email},${user.uid}`;
       // Add other details to your backend
       const formData = new FormData();
       formData.append('fullName', formValues.fullName);
@@ -113,6 +115,7 @@ const AddStudentModal = ({ open, onClose }) => {
       formData.append('motherPhoneNumber', formValues.motherPhoneNumber);
       formData.append('address', formValues.address);
       formData.append('studentId', user.uid);
+      formData.append('qrCode', qrCodeData);
       formData.append('status', formValues.status);
       formData.append('photo', selectedFile);
   
@@ -203,6 +206,9 @@ const AddStudentModal = ({ open, onClose }) => {
                     width: '150px',
                   }}
                 />
+                <Grid item xs={12} sx={{ textAlign: 'center'}}>
+          <QRCode value={formValues.qrCodeData} size={50} />
+        </Grid>
                 <img
                   src={
                     selectedFile

@@ -17,6 +17,7 @@ const studentController = {
         motherPhoneNumber,
         address,
         studentId,
+        qrCode,
         status
       } = req.body;
 
@@ -34,6 +35,7 @@ const studentController = {
         motherPhoneNumber,
         address,
         studentId,
+        qrCode,
         photo,
         status,
       });

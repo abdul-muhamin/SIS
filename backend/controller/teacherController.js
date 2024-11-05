@@ -17,6 +17,7 @@ const teacherController = {
         motherPhoneNumber,
         address,
         staffId,
+        qrCode,
         status
       } = req.body;
 
@@ -36,6 +37,7 @@ const teacherController = {
         staffId,
         photo,
         status,
+        qrCode ,
         attendance: [] // Initialize attendance as an empty array
       });
 

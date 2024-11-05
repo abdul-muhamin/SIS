@@ -11,6 +11,7 @@ const StudentSchema = new mongoose.Schema({
     motherPhoneNumber: String,
     address: String,
     studentId: String,
+    qrCode:String,
     photo: String, // Photo file name
     status: String
 });

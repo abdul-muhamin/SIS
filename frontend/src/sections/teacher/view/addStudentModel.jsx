@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import QRCode from 'react-qr-code';
 import { useState , useEffect} from 'react';
 import { doc, setDoc  } from 'firebase/firestore';
 import {createUserWithEmailAndPassword,} from 'firebase/auth';
@@ -98,7 +99,7 @@ const AddStudentModal = ({ open, onClose }) => {
         email: formValues.email,
         // status: formValues.status || 'Active',
       });
-  
+      const qrCodeData = `${formValues.email},${formValues.email},${user.uid}`;
       console.log('Staff added successfully with role ID:', selectedRoleId);
   
       // Add other details to your backend
@@ -114,6 +115,7 @@ const AddStudentModal = ({ open, onClose }) => {
       formData.append('address', formValues.address);
       formData.append('staffId', user.uid);
       formData.append('status', formValues.status);
+      formData.append('qrCode', qrCodeData);
       formData.append('photo', selectedFile);
   
       const response = await fetch(`${url}/api/teachers`, {
@@ -211,6 +213,9 @@ const AddStudentModal = ({ open, onClose }) => {
       }}
       // inputProps={{ style: { padding: '6px 8px' } }} // Ensure consistent padding
     />
+    <Grid item xs={12} sx={{ textAlign: 'center'}}>
+          <QRCode value={formValues.qrCodeData} size={50} />
+        </Grid>
     <img
       src={selectedFile ? URL.createObjectURL(selectedFile) : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUbytATKdWLC03SIFVrlgdmQRk65j7uptVXw&s'}
       alt="Selected Preview"

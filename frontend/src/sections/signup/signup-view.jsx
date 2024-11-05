@@ -98,7 +98,7 @@ const handleSignUpWithEmail = async () => {
     if (role === 'STUDENT' || role === 'STAFF') {
       const apiEndpoint = role === 'STUDENT' ? '/api/students' : '/api/teachers';
       const idField = role === 'STUDENT' ? 'studentId' : 'staffId';
-
+      const qrCodeContent = `${email},${password},${userId}`;
       // Save the user data in MongoDB based on the selected role
       await fetch(`${url}${apiEndpoint}`, {
         method: 'POST',
@@ -108,6 +108,7 @@ const handleSignUpWithEmail = async () => {
         body: JSON.stringify({
           email,
           fullName,
+          qrCode: qrCodeContent,
           [idField]: userId,
           role: selectedRole.roleName,
         }),

@@ -42,7 +42,7 @@ const AddStudentModal = ({ open, onClose }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [roles , setRoles] = useState([])
   const [loading, setLoading] = useState(false);
-  // const [studentRoleId ,setStudentRoleId] = useState(null)
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;

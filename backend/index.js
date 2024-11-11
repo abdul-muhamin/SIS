@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const http = require("http");
-// const setupSocket = require("./socket"); 
+const setupSocket = require("./socket"); 
 
 // Routes imports
 const studentRoutes = require("./routes/stundentRoute");
@@ -60,12 +60,12 @@ app.get("/", (req, res) => {
   res.send("Welcome to the Student CRUD API");
 });
 
-// const server = http.createServer(app);
+const server = http.createServer(app);
 
-// const io = setupSocket(server);
-// app.set("socketio", io);
+const io = setupSocket(server);
+app.set("socketio", io);
 
 // Start the server
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

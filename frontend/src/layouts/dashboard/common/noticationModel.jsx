@@ -1,5 +1,6 @@
-import PropTypes from 'prop-types';
 import { useState } from 'react';
+import PropTypes from 'prop-types';
+
 import { Box, List, Modal, Button, Divider, Typography, ListItemButton, TablePagination } from '@mui/material';
 
 export default function NotificationsModal({ open, onClose, notifications, setNotifications, setTotalUnRead }) {
@@ -39,7 +40,7 @@ export default function NotificationsModal({ open, onClose, notifications, setNo
 
   return (
     <Modal open={open} onClose={onClose} aria-labelledby="notifications-modal" aria-describedby="modal-with-notifications">
-      <Box sx={{ maxWidth: 800,maxHeight:1200, mx: 'auto', mt: 5, bgcolor: 'background.paper', borderRadius: 1, p: 3, boxShadow: 24 }}>
+      <Box sx={{ maxWidth: 800,Height:1200, mx: 'auto', mt: 5, bgcolor: 'background.paper', borderRadius: 1, p: 3, boxShadow: 24 }}>
         <Typography variant="h6" component="h2" gutterBottom>
           Notifications
         </Typography>

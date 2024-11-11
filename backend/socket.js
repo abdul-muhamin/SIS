@@ -13,14 +13,13 @@ const setupSocket = (server) => {
 
     // Join room based on user ID from the client side
     socket.on("joinRoom", (userId) => {
-      if (userId) {
         socket.join(userId);
         console.log(`User ${userId} joined room ${userId}`);
-      }
+      
     });
 
     socket.on("sendNotification", (data) => {
-      console.log("Received sendNotification event for user:", data.toUserId);
+      console.log("Received sendNotification event for user:", data);
       // Emit only to the room associated with toUserId
       io.to(data.toUserId).emit("receiveNotification", data);
     });

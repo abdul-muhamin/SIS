@@ -211,7 +211,9 @@
 
 
 import PropTypes from 'prop-types';
+import { io } from 'socket.io-client';
 import { useState, useEffect } from 'react';
+
 import {
   Box,
   List,
@@ -223,11 +225,13 @@ import {
   Popover,
   Typography,
   IconButton,
-  ListItemAvatar,
-  ListItemButton,ListItemText,
+  ListItemText,
+  ListItemAvatar,ListItemButton,
 } from '@mui/material';
+
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
+
 import NotificationsModal from './noticationModel';
 
 export default function NotificationsPopover() {
@@ -238,9 +242,15 @@ export default function NotificationsPopover() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+
+    const socket = io('http://localhost:3001');
+   const userId = localStorage.getItem('userId');
+  //   if (userId) {
+  //    socket.emit("joinRoom", userId); // Join room for current user
+  //  }
     const fetchNotifications = async () => {
       try {
-        const userId = localStorage.getItem('userId');
+        // const userId = localStorage.getItem('userId');
         if (!userId) return;
 
         const response = await fetch(`http://localhost:3001/api/notification?userId=${userId}`);
@@ -254,6 +264,9 @@ export default function NotificationsPopover() {
       }
     };
     fetchNotifications();
+       socket.on("receiveNotification", (data) => {
+     setNotifications((prevNotifications) => [data, ...prevNotifications]);    });
+    return () => {      socket.disconnect();    };
   }, []);
 
   const handleOpen = (event) => {

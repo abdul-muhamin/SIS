@@ -131,16 +131,16 @@ updateStudentById: async (req, res) => {
       });
 
       // Emit a Socket.io event to notify the student
-//       const io = req.app.get("socketio");
-// if (io && toUserId) {
-//   io.to(toUserId).emit("receiveNotification", {
-//     message,
-//     toUserId,
-//     fromUserId,
-//   });
-// } else {
-//   console.error("Socket.io instance or toUserId is invalid.");
-// }
+      const io = req.app.get("socketio");
+if (io && toUserId) {
+  io.to(toUserId).emit("receiveNotification", {
+    message,
+    toUserId,
+    fromUserId,
+  });
+} else {
+  console.error("Socket.io instance or toUserId is invalid.");
+}
     } catch (notificationError) {
       console.error("Error creating notification or emitting Socket.io event:", notificationError.message);
     }

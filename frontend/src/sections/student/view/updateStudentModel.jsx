@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import QRCode from 'react-qr-code';
 import React, { useState, useEffect } from 'react';
-
+// import { Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
 import {
   Box,
   Grid,
@@ -16,6 +17,8 @@ import {
   DialogContent,
   DialogActions,
 } from '@mui/material';
+
+const socket = io('http://localhost:3001');
 
 const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
   const [formValues, setFormValues] = useState({
@@ -37,11 +40,11 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [notification , setNotifications] = useState('abc')
   // Load user data when the modal opens
-  // debugger
   useEffect(() => {
-    const url = import.meta.env.VITE_APP_URL;
     if (user) {
+      const url = import.meta.env.VITE_APP_URL;
       setFormValues({
         fullName: user.fullName || '',
         email: user.email || '',
@@ -60,6 +63,9 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
       });
       setSelectedFile(null);
     }
+    return () => {
+      socket.disconnect();
+    };
   }, [user, open]);
 
   const handleChange = (e) => {
@@ -74,16 +80,16 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
   const handleSubmit = async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
-  
+
     const url = import.meta.env.VITE_APP_URL;
     const fromUserId = localStorage.getItem('userId');
-  
+
     if (!fromUserId) {
       console.error('Error: fromUserId not found in localStorage.');
       setIsSubmitting(false);
       return;
     }
-  
+
     const formData = new FormData();
     formData.append('fullName', formValues.fullName);
     formData.append('email', formValues.email);
@@ -96,32 +102,40 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
     formData.append('address', formValues.address);
     formData.append('studentId', formValues.studentId);
     formData.append('status', formValues.status);
-    formData.append('fromUserId', fromUserId); // Add fromUserId here
-  
+    formData.append('fromUserId', fromUserId);
+
     if (selectedFile) {
       formData.append('photo', selectedFile);
     }
-  
+
     try {
       const response = await fetch(`${url}/api/students/${formValues._id}`, {
         method: 'PUT',
         body: formData,
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to update student');
       }
-  
+
       const data = await response.json();
       onUpdateUser(data);
       onClose();
+
+      // Emit a notification event to the server with the relevant data
+      const notificationData = {
+        toUserId: 'TARGET_USER_ID', // Replace with the ID of the user who should receive the notification
+        fromUserId,
+        message: `${formValues.fullName} has been updated.`,
+      };
+      socket.emit('sendNotification', notificationData);
+
     } catch (error) {
       console.error('Error updating student:', error);
     } finally {
       setIsSubmitting(false);
     }
   };
-  
   
   
   

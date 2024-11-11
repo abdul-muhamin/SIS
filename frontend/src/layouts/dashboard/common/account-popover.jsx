@@ -55,6 +55,7 @@ export default function AccountPopover() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      localStorage.clear();
       navigate('/'); 
     } catch (error) {
       console.error("Error logging out:", error);

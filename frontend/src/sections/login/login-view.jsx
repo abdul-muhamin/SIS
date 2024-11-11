@@ -1,61 +1,56 @@
-import { useState } from 'react';
+// import io from 'socket.io-client';
+import { useState, useEffect } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
-import { Link , useNavigate } from 'react-router-dom';
-import { signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, signInWithEmailAndPassword } from 'firebase/auth'; // Import Firestore functions
-// import { db } from 'src/firebase';
+import { Link, useNavigate } from 'react-router-dom';
+import { signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, signInWithEmailAndPassword } from 'firebase/auth';
+
 import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
-import {
-  Box,
-  Card,
-  Stack,
-  Button,
-  Divider,
-  TextField,
-  IconButton,
-  Typography,
-} from '@mui/material';
+import { Box, Card, Stack, Button, Divider, TextField, IconButton, Typography } from '@mui/material';
 
-import { useRouter } from 'src/routes/hooks';
-
-import { db , auth } from 'src/firebase';
+import { db, auth } from 'src/firebase';
 import { bgGradient } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 
+
+
 export default function LoginView() {
   const theme = useTheme();
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  // Sign in with Email and Password
+
+
+
   const handleLoginWithEmail = async () => {
     setLoading(true);
     setError('');
     const url = import.meta.env.VITE_APP_URL;
-  
+
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const userId = userCredential.user.uid;
-  
-      // Fetch user data from Firestore
+
       const userDocRef = doc(db, 'users', userId);
       const userDoc = await getDoc(userDocRef);
-  
+
       if (userDoc.exists()) {
         const userData = userDoc.data();
         const policiesResponse = await fetch(`${url}/api/roles/getRolePolicies/${userData.roleId}`);
         const policiesData = await policiesResponse.json();
         const policies = policiesData.rolePolicies || [];
-  
+
         localStorage.setItem('userPolicies', JSON.stringify(policies));
-        router.push('/dashboard');
+        localStorage.setItem('userId', userId);
+
+        // socket.emit('user_connected', userId);
+        navigate('/dashboard');
       } else {
         setError('User data not found in Firestore.');
       }
@@ -65,40 +60,30 @@ export default function LoginView() {
       setLoading(false);
     }
   };
-  
 
-  // Sign in with Google
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
-      router.push('/dashboard');
+      const result = await signInWithPopup(auth, provider);
+      localStorage.setItem('userId', result.user.uid);
+      // socket.emit('user_connected', result.user.uid);
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message);
     }
   };
 
-  // Sign in with Facebook
   const handleFacebookLogin = async () => {
     const provider = new FacebookAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
-      router.push('/dashboard');
+      const result = await signInWithPopup(auth, provider);
+      localStorage.setItem('userId', result.user.uid);
+      // socket.emit('user_connected', result.user.uid);
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message);
     }
   };
-
-  // Sign in with Twitter
-  // const handleTwitterLogin = async () => {
-  //   const provider = new TwitterAuthProvider();
-  //   try {
-  //     await signInWithPopup(auth, provider);
-  //     router.push('/dashboard');
-  //   } catch (err) {
-  //     setError(err.message);
-  //   }
-  // };
 
   const renderForm = (
     <>
@@ -131,7 +116,7 @@ export default function LoginView() {
       {error && <Typography color="error">{error}</Typography>}
 
       <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
-        <Link variant="subtitle2" underline="hover">
+        <Link to="/forgot-password" variant="subtitle2" underline="hover">
           Forgot password?
         </Link>
       </Stack>
@@ -205,17 +190,6 @@ export default function LoginView() {
               onClick={handleFacebookLogin}
             >
               <Iconify icon="eva:facebook-fill" color="#1877F2" />
-            </Button>
-
-            <Button
-              fullWidth
-              size="large"
-              color="inherit"
-              variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-              // onClick={handleTwitterLogin}
-            >
-              <Iconify icon="eva:twitter-fill" color="#1C9CEA" />
             </Button>
           </Stack>
 

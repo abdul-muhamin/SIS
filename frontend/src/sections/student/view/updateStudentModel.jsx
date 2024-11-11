@@ -29,17 +29,18 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
     motherPhoneNumber: '',
     address: '',
     _id: '',
-    studentId:'',
-    qrCode:'',
+    studentId: '',
+    qrCode: '',
     photo: '', // Added photo property
     status: '', // Set default status to Active
   });
 
   const [selectedFile, setSelectedFile] = useState(null);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // Load user data when the modal opens
+  // debugger
   useEffect(() => {
-    const url= import.meta.env.VITE_APP_URL;
+    const url = import.meta.env.VITE_APP_URL;
     if (user) {
       setFormValues({
         fullName: user.fullName || '',
@@ -71,7 +72,18 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
   };
 
   const handleSubmit = async () => {
-    const url= import.meta.env.VITE_APP_URL;
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+  
+    const url = import.meta.env.VITE_APP_URL;
+    const fromUserId = localStorage.getItem('userId');
+  
+    if (!fromUserId) {
+      console.error('Error: fromUserId not found in localStorage.');
+      setIsSubmitting(false);
+      return;
+    }
+  
     const formData = new FormData();
     formData.append('fullName', formValues.fullName);
     formData.append('email', formValues.email);
@@ -82,32 +94,37 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
     formData.append('fatherPhoneNumber', formValues.fatherPhoneNumber);
     formData.append('motherPhoneNumber', formValues.motherPhoneNumber);
     formData.append('address', formValues.address);
-    formData.append('status', formValues.status);
     formData.append('studentId', formValues.studentId);
-    formData.append('qrCode', formValues.qrCode);
-    formData.append('_id', formValues._id);
-
+    formData.append('status', formValues.status);
+    formData.append('fromUserId', fromUserId); // Add fromUserId here
+  
     if (selectedFile) {
       formData.append('photo', selectedFile);
     }
-
+  
     try {
       const response = await fetch(`${url}/api/students/${formValues._id}`, {
         method: 'PUT',
         body: formData,
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to update student');
       }
-
+  
       const data = await response.json();
       onUpdateUser(data);
       onClose();
     } catch (error) {
       console.error('Error updating student:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
+  
+  
+  
+  
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
@@ -131,8 +148,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
                 type="email"
                 value={formValues.email}
                 onChange={handleChange}
-                // margin="normal"
-                sx={{marginTop:"25px"}}
+                sx={{ marginTop: '25px' }}
               />
               <TextField
                 fullWidth
@@ -176,18 +192,23 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
                   onChange={handleFileChange}
                   sx={{ width: '150px' }}
                 />
-                <Grid item xs={12} sx={{ textAlign: 'center'}}>
-          <QRCode value={formValues.qrCode} size={50} />
-        </Grid>
+                <Grid item xs={12} sx={{ textAlign: 'center' }}>
+                  <QRCode value={formValues.qrCode} size={50} />
+                </Grid>
                 <img
-                  src={selectedFile ? URL.createObjectURL(selectedFile) : formValues.photo || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUbytATKdWLC03SIFVrlgdmQRk65j7uptVXw&s'}
+                  src={
+                    selectedFile
+                      ? URL.createObjectURL(selectedFile)
+                      : formValues.photo ||
+                        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUbytATKdWLC03SIFVrlgdmQRk65j7uptVXw&s'
+                  }
                   alt="Selected Preview"
                   style={{
                     width: '90px',
                     height: '90px',
                     borderRadius: '50%',
                     objectFit: 'cover',
-                    border: '5px solid grey'
+                    border: '5px solid grey',
                   }}
                 />
               </Box>
@@ -206,7 +227,6 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
                 value={formValues.motherPhoneNumber}
                 onChange={handleChange}
                 margin="normal"
-                
               />
               <TextField
                 fullWidth
@@ -217,7 +237,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
                 margin="normal"
               />
               <TextField
-              disabled
+                disabled
                 fullWidth
                 label="ID"
                 name="studentId"
@@ -225,13 +245,9 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
                 onChange={handleChange}
                 margin="normal"
               />
-              <FormControl fullWidth sx={{marginTop:"10px"}}>
+              <FormControl fullWidth sx={{ marginTop: '10px' }}>
                 <InputLabel>Status</InputLabel>
-                <Select
-                  name="status"
-                  value={formValues.status}
-                  onChange={handleChange}
-                >
+                <Select name="status" value={formValues.status} onChange={handleChange}>
                   <MenuItem value="Active">Active</MenuItem>
                   <MenuItem value="Banned">Banned</MenuItem>
                 </Select>
@@ -257,6 +273,7 @@ UpdateStudentModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   user: PropTypes.object.isRequired,
   onUpdateUser: PropTypes.func.isRequired,
+  // socket: PropTypes.object,
 };
 
 export default UpdateStudentModal;

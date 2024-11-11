@@ -12,17 +12,19 @@ const setupSocket = (server) => {
     console.log("A user connected:", socket.id);
 
     // Join room based on user ID from the client side
-    socket.on("joinRoom", (userId) => {
-        socket.join(userId);
-        console.log(`User ${userId} joined room ${userId}`);
+    // socket.on("joinRoom", (userId) => {
+    //     socket.join(userId);
+    //     console.log(`User ${userId} joined room ${userId}`);
       
-    });
+    // });
 
-    socket.on("sendNotification", (data) => {
-      console.log("Received sendNotification event for user:", data);
-      // Emit only to the room associated with toUserId
-      io.to(data.toUserId).emit("receiveNotification", data);
-    });
+    // socket.on("sendNotification", (data) => {
+    //   console.log("Received sendNotification event for user:", data);
+    //   // Emit only to the room associated with toUserId
+    //   io.to(data.toUserId).emit("receiveNotification", data);
+    // });
+    socket.on("read_msg", (arg) => {      console.log(arg);  'world from client'    });
+    socket.emit('send_msg',  'emit from server');
 
     socket.on("disconnect", () => {
       console.log("A user disconnected:", socket.id);

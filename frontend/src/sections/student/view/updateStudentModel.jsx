@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
 import QRCode from 'react-qr-code';
-import React, { useState, useEffect } from 'react';
 // import { Socket } from 'socket.io-client';
 import { io } from 'socket.io-client';
+import React, { useState, useEffect } from 'react';
+
 import {
   Box,
   Grid,
@@ -18,7 +19,7 @@ import {
   DialogActions,
 } from '@mui/material';
 
-const socket1 = io('http://localhost:3001');
+// const socket1 = io('http://localhost:3001');
 
 const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
   const [formValues, setFormValues] = useState({
@@ -43,16 +44,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
   const [notification , setNotifications] = useState('abc')
   // Load user data when the modal opens
   // const socket = io('http://localhost:3001');  
-  useEffect(() => {
-    socket1.on('connection', (socket) => {
-      socket.emit('read_msg'   , 'emit from client'  );
-      socket.on('send_msg', (arg) =>
-         { console.log( 'world from server'); })
-    });
 
-
-    }
-    ,[]);
 
 
 
@@ -137,12 +129,11 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
       onClose();
 
       // Emit a notification event to the server with the relevant data
-      // const notificationData = {
-      //   toUserId: 'TARGET_USER_ID', // Replace with the ID of the user who should receive the notification
+      // const notificationMessage = `${formValues.fullName} has been updated.`;
+      // socket1.emit('send_notification', {
       //   fromUserId,
-      //   message: `${formValues.fullName} has been updated.`,
-      // };
-      // socket.emit('sendNotification', notificationData);
+      //   message: notificationMessage,
+      // });
 
     } catch (error) {
       console.error('Error updating student:', error);

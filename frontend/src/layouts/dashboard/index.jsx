@@ -3,6 +3,8 @@ import { io } from 'socket.io-client';
 import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 
 import Nav from './nav';
 import Main from './main';
@@ -10,48 +12,58 @@ import Header from './header';
 
 export default function DashboardLayout({ children }) {
   const [openNav, setOpenNav] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState([]);
 
   useEffect(() => {
-    console.log('test1');
-
-    function onConnect() {
-      console.log('onConnect');
-    }
-
-    function onDisconnect() {
-      console.log('onDisconnect');
-    }
-
-    function onFooEvent(value) {
-      console.log('2');
-    }
-
+    // Initialize socket connection
     const socket = io('http://localhost:3001');
-    socket.on('connect', onConnect);
-    socket.on('disconnect', onDisconnect);
 
-    ////2-way immediate msgs --> From Server to Client usecase
-    // socket.emit('chat_message', 'msg 1 from client');
-    // socket.on('following_chat_message', (arg) => {
-    //   console.log('msg 2 at client:', arg);
-    // });
+    // Log when connected
+    socket.on('connect', () => {
+      console.log('Connected to server');
+    });
 
-    ////From Server to Client usecase
-    // socket.on('server-chat_message', (msg) => {
-    //   console.log('msg at client:', msg);
-    // });
+    // Listen for the 'following_chat_message' event from the server
+    socket.on('send_notification', (message) => {
+      console.log('send_notification:', message.message);
+      setSnackbarMessage(message.message); // Set the received message
+      setOpenSnackbar(true);       // Open the Snackbar to display it
+    });
 
-    ////From Client to Server usecase
-    socket.emit('client-chat_message', 'this is a msg to server');
 
+    socket.on('student_added', (message) => {
+      console.log('student_added:', message.message);
+      setSnackbarMessage(message.message); // Set the received message
+      setOpenSnackbar(true);       // Open the Snackbar to display it
+    });
+
+
+    socket.on('student_attendance', (message) => {
+      console.log('student_attendance:', message.message);
+      setSnackbarMessage(message.message); // Set the received message
+      setOpenSnackbar(true);       // Open the Snackbar to display it
+    });
+
+    // Send a test message to the server
+    socket.emit('chat_message', 'Message from client to server');
+
+    // Clean up the event listeners on component unmount
     return () => {
-      socket.off('connect', onConnect);
-      socket.off('disconnect', onDisconnect);
-      socket.off('chat_message', onFooEvent);
-      socket.off('following_chat_message', onFooEvent);
-      socket.off('client-chat_message', onFooEvent);
+      socket.off('connect');
+      socket.off('send_notification');
+      socket.off('student_added');
+      socket.disconnect();
     };
   }, []);
+
+  // Handle Snackbar close
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnackbar(false);
+  };
 
   return (
     <>
@@ -67,6 +79,26 @@ export default function DashboardLayout({ children }) {
         <Nav openNav={openNav} onCloseNav={() => setOpenNav(false)} />
         <Main>{children}</Main>
       </Box>
+
+      {/* Snackbar to display messages at the bottom-right corner */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={5000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} // Position: bottom-right
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="success"
+          sx={{
+            width: '100%',
+            backgroundColor: '#abf7b1',  // Green background color
+            color: 'black',            // Black text color
+          }}
+        >
+          {snackbarMessage || 'Default message for testing'}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

@@ -23,16 +23,34 @@ const setupSocket = (server) => {
     //   io.to(data.toUserId).emit("receiveNotification", data);
     // });
 
-    ////2-way immediate msgs --> From Server to Client usecase
-    // socket.on("chat_message", (arg) => {
-    //   console.log("msg at server:", arg);
-    //   io.emit("following_chat_message", "response from server");
-    // });
+    //2-way immediate msgs --> From Server to Client usecase
+    socket.on("chat_message", (arg) => {
+      console.log("msg at server:", arg);
+      io.emit("following_chat_message", "response from server");
+    });
 
-    ////From Server to Client usecase
+
+    socket.on("send_notification", (arg) => {
+      console.log("Your Information is Updated by Administrator:", arg);
+      io.emit("recieve_notification", "Your Information is Updated by Administrator");
+    });
+
+
+    socket.on("student_added", (arg) => {
+      console.log("New Student is Added:", arg);
+      io.emit("student_added_notification", "New Student is Added");
+    });
+
+
+    socket.on("student_attendance", (arg) => {
+      console.log("Student Mark the Attendance:", arg);
+      io.emit("student_attendance_enterance", "Student Mark the Attendance");
+    });
+
+    //From Server to Client usecase
     // socket.emit("server-chat_message", "this is a msg from server");
 
-    ////From Client to Server usecase
+    //From Client to Server usecase
     socket.on("client-chat_message", (msg) => {
       console.log("client msg at server:", msg);
     });

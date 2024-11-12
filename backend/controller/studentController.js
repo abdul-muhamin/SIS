@@ -49,6 +49,13 @@ const studentController = {
         photoUrl: photo ? `${req.protocol}://${req.get('host')}/uploads/${photo}` : null
       };
 
+      const message = "New Student is Added"
+      const io = req.app.get("socketio");
+      if (io) {
+        io.emit("student_added", {
+          message,
+        })};
+      
       res.status(201).json(studentWithPhotoUrl);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -132,15 +139,14 @@ updateStudentById: async (req, res) => {
 
       // Emit a Socket.io event to notify the student
       const io = req.app.get("socketio");
-if (io && toUserId) {
-  io.to(toUserId).emit("receiveNotification", {
-    message,
-    toUserId,
-    fromUserId,
-  });
-} else {
-  console.error("Socket.io instance or toUserId is invalid.");
-}
+      if (io) {
+        io.emit("send_notification", {
+          message,
+          fromUserId,
+        });
+      } else {
+        console.error("Socket.io instance is invalid.");
+      }
     } catch (notificationError) {
       console.error("Error creating notification or emitting Socket.io event:", notificationError.message);
     }

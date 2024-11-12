@@ -101,7 +101,7 @@ const AddStudentModal = ({ open, onClose }) => {
         // status: formValues.status || 'Active',
       });
   
-      console.log('Staff added successfully with role ID:', selectedRoleId);
+      console.log('Student added successfully with role ID:', selectedRoleId);
       const qrCodeData = `${formValues.email},${formValues.email},${user.uid}`;
       // Add other details to your backend
       const formData = new FormData();

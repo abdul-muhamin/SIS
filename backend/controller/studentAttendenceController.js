@@ -60,6 +60,12 @@ exports.saveOrUpdateAttendance = async (req, res) => {
         leaveType: att.leaveType,
         isArchived: att.isArchived,
       }));
+      const message = "Student Mark the Attendance"
+      const io = req.app.get("socketio");
+      if (io) {
+        io.emit("student_added", {
+          message,
+        })};
 
       return res.status(200).json({ message: 'Attendance updated or added.', attendances: sanitizedAttendance });
     } else {
@@ -85,13 +91,6 @@ exports.saveOrUpdateAttendance = async (req, res) => {
         leaveType: att.leaveType,
         isArchived: att.isArchived,
       }));
-      const message = "Student Mark the Attendance"
-      const io = req.app.get("socketio");
-      if (io) {
-        io.emit("student_added", {
-          message,
-        })};
-
       return res.status(201).json({ message: 'New student attendance created.', attendances: sanitizedAttendance });
     }
   } catch (error) {

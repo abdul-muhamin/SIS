@@ -88,7 +88,7 @@ function StudentDashboard() {
   return (
     <Paper elevation={3} sx={{ p: 4, textAlign: 'center', maxWidth: 500, margin: 'auto', mt: 4 }}>
       <Typography variant="h5" sx={{ mb: 3 }}>
-        Staff Attendance
+        Student Attendance
       </Typography>
 
       <Grid container spacing={2} justifyContent="center">

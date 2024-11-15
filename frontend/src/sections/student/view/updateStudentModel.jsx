@@ -43,7 +43,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notification , setNotifications] = useState('abc')
   // Load user data when the modal opens
-  // const socket = io('http://localhost:3001');  
+  const socket = io('http://localhost:3001');  
 
 
 
@@ -68,6 +68,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
         photo: user.photo ? `${url}/uploads/${user.photo}` : '',
       });
       setSelectedFile(null);
+      
     }
     // return () => {
     //   socket.disconnect();
@@ -128,12 +129,15 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
       onUpdateUser(data);
       onClose();
 
+      
+
       // Emit a notification event to the server with the relevant data
       // const notificationMessage = `${formValues.fullName} has been updated.`;
       // socket1.emit('send_notification', {
       //   fromUserId,
       //   message: notificationMessage,
       // });
+      socket.emit("joinRoom", user.studentId , fromUserId);
 
     } catch (error) {
       console.error('Error updating student:', error);

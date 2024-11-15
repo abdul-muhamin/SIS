@@ -18,18 +18,25 @@ export default function DashboardLayout({ children }) {
   useEffect(() => {
     // Initialize socket connection
     const socket = io('http://localhost:3001');
-
+    const userId = "brUOSt0kicagu7aJMO0lbvaWawB3";
     // Log when connected
     socket.on('connect', () => {
       console.log('Connected to server');
     });
 
     // Listen for the 'following_chat_message' event from the server
+    socket.on(userId, (message) => {
+      console.log('send_notification:', message);
+      setSnackbarMessage(message); // Set the received message
+      setOpenSnackbar(true);       // Open the Snackbar to display it
+    });
+
     socket.on('send_notification', (message) => {
       console.log('send_notification:', message.message);
       setSnackbarMessage(message.message); // Set the received message
       setOpenSnackbar(true);       // Open the Snackbar to display it
     });
+
 
 
     socket.on('student_added', (message) => {

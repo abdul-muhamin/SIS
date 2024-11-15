@@ -54,6 +54,8 @@ const studentController = {
       if (io) {
         io.emit("student_added", {
           message,
+          fromUserId,
+          toUserId
         })};
       
       res.status(201).json(studentWithPhotoUrl);
@@ -140,7 +142,7 @@ updateStudentById: async (req, res) => {
       // Emit a Socket.io event to notify the student
       const io = req.app.get("socketio");
       if (io) {
-        io.emit("send_notification", {
+        io.to(toUserId).emit("receive_notification", {
           message,
           fromUserId,
         });

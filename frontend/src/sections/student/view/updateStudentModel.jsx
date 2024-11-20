@@ -19,7 +19,7 @@ import {
   DialogActions,
 } from '@mui/material';
 
-// const socket1 = io('http://localhost:3001');
+// const socket = io('http://localhost:3001');
 
 const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
   const [formValues, setFormValues] = useState({
@@ -43,7 +43,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notification , setNotifications] = useState('abc')
   // Load user data when the modal opens
-  const socket = io('http://localhost:3001');  
+  // const socket = io('http://localhost:3001');  
 
 
 
@@ -137,7 +137,7 @@ const UpdateStudentModal = ({ open, onClose, user, onUpdateUser }) => {
       //   fromUserId,
       //   message: notificationMessage,
       // });
-      socket.emit("joinRoom", user.studentId , fromUserId);
+      // socket.emit("join_room", fromUserId);
 
     } catch (error) {
       console.error('Error updating student:', error);

@@ -24,6 +24,7 @@ export const AppointmentChatbot = lazy(()=>import ('src/pages/appointmentChatBot
 export const AdminStudentAttendance = lazy(()=>import ('src/pages/admin-student-attendence'))
 export const AdminStafftAttendance = lazy(()=>import ('src/pages/admin-staff-attendence'))
 export const SuperAdminDashboard = lazy(()=>import ('src/pages/super-admin-dashboard'))
+export const UserCall = lazy(()=>import ('src/pages/user-call'))
 
 // ----------------------------------------------------------------------
 
@@ -56,7 +57,8 @@ export default function Router() {
         { path: 'appointment-chatbot', element: <AppointmentChatbot /> }, 
         { path: 'admin-student-attendance', element: <AdminStudentAttendance /> }, 
         { path: 'admin-staff-attendance', element: <AdminStafftAttendance /> }, 
-        { path: 'super-admin-dashboard', element: <SuperAdminDashboard /> }, 
+        { path: 'super-admin-dashboard', element: <SuperAdminDashboard /> },
+        { path: 'user-call', element: <UserCall /> },
         // { path: 'sign-up', element: <SignUp /> },
       ],
     },

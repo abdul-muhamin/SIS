@@ -130,7 +130,7 @@ export default function UserPage() {
   const notFound = !dataFiltered.length && filterName.trim() !== '';
 
   return (
-    <Container sx={{ height: { lg: '60vh' } }}>
+    <Container sx={{ height: { lg: '60vh' }, minWidth: '75vw' }}>
       <Card>
         <Toolbar sx={{ height: 96, display: 'flex', alignItems: 'center', gap: 3, p: 1 }}>
           <div style={{ fontWeight: 'bold', color: '#3f3f46' }}>Attendance Overview</div>
@@ -173,7 +173,7 @@ export default function UserPage() {
 
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
-            <Table sx={{ minWidth: 800 }}>
+            <Table >
               <UserTableHead
                 order={order}
                 orderBy={orderBy}

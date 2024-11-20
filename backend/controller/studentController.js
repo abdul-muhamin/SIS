@@ -126,7 +126,7 @@ updateStudentById: async (req, res) => {
     
     try {
       const toUserId = updatedStudent.studentId; 
-      const fromUserId = req.user?.id || req.body.fromUserId || 'defaultAdminId';
+      const fromUserId =req.body.fromUserId || 'defaultAdminId';
 
       if (!toUserId) {
         return res.status(400).json({ error: "toUserId (studentId) is required" });
@@ -142,9 +142,10 @@ updateStudentById: async (req, res) => {
       // Emit a Socket.io event to notify the student
       const io = req.app.get("socketio");
       if (io) {
-        io.to(toUserId).emit("receive_notification", {
+        io.emit("receive_notification", {
           message,
           fromUserId,
+          toUserId,
         });
       } else {
         console.error("Socket.io instance is invalid.");

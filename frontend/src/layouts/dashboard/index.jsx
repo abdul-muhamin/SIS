@@ -14,63 +14,91 @@ export default function DashboardLayout({ children }) {
   const [openNav, setOpenNav] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState([]);
-
-  useEffect(() => {
-    // Initialize socket connection
-    const socket = io('http://localhost:3001');
-    const userId = "brUOSt0kicagu7aJMO0lbvaWawB3";
-    // Log when connected
-    socket.on('connect', () => {
-      console.log('Connected to server');
-    });
-
-    // Listen for the 'following_chat_message' event from the server
-    socket.on(userId, (message) => {
-      console.log('send_notification:', message);
-      setSnackbarMessage(message); // Set the received message
-      setOpenSnackbar(true);       // Open the Snackbar to display it
-    });
-
-    socket.on('send_notification', (message) => {
-      console.log('send_notification:', message.message);
-      setSnackbarMessage(message.message); // Set the received message
-      setOpenSnackbar(true);       // Open the Snackbar to display it
-    });
+  const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState("");
+  const [room, setRoom] = useState("");
+  const [socketID, setSocketId] = useState("");
+  const [roomName, setRoomName] = useState("");
 
 
+  // useEffect(() => {
+  //   // Initialize socket connection
+  //   const socket = io('http://localhost:3001');
+  //   // Log when connected
+  //   socket.on('connect', () => {
+  //     console.log('Connected to server' , socket.id);
+  //   });
 
-    socket.on('student_added', (message) => {
-      console.log('student_added:', message.message);
-      setSnackbarMessage(message.message); // Set the received message
-      setOpenSnackbar(true);       // Open the Snackbar to display it
-    });
+
+  //   socket.on('receive_notification', (message) => {
+  //     console.log('receive_notification:', message.message , message.fromUserId);
+  //     setSnackbarMessage(message.message); // Set the received message
+  //     setOpenSnackbar(true);       // Open the Snackbar to display it
+  //   });
 
 
-    socket.on('student_attendance', (message) => {
-      console.log('student_attendance:', message.message);
-      setSnackbarMessage(message.message); // Set the received message
-      setOpenSnackbar(true);       // Open the Snackbar to display it
-    });
 
-    // Send a test message to the server
-    socket.emit('chat_message', 'Message from client to server');
+  //   socket.on('student_added', (message) => {
+  //     console.log('student_added:', message.message);
+  //     setSnackbarMessage(message.message); // Set the received message
+  //     setOpenSnackbar(true);       // Open the Snackbar to display it
+  //   });
 
-    // Clean up the event listeners on component unmount
-    return () => {
-      socket.off('connect');
-      socket.off('send_notification');
-      socket.off('student_added');
-      socket.disconnect();
-    };
-  }, []);
 
-  // Handle Snackbar close
-  const handleCloseSnackbar = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpenSnackbar(false);
-  };
+  //   socket.on('student_attendance', (message) => {
+  //     console.log('student_attendance:', message.message);
+  //     setSnackbarMessage(message.message); // Set the received message
+  //     setOpenSnackbar(true);       // Open the Snackbar to display it
+  //   });
+
+  //   // Send a test message to the server
+  //   socket.emit('chat_message', 'Message from client to server');
+
+  //   // Clean up the event listeners on component unmount
+  //   return () => {
+  //     socket.off('connect');
+  //     socket.off('send_notification');
+  //     socket.off('student_added');
+  //     socket.disconnect();
+  //   };
+  // }, []);
+
+  // const socket = io('http://localhost:3001');
+  // useEffect(() => {
+  //   socket.on("connect", () => {
+  //     setSocketId(socket.id);
+  //     console.log("connected", socket.id);
+  //   });
+
+  //   socket.on("receive-message", (data) => {
+  //     console.log(data);
+  //     setMessages((msg) => [...msg, data]);
+  //   });
+
+  //   socket.on("welcome", (s) => {
+  //     console.log(s);
+  //   });
+
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // }, []);
+
+  // const joinRoomHandler = (e) => {
+  //   e.preventDefault();
+  //   socket.emit("join-room", 'roomName');
+  //   setRoomName("");
+  //   socket.emit("message", { message, room });
+  //   setMessage("");
+  // };
+
+  // // Handle Snackbar close
+  // const handleCloseSnackbar = (event, reason) => {
+  //   if (reason === 'clickaway') {
+  //     return;
+  //   }
+  //   setOpenSnackbar(false);
+  // };
 
   return (
     <>
@@ -84,6 +112,10 @@ export default function DashboardLayout({ children }) {
         }}
       >
         <Nav openNav={openNav} onCloseNav={() => setOpenNav(false)} />
+
+          {/* <button type='submit' onClick={joinRoomHandler}>
+            btn
+          </button> */}
         <Main>{children}</Main>
       </Box>
 
@@ -91,11 +123,11 @@ export default function DashboardLayout({ children }) {
       <Snackbar
         open={openSnackbar}
         autoHideDuration={5000}
-        onClose={handleCloseSnackbar}
+        // onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} // Position: bottom-right
       >
         <Alert
-          onClose={handleCloseSnackbar}
+          // onClose={handleCloseSnackbar}
           severity="success"
           sx={{
             width: '100%',

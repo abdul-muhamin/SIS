@@ -243,7 +243,7 @@ export default function NotificationsPopover() {
 
   useEffect(() => {
 
-    const socket = io('http://localhost:3001');
+    // const socket = io('http://localhost:3001');
    const userId = localStorage.getItem('userId');
   //   if (userId) {
   //    socket.emit("joinRoom", userId); // Join room for current user
@@ -264,9 +264,9 @@ export default function NotificationsPopover() {
       }
     };
     fetchNotifications();
-       socket.on("receiveNotification", (data) => {
-     setNotifications((prevNotifications) => [data, ...prevNotifications]);    });
-    return () => {      socket.disconnect();    };
+    //    socket.on("receiveNotification", (data) => {
+    //  setNotifications((prevNotifications) => [data, ...prevNotifications]);    });
+    // return () => {      socket.disconnect();    };
   }, []);
 
   const handleOpen = (event) => {

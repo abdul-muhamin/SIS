@@ -108,15 +108,16 @@ function App() {
         Virtual Classroom
       </h1>
       <div className="container">
-        <div className="video-container">
+        <div className="video-container" style={{display:"flex" , flexDirection:"row" ,justifyContent:"space-between", gap:"20px", alignItems:"center", margin:"20px 5px"}}>
           <div className="video">
             {stream && (
               <video
                 playsInline
                 muted
                 ref={myVideo}
+                placeholder="Me"
                 autoPlay
-                style={{ border: "1px solid red", width: "100%" }}
+                style={{ width: "550px", borderRadius:'5px' }}
               />
             )}
           </div>
@@ -126,23 +127,25 @@ function App() {
                 playsInline
                 ref={userVideo}
                 autoPlay
-                style={{ width: "100%" }}
+                style={{ width: "550px",borderRadius:'5px'  }}
               />
             ) : null}
           </div>
         </div>
-        <div className="myId">
+        <div className="myId" style={{display:'flex', flexDirection:"row" ,justifyContent:"start", gap:"20px", alignItems:"center" , marginTop:'30px' }}>
           <TextField
-            id="filled-name"
+            id="outlined-basic"
             label="Name"
-            variant="filled"
+            variant="outlined"
+            color="primary"
             value={name}
+            
             onChange={(e) => setName(e.target.value)}
-            style={{ marginBottom: "20px" }}
+            
           />
           {me ? (
-  <CopyToClipboard text={me} style={{ marginBottom: "2rem" }}>
-    <Button
+  <CopyToClipboard text={me} >
+    <Button style={{padding:'15px 30px'}}
       variant="contained"
       color="primary"
       startIcon={<AssignmentIcon fontSize="large" />}
@@ -158,13 +161,14 @@ function App() {
           <TextField
             id="filled-id-to-call"
             label="ID to call"
-            variant="filled"
+            variant="outlined"
+            color="primary"
             value={idToCall}
             onChange={(e) => setIdToCall(e.target.value)}
           />
           <div className="call-button">
             {callAccepted && !callEnded ? (
-              <Button variant="contained" color="secondary" onClick={leaveCall}>
+              <Button style={{padding:'15px 30px'}} variant="contained" color="secondary" onClick={leaveCall}>
                 End Call
               </Button>
             ) : (
@@ -176,7 +180,7 @@ function App() {
                 <PhoneIcon fontSize="large" />
               </IconButton>
             )}
-            {idToCall}
+            {/* {idToCall} */}
           </div>
         </div>
         <div>

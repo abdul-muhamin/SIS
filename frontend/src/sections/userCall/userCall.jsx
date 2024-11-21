@@ -1,7 +1,7 @@
+import React, { useRef, useState, useEffect } from "react";
 import Peer from "simple-peer";
 import io from "socket.io-client";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import React, { useRef, useState, useEffect } from "react";
 
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -9,66 +9,82 @@ import IconButton from "@mui/material/IconButton";
 import PhoneIcon from "@mui/icons-material/Phone";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 
-// connecting to the backend
-const socket = io.connect('http://localhost:3001');
+// Connect to the backend
+const socket = io.connect("http://localhost:3001");
 
-// put these static links to env files
-// const socket = io.connect("https://videochat-backend.vercel.app/");
 function App() {
   const [me, setMe] = useState("");
-  const [stream, setStream] = useState({});
+  const [stream, setStream] = useState(null);
   const [receivingCall, setReceivingCall] = useState(false);
   const [caller, setCaller] = useState("");
-  const [callerSignal, setCallerSignal] = useState();
+  const [callerSignal, setCallerSignal] = useState(null);
   const [callAccepted, setCallAccepted] = useState(false);
   const [idToCall, setIdToCall] = useState("");
   const [callEnded, setCallEnded] = useState(false);
-  const [name, setName] = useState("");
-  const myVideo = useRef({});
-  const userVideo = useRef({});
-  const connectionRef = useRef({});
+  const [myName, setMyName] = useState("");
+  const [callerName, setCallerName] = useState("");
+
+  const myVideo = useRef();
+  const userVideo = useRef();
+  const connectionRef = useRef();
 
   useEffect(() => {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((mediaStream) => {
-        console.log("mediaStream", mediaStream);
         setStream(mediaStream);
-        myVideo.current.srcObject = mediaStream;
-      });
+        if (myVideo.current) {
+          myVideo.current.srcObject = mediaStream;
+        }
+      })
+      .catch((err) => console.error("Error accessing media devices:", err));
 
-    socket.on("me", (id) => {
-        console.log("Received socket ID:", id);
-      setMe(id);
+    socket.on("me", (id) => setMe(id));
 
-    });
-
-    socket.on("callUser", (data) => {
+    socket.on("callUser", ({ from, name, signal }) => {
       setReceivingCall(true);
-      setCaller(data.from);
-      setName(data.name);
-      setCallerSignal(data.signal);
+      setCaller(from);
+      setCallerName(name);
+      setCallerSignal(signal);
     });
+
+    socket.on("callEnded", () => {
+      console.log("Call ended by remote user.");
+      endCallCleanup();
+    });
+
+    return () => {
+      socket.off("me");
+      socket.off("callUser");
+      socket.off("callEnded");
+    };
   }, []);
+
+  useEffect(() => {
+    if (myVideo.current && stream) {
+      myVideo.current.srcObject = stream;
+    }
+  }, [stream]);
+
   const callUser = (id) => {
-    //   debugger
-    const peer = new Peer({
-      initiator: true,
-      trickle: false,
-      stream,
-    });
+    const peer = new Peer({ initiator: true, trickle: false, stream });
+
     peer.on("signal", (data) => {
       socket.emit("callUser", {
         userToCall: id,
         signalData: data,
         from: me,
-        name,
+        name: myName,
       });
     });
+
     peer.on("stream", (receivedStream) => {
-      userVideo.current.srcObject = receivedStream;
+      if (userVideo.current) {
+        userVideo.current.srcObject = receivedStream;
+      }
     });
-    socket.on("callAccepted", (signal) => {
+
+    socket.once("callAccepted", (signal) => {
       setCallAccepted(true);
       peer.signal(signal);
     });
@@ -78,16 +94,17 @@ function App() {
 
   const answerCall = () => {
     setCallAccepted(true);
-    const peer = new Peer({
-      initiator: false,
-      trickle: false,
-      stream,
-    });
+
+    const peer = new Peer({ initiator: false, trickle: false, stream });
+
     peer.on("signal", (data) => {
       socket.emit("answerCall", { signal: data, to: caller });
     });
+
     peer.on("stream", (receivedStream) => {
-      userVideo.current.srcObject = receivedStream;
+      if (userVideo.current) {
+        userVideo.current.srcObject = receivedStream;
+      }
     });
 
     peer.signal(callerSignal);
@@ -95,106 +112,131 @@ function App() {
   };
 
   const leaveCall = () => {
-    setCallEnded(true);
-    connectionRef.current = {};
-    // connectionRef.current.destroy();
+    socket.emit("endCall", { to: caller || idToCall });
+    endCallCleanup();
+  };
+
+  const endCallCleanup = () => {
+    setCallEnded(false);
+    setCallAccepted(false);
+    setReceivingCall(false);
+    setCaller("");
+    setCallerName("");
+    setCallerSignal(null);
+
+    if (connectionRef.current) {
+      connectionRef.current.destroy();
+    }
+    connectionRef.current = null;
   };
 
   return (
-    <>
-      <h1
-        style={{ textAlign: "left", color: "black" }}
+    <div style={{ display: "flex", flexDirection: "column"  ,overflow:"hidden"}}>
+      <h1 style={{ textAlign: "center", color: "#1976d2" }}>Virtual Classroom</h1>
+
+      <div
+        style={{
+          display: "flex",
+          flexDirection: callAccepted ? "row" : "column",
+          justifyContent: callAccepted ? "space-between" : "center",
+          alignItems: "center",
+          width: "100%",
+          gap: "20px",
+        }}
       >
-        Virtual Classroom
-      </h1>
-      <div className="container">
-        <div className="video-container" style={{display:"flex" , flexDirection:"row" ,justifyContent:"space-between", gap:"20px", alignItems:"center", margin:"20px 5px"}}>
-          <div className="video">
-            {stream && (
-              <video
-                playsInline
-                muted
-                ref={myVideo}
-                placeholder="Me"
-                autoPlay
-                style={{ width: "550px", borderRadius:'5px' }}
-              />
-            )}
-          </div>
-          <div className="video">
-            {callAccepted && !callEnded ? (
-              <video
-                playsInline
-                ref={userVideo}
-                autoPlay
-                style={{ width: "550px",borderRadius:'5px'  }}
-              />
-            ) : null}
-          </div>
-        </div>
-        <div className="myId" style={{display:'flex', flexDirection:"row" ,justifyContent:"start", gap:"20px", alignItems:"center" , marginTop:'30px' }}>
-          <TextField
-            id="outlined-basic"
-            label="Name"
-            variant="outlined"
-            color="primary"
-            value={name}
-            
-            onChange={(e) => setName(e.target.value)}
-            
+        {stream && (
+          <video
+            playsInline
+            muted
+            ref={myVideo}
+            autoPlay
+            style={{ width: "45%", borderRadius: "10px", border: "2px solid #1976d2" }}
           />
-          {me ? (
-  <CopyToClipboard text={me} >
-    <Button style={{padding:'15px 30px'}}
-      variant="contained"
-      color="primary"
-      startIcon={<AssignmentIcon fontSize="large" />}
-    >
-      Copy ID
-    </Button>
-  </CopyToClipboard>
-) : (
-  <p>Loading your ID...</p>
-)}
+        )}
 
-
-          <TextField
-            id="filled-id-to-call"
-            label="ID to call"
-            variant="outlined"
-            color="primary"
-            value={idToCall}
-            onChange={(e) => setIdToCall(e.target.value)}
+        {callAccepted && (
+          <video
+            playsInline
+            ref={userVideo}
+            autoPlay
+            style={{ width: "45%", borderRadius: "10px", border: "2px solid #1976d2" }}
           />
-          <div className="call-button">
-            {callAccepted && !callEnded ? (
-              <Button style={{padding:'15px 30px'}} variant="contained" color="secondary" onClick={leaveCall}>
-                End Call
-              </Button>
-            ) : (
-              <IconButton
-                color="primary"
-                aria-label="call"
-                onClick={() => callUser(idToCall)}
-              >
-                <PhoneIcon fontSize="large" />
-              </IconButton>
-            )}
-            {/* {idToCall} */}
-          </div>
-        </div>
-        <div>
-          {receivingCall && !callAccepted ? (
-            <div className="caller">
-              <h1>{name} is calling...</h1>
-              <Button variant="contained" color="primary" onClick={answerCall}>
-                Answer
-              </Button>
-            </div>
-          ) : null}
-        </div>
+        )}
       </div>
-    </>
+
+      <div
+        style={{
+          marginTop: "20px",
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "15px",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <TextField
+          label="Your Name"
+          value={myName}
+          onChange={(e) => setMyName(e.target.value)}
+          style={{ minWidth: "200px" }}
+        />
+
+        {me?(
+        <CopyToClipboard text={me}>
+          <Button
+            color="primary"
+            variant="contained"
+            startIcon={<AssignmentIcon />}
+            style={{ minWidth: "150px" }}
+          >
+            Copy ID
+          </Button>
+        </CopyToClipboard>
+
+        ):(
+          <p>loading id</p>
+        )}
+
+
+        <TextField
+          label="ID to Call"
+          value={idToCall}
+          onChange={(e) => setIdToCall(e.target.value)}
+          style={{ minWidth: "200px" }}
+        />
+
+        {callAccepted ? (
+          <Button
+            color="secondary"
+            variant="contained"
+            onClick={leaveCall}
+            style={{ minWidth: "150px" }}
+          >
+            End Call
+          </Button>
+        ) : (
+          <IconButton
+            color="primary"
+            aria-label="call"
+            onClick={() => callUser(idToCall)}
+            style={{ backgroundColor: "#e3f2fd", padding: "10px" }}
+          >
+            <PhoneIcon />
+          </IconButton>
+        )}
+      {receivingCall && !callAccepted && (
+        <div style={{ textAlign: "center", marginTop: "20px" }}>
+          <span>
+          <Button variant="contained" color="primary" onClick={answerCall}>
+            Answer
+          </Button>
+          <h2>{callerName} is calling...</h2>
+          </span>
+        </div>
+      )}
+      </div>
+
+    </div>
   );
 }
 

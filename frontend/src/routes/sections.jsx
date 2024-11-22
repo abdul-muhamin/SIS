@@ -4,7 +4,7 @@ import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 // import { useState , useEffect } from 'react';
 import DashboardLayout from 'src/layouts/dashboard'; 
 
-export const IndexPage = lazy(() => import('src/pages/app'));
+// export const IndexPage = lazy(() => import('src/pages/app'));
 export const Teacher = lazy(() => import('src/pages/teacher'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
 export const UserPage = lazy(() => import('src/pages/student'));
@@ -40,25 +40,25 @@ export default function Router() {
         </DashboardLayout>
       ),
       children: [
-        { path: 'dashboard',element: <IndexPage/> },
+        { path: 'dashboard',element: <SuperAdminDashboard/> },
         { path: 'student', element: <UserPage /> },
         { path: 'staff', element: <Teacher /> },
-        { path: 'products', element: <ProductsPage /> },
-        { path: 'blog', element: <BlogPage /> },
+        // { path: 'products', element: <ProductsPage /> },
+        // { path: 'blog', element: <BlogPage /> },
         // { path: 'student', element: <StudentPage /> },
         // { path: 'update-student', element: <UpdateStudentPage /> },
         { path: 'add-assignment', element: <AddAssignment /> },
-        { path: 'admin-panel', element: <AdminPanel /> },
+        // { path: 'admin-panel', element: <AdminPanel /> },
         { path: 'assignment', element: <AddAssignmentUserPage /> },
         { path: 'grade', element: <GradePage /> },
         { path: 'student-attendance', element: <StudentAttendence /> },
         { path: 'staff-attendance', element: <StaffAttendence /> },
         { path: 'schedule', element: <Schedule /> },
         { path: 'appointment-chatbot', element: <AppointmentChatbot /> }, 
-        { path: 'admin-student-attendance', element: <AdminStudentAttendance /> }, 
-        { path: 'admin-staff-attendance', element: <AdminStafftAttendance /> }, 
-        { path: 'super-admin-dashboard', element: <SuperAdminDashboard /> },
-        { path: 'user-call', element: <UserCall /> },
+        { path: 'manage-student-attendance', element: <AdminStudentAttendance /> }, 
+        { path: 'manage-staff-attendance', element: <AdminStafftAttendance /> }, 
+        // { path: 'super-admin-dashboard', element: <SuperAdminDashboard /> },
+        { path: 'virtual-classroom', element: <UserCall /> },
         // { path: 'sign-up', element: <SignUp /> },
       ],
     },
